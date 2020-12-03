@@ -233,6 +233,11 @@ namespace Cyotek.SvnMigrate.Client
         this.EmptyGitFolder(gitPath);
         this.CopyFolder(workPath, gitPath);
         this.Commit(gitPath, set);
+
+        if (migrateBackgroundWorker.CancellationPending)
+        {
+          break;
+        }
       }
 
       this.DeletePath(workPath);
@@ -255,13 +260,19 @@ namespace Cyotek.SvnMigrate.Client
       {
         MessageBox.Show(string.Format("Migration failed. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
+      else if (migrateBackgroundWorker.CancellationPending)
+      {
+        MessageBox.Show("Migration cancelled.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
       else
       {
-        MessageBox.Show("Done");
+        MessageBox.Show("Migration complete.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
 
-      statusToolStripStatusLabel.Text = "";
+      statusToolStripStatusLabel.Text = string.Empty; ;
       toolStripProgressBar.Value = 0;
+      toolStripProgressBar.Visible = false;
+      cancelToolStripStatusLabel.Visible = false;
     }
 
     private void migrateButton_Click(object sender, EventArgs e)
@@ -278,6 +289,10 @@ namespace Cyotek.SvnMigrate.Client
           new User("Richard Moss","richard.moss@cyotek.com","Richard")
         }
       };
+
+      toolStripProgressBar.Visible = true;
+      cancelToolStripStatusLabel.Visible = true;
+
 
       migrateBackgroundWorker.RunWorkerAsync(options);
     }
@@ -307,5 +322,15 @@ namespace Cyotek.SvnMigrate.Client
     }
 
     #endregion Private Classes
+
+    private void cancelToolStripStatusLabel_Click(object sender, EventArgs e)
+    {
+      migrateBackgroundWorker.CancelAsync();
+    }
+
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
   }
 }

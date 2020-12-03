@@ -39,7 +39,13 @@ namespace Cyotek.SvnMigrate.Client
       this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
       this.logTextBox = new System.Windows.Forms.TextBox();
+      this.cancelToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+      this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.statusStrip.SuspendLayout();
+      this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
@@ -97,7 +103,8 @@ namespace Cyotek.SvnMigrate.Client
       // 
       this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusToolStripStatusLabel,
-            this.toolStripProgressBar});
+            this.toolStripProgressBar,
+            this.cancelToolStripStatusLabel});
       this.statusStrip.Location = new System.Drawing.Point(0, 428);
       this.statusStrip.Name = "statusStrip";
       this.statusStrip.Size = new System.Drawing.Size(800, 22);
@@ -105,9 +112,8 @@ namespace Cyotek.SvnMigrate.Client
       // 
       // statusToolStripStatusLabel
       // 
-      this.statusToolStripStatusLabel.AutoSize = false;
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(683, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(609, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -115,6 +121,7 @@ namespace Cyotek.SvnMigrate.Client
       // 
       this.toolStripProgressBar.Name = "toolStripProgressBar";
       this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
+      this.toolStripProgressBar.Visible = false;
       // 
       // logTextBox
       // 
@@ -126,6 +133,49 @@ namespace Cyotek.SvnMigrate.Client
       this.logTextBox.Size = new System.Drawing.Size(337, 128);
       this.logTextBox.TabIndex = 7;
       // 
+      // cancelToolStripStatusLabel
+      // 
+      this.cancelToolStripStatusLabel.IsLink = true;
+      this.cancelToolStripStatusLabel.Name = "cancelToolStripStatusLabel";
+      this.cancelToolStripStatusLabel.Size = new System.Drawing.Size(43, 17);
+      this.cancelToolStripStatusLabel.Text = "Cancel";
+      this.cancelToolStripStatusLabel.Visible = false;
+      this.cancelToolStripStatusLabel.Click += new System.EventHandler(this.cancelToolStripStatusLabel_Click);
+      // 
+      // menuStrip1
+      // 
+      this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+      this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+      this.menuStrip1.Name = "menuStrip1";
+      this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+      this.menuStrip1.TabIndex = 8;
+      this.menuStrip1.Text = "menuStrip1";
+      // 
+      // toolStrip1
+      // 
+      this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+      this.toolStrip1.Name = "toolStrip1";
+      this.toolStrip1.Size = new System.Drawing.Size(800, 25);
+      this.toolStrip1.TabIndex = 9;
+      this.toolStrip1.Text = "toolStrip1";
+      // 
+      // fileToolStripMenuItem
+      // 
+      this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+      this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+      this.fileToolStripMenuItem.Text = "&File";
+      // 
+      // exitToolStripMenuItem
+      // 
+      this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+      this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.exitToolStripMenuItem.Text = "E&xit";
+      this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -133,17 +183,22 @@ namespace Cyotek.SvnMigrate.Client
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.migrateButton;
       this.ClientSize = new System.Drawing.Size(800, 450);
+      this.Controls.Add(this.toolStrip1);
       this.Controls.Add(this.logTextBox);
       this.Controls.Add(this.statusStrip);
+      this.Controls.Add(this.menuStrip1);
       this.Controls.Add(this.migrateButton);
       this.Controls.Add(this.gitTextBox);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.svnTextBox);
       this.Controls.Add(this.label1);
+      this.MainMenuStrip = this.menuStrip1;
       this.Name = "MainForm";
       this.Text = "Form1";
       this.statusStrip.ResumeLayout(false);
       this.statusStrip.PerformLayout();
+      this.menuStrip1.ResumeLayout(false);
+      this.menuStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -161,6 +216,11 @@ namespace Cyotek.SvnMigrate.Client
     private System.Windows.Forms.ToolStripStatusLabel statusToolStripStatusLabel;
     private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
     private System.Windows.Forms.TextBox logTextBox;
+    private System.Windows.Forms.ToolStripStatusLabel cancelToolStripStatusLabel;
+    private System.Windows.Forms.MenuStrip menuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+    private System.Windows.Forms.ToolStrip toolStrip1;
   }
 }
 
