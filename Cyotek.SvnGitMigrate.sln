@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.SvnMigrate.Client", "gui\Cyotek.SvnMigrate.Client.csproj", "{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.SvnMigrate", "lib\Cyotek.SvnMigrate.csproj", "{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8D9F9C8-B3FA-48E3-8C39-D0808D4A150F}
+	EndGlobalSection
+EndGlobal
