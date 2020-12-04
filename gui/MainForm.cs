@@ -154,10 +154,10 @@ namespace Cyotek.Demo.Windows.Forms
     {
       revisionsListView.Items.Clear();
 
-      _svnRevisions = (SvnChangesetCollection)e.Result;
-
       if (e.Error == null)
       {
+        _svnRevisions = (SvnChangesetCollection)e.Result;
+
         revisionsListView.BeginUpdate();
 
         for (int i = 0; i < _svnRevisions.Count; i++)
@@ -187,6 +187,8 @@ namespace Cyotek.Demo.Windows.Forms
       }
       else
       {
+        _svnRevisions = new SvnChangesetCollection();
+
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
