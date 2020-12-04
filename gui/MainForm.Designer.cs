@@ -67,6 +67,9 @@ namespace Cyotek.Demo.Windows.Forms
       this.panel1 = new System.Windows.Forms.Panel();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
+      this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveSettingsOnExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveSettingsNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -326,6 +329,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
       this.menuStrip.Location = new System.Drawing.Point(0, 0);
       this.menuStrip.Name = "menuStrip";
@@ -443,6 +447,30 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
       // 
+      // optionsToolStripMenuItem
+      // 
+      this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveSettingsOnExitToolStripMenuItem,
+            this.saveSettingsNowToolStripMenuItem});
+      this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+      this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+      this.optionsToolStripMenuItem.Text = "&Options";
+      // 
+      // saveSettingsOnExitToolStripMenuItem
+      // 
+      this.saveSettingsOnExitToolStripMenuItem.Checked = true;
+      this.saveSettingsOnExitToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.saveSettingsOnExitToolStripMenuItem.Name = "saveSettingsOnExitToolStripMenuItem";
+      this.saveSettingsOnExitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+      this.saveSettingsOnExitToolStripMenuItem.Text = "Save Settings on &Exit";
+      // 
+      // saveSettingsNowToolStripMenuItem
+      // 
+      this.saveSettingsNowToolStripMenuItem.Name = "saveSettingsNowToolStripMenuItem";
+      this.saveSettingsNowToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+      this.saveSettingsNowToolStripMenuItem.Text = "Save Settings &Now";
+      this.saveSettingsNowToolStripMenuItem.Click += new System.EventHandler(this.SaveSettingsNowToolStripMenuItem_Click);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -518,6 +546,9 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Button previousButton;
     private System.Windows.Forms.Button nextButton;
+    private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem saveSettingsOnExitToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem saveSettingsNowToolStripMenuItem;
   }
 }
 

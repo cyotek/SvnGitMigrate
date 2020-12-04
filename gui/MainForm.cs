@@ -1,5 +1,6 @@
 ﻿using Cyotek.SvnMigrate;
 using Cyotek.SvnMigrate.Client;
+using Cyotek.SvnMigrate.Client.Properties;
 using LibGit2Sharp;
 using SharpSvn;
 using System;
@@ -29,6 +30,16 @@ namespace Cyotek.Demo.Windows.Forms
 
     #region Protected Methods
 
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+      base.OnFormClosing(e);
+
+      if (!e.Cancel && saveSettingsOnExitToolStripMenuItem.Checked)
+      {
+        this.SaveSettings();
+      }
+    }
+
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e);
@@ -40,12 +51,7 @@ namespace Cyotek.Demo.Windows.Forms
     {
       base.OnShown(e);
 
-#if DEBUG
-      //svnTextBox.Text = "https://hades:8443/svn/cyotek/trunk/cyotek/source/Libraries/Cyotek.Web.BbCodeFormatter";
-      svnBranchUrlTextBox.Text = "https://hades:8443/svn/cyotek/trunk/cyotek/source/Applications/ErrorVault";
-      gitRepositoryPathTextBox.Text = @"C:\svnmig\" + DateTime.Now.Ticks;
-      authorMappingsTextBox.Text = "Richard = Richard Moss <richard.moss@cyotek.com>";
-#endif
+      this.LoadSettings();
     }
 
     #endregion Protected Methods
@@ -336,6 +342,18 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
+    private void LoadSettings()
+    {
+      Settings settings;
+
+      settings = Settings.Default;
+
+      svnBranchUrlTextBox.Text = settings.SvnBranchUri;
+      gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
+      authorMappingsTextBox.Text = settings.AuthorMapping;
+      saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
+    }
+
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
     {
       MigrationOptions options;
@@ -457,6 +475,24 @@ namespace Cyotek.Demo.Windows.Forms
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
+    }
+
+    private void SaveSettings()
+    {
+      Settings settings;
+
+      settings = Settings.Default;
+
+      settings.SvnBranchUri = svnBranchUrlTextBox.Text;
+      settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
+      settings.AuthorMapping = authorMappingsTextBox.Text;
+      settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
+      settings.Save();
+    }
+
+    private void SaveSettingsNowToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.SaveSettings();
     }
 
     private void SvnBranchUrlTextBox_TextChanged(object sender, EventArgs e)
