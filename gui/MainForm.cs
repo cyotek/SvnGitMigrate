@@ -444,6 +444,16 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
+    private void NextButton_Click(object sender, EventArgs e)
+    {
+      tabList.SelectedIndex++;
+    }
+
+    private void PreviousButton_Click(object sender, EventArgs e)
+    {
+      tabList.SelectedIndex--;
+    }
+
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
@@ -453,6 +463,12 @@ namespace Cyotek.Demo.Windows.Forms
     {
       changesetTimer.Stop();
       changesetTimer.Start();
+    }
+
+    private void TabList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      previousButton.Enabled = tabList.SelectedIndex > 0;
+      nextButton.Enabled = tabList.SelectedIndex < tabList.TabListPageCount - 1;
     }
 
     private bool ValidateOptions(MigrationOptions options)

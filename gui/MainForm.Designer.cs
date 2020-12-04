@@ -43,10 +43,11 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.migrateButton = new System.Windows.Forms.Button();
       this.logTextBox = new System.Windows.Forms.TextBox();
+      this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
       this.gitRepositoryPathTextBox = new System.Windows.Forms.TextBox();
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
+      this.migrateButton = new System.Windows.Forms.Button();
       this.migrateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.statusStrip = new System.Windows.Forms.StatusStrip();
       this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -63,7 +64,9 @@ namespace Cyotek.Demo.Windows.Forms
       this.gitTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
-      this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.previousButton = new System.Windows.Forms.Button();
+      this.nextButton = new System.Windows.Forms.Button();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -81,6 +84,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.svnTabListPage.SuspendLayout();
       this.authorMappingTabListPage.SuspendLayout();
       this.gitTabListPage.SuspendLayout();
+      this.panel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // repositoryGroupBox
@@ -123,7 +127,7 @@ namespace Cyotek.Demo.Windows.Forms
       revisionsGroupBox.Controls.Add(this.revisionsListView);
       revisionsGroupBox.Location = new System.Drawing.Point(3, 63);
       revisionsGroupBox.Name = "revisionsGroupBox";
-      revisionsGroupBox.Size = new System.Drawing.Size(681, 394);
+      revisionsGroupBox.Size = new System.Drawing.Size(681, 353);
       revisionsGroupBox.TabIndex = 1;
       revisionsGroupBox.TabStop = false;
       revisionsGroupBox.Text = "Revisions";
@@ -144,7 +148,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.revisionsListView.HideSelection = false;
       this.revisionsListView.Location = new System.Drawing.Point(6, 19);
       this.revisionsListView.Name = "revisionsListView";
-      this.revisionsListView.Size = new System.Drawing.Size(669, 369);
+      this.revisionsListView.Size = new System.Drawing.Size(669, 328);
       this.revisionsListView.TabIndex = 0;
       this.revisionsListView.UseCompatibleStateImageBehavior = false;
       this.revisionsListView.View = System.Windows.Forms.View.Details;
@@ -175,26 +179,13 @@ namespace Cyotek.Demo.Windows.Forms
       migrateGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      migrateGroupBox.Controls.Add(this.migrateButton);
       migrateGroupBox.Controls.Add(this.logTextBox);
       migrateGroupBox.Location = new System.Drawing.Point(3, 63);
       migrateGroupBox.Name = "migrateGroupBox";
-      migrateGroupBox.Size = new System.Drawing.Size(681, 394);
+      migrateGroupBox.Size = new System.Drawing.Size(681, 353);
       migrateGroupBox.TabIndex = 1;
       migrateGroupBox.TabStop = false;
-      migrateGroupBox.Text = "Log";
-      // 
-      // migrateButton
-      // 
-      this.migrateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.migrateButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.migrateButton.Location = new System.Drawing.Point(600, 365);
-      this.migrateButton.Name = "migrateButton";
-      this.migrateButton.Size = new System.Drawing.Size(75, 23);
-      this.migrateButton.TabIndex = 1;
-      this.migrateButton.Text = "&Migrate";
-      this.migrateButton.UseVisualStyleBackColor = true;
-      this.migrateButton.Click += new System.EventHandler(this.MigrateButton_Click);
+      migrateGroupBox.Text = "&Log";
       // 
       // logTextBox
       // 
@@ -206,7 +197,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
       this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.logTextBox.Size = new System.Drawing.Size(669, 340);
+      this.logTextBox.Size = new System.Drawing.Size(669, 328);
       this.logTextBox.TabIndex = 0;
       this.logTextBox.WordWrap = false;
       // 
@@ -223,6 +214,17 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryGroupBox.TabIndex = 0;
       gitRepositoryGroupBox.TabStop = false;
       gitRepositoryGroupBox.Text = "Repository";
+      // 
+      // gitRepositoryPathBrowseButton
+      // 
+      this.gitRepositoryPathBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(600, 17);
+      this.gitRepositoryPathBrowseButton.Name = "gitRepositoryPathBrowseButton";
+      this.gitRepositoryPathBrowseButton.Size = new System.Drawing.Size(75, 23);
+      this.gitRepositoryPathBrowseButton.TabIndex = 2;
+      this.gitRepositoryPathBrowseButton.Text = "&Browse...";
+      this.gitRepositoryPathBrowseButton.UseVisualStyleBackColor = true;
+      this.gitRepositoryPathBrowseButton.Click += new System.EventHandler(this.GitRepositoryPathBrowseButton_Click);
       // 
       // gitRepositoryPathLabel
       // 
@@ -250,10 +252,10 @@ namespace Cyotek.Demo.Windows.Forms
       authorsGroupBox.Controls.Add(this.authorMappingsTextBox);
       authorsGroupBox.Location = new System.Drawing.Point(3, 3);
       authorsGroupBox.Name = "authorsGroupBox";
-      authorsGroupBox.Size = new System.Drawing.Size(681, 454);
+      authorsGroupBox.Size = new System.Drawing.Size(681, 413);
       authorsGroupBox.TabIndex = 2;
       authorsGroupBox.TabStop = false;
-      authorsGroupBox.Text = "Authors";
+      authorsGroupBox.Text = "&Authors";
       // 
       // authorMappingsTextBox
       // 
@@ -264,9 +266,20 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingsTextBox.Multiline = true;
       this.authorMappingsTextBox.Name = "authorMappingsTextBox";
       this.authorMappingsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.authorMappingsTextBox.Size = new System.Drawing.Size(669, 429);
+      this.authorMappingsTextBox.Size = new System.Drawing.Size(669, 388);
       this.authorMappingsTextBox.TabIndex = 1;
       this.authorMappingsTextBox.WordWrap = false;
+      // 
+      // migrateButton
+      // 
+      this.migrateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.migrateButton.Location = new System.Drawing.Point(763, 6);
+      this.migrateButton.Name = "migrateButton";
+      this.migrateButton.Size = new System.Drawing.Size(75, 23);
+      this.migrateButton.TabIndex = 2;
+      this.migrateButton.Text = "&Migrate";
+      this.migrateButton.UseVisualStyleBackColor = true;
+      this.migrateButton.Click += new System.EventHandler(this.MigrateButton_Click);
       // 
       // migrateBackgroundWorker
       // 
@@ -285,7 +298,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.statusStrip.Location = new System.Drawing.Point(0, 492);
       this.statusStrip.Name = "statusStrip";
       this.statusStrip.Size = new System.Drawing.Size(845, 22);
-      this.statusStrip.TabIndex = 2;
+      this.statusStrip.TabIndex = 3;
       // 
       // statusToolStripStatusLabel
       // 
@@ -358,22 +371,23 @@ namespace Cyotek.Demo.Windows.Forms
       this.tabList.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabList.Location = new System.Drawing.Point(0, 24);
       this.tabList.Name = "tabList";
-      this.tabList.Size = new System.Drawing.Size(845, 468);
+      this.tabList.Size = new System.Drawing.Size(845, 427);
       this.tabList.TabIndex = 1;
+      this.tabList.SelectedIndexChanged += new System.EventHandler(this.TabList_SelectedIndexChanged);
       // 
       // svnTabListPage
       // 
       this.svnTabListPage.Controls.Add(revisionsGroupBox);
       this.svnTabListPage.Controls.Add(repositoryGroupBox);
       this.svnTabListPage.Name = "svnTabListPage";
-      this.svnTabListPage.Size = new System.Drawing.Size(687, 460);
+      this.svnTabListPage.Size = new System.Drawing.Size(687, 419);
       this.svnTabListPage.Text = "SVN";
       // 
       // authorMappingTabListPage
       // 
       this.authorMappingTabListPage.Controls.Add(authorsGroupBox);
       this.authorMappingTabListPage.Name = "authorMappingTabListPage";
-      this.authorMappingTabListPage.Size = new System.Drawing.Size(687, 460);
+      this.authorMappingTabListPage.Size = new System.Drawing.Size(687, 419);
       this.authorMappingTabListPage.Text = "Author Mapping";
       // 
       // gitTabListPage
@@ -381,7 +395,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.gitTabListPage.Controls.Add(migrateGroupBox);
       this.gitTabListPage.Controls.Add(gitRepositoryGroupBox);
       this.gitTabListPage.Name = "gitTabListPage";
-      this.gitTabListPage.Size = new System.Drawing.Size(687, 460);
+      this.gitTabListPage.Size = new System.Drawing.Size(687, 419);
       this.gitTabListPage.Text = "Git";
       // 
       // changesetBackgroundWorker
@@ -394,25 +408,49 @@ namespace Cyotek.Demo.Windows.Forms
       this.changesetTimer.Interval = 250;
       this.changesetTimer.Tick += new System.EventHandler(this.ChangesetTimer_Tick);
       // 
-      // gitRepositoryPathBrowseButton
+      // panel1
       // 
-      this.gitRepositoryPathBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(600, 17);
-      this.gitRepositoryPathBrowseButton.Name = "gitRepositoryPathBrowseButton";
-      this.gitRepositoryPathBrowseButton.Size = new System.Drawing.Size(75, 23);
-      this.gitRepositoryPathBrowseButton.TabIndex = 2;
-      this.gitRepositoryPathBrowseButton.Text = "&Browse...";
-      this.gitRepositoryPathBrowseButton.UseVisualStyleBackColor = true;
-      this.gitRepositoryPathBrowseButton.Click += new System.EventHandler(this.GitRepositoryPathBrowseButton_Click);
+      this.panel1.Controls.Add(this.previousButton);
+      this.panel1.Controls.Add(this.nextButton);
+      this.panel1.Controls.Add(this.migrateButton);
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panel1.Location = new System.Drawing.Point(0, 451);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(845, 41);
+      this.panel1.TabIndex = 2;
+      // 
+      // previousButton
+      // 
+      this.previousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.previousButton.Enabled = false;
+      this.previousButton.Location = new System.Drawing.Point(595, 6);
+      this.previousButton.Name = "previousButton";
+      this.previousButton.Size = new System.Drawing.Size(75, 23);
+      this.previousButton.TabIndex = 0;
+      this.previousButton.Text = "&Previous";
+      this.previousButton.UseVisualStyleBackColor = true;
+      this.previousButton.Click += new System.EventHandler(this.PreviousButton_Click);
+      // 
+      // nextButton
+      // 
+      this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.nextButton.Location = new System.Drawing.Point(676, 6);
+      this.nextButton.Margin = new System.Windows.Forms.Padding(3, 3, 9, 3);
+      this.nextButton.Name = "nextButton";
+      this.nextButton.Size = new System.Drawing.Size(75, 23);
+      this.nextButton.TabIndex = 1;
+      this.nextButton.Text = "&Next";
+      this.nextButton.UseVisualStyleBackColor = true;
+      this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
       // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.CancelButton = this.migrateButton;
       this.ClientSize = new System.Drawing.Size(845, 514);
       this.Controls.Add(this.tabList);
+      this.Controls.Add(this.panel1);
       this.Controls.Add(this.statusStrip);
       this.Controls.Add(this.menuStrip);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
@@ -441,6 +479,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.svnTabListPage.ResumeLayout(false);
       this.authorMappingTabListPage.ResumeLayout(false);
       this.gitTabListPage.ResumeLayout(false);
+      this.panel1.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -476,6 +515,9 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox gitRepositoryPathTextBox;
     private System.Windows.Forms.TextBox authorMappingsTextBox;
     private System.Windows.Forms.Button gitRepositoryPathBrowseButton;
+    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Button previousButton;
+    private System.Windows.Forms.Button nextButton;
   }
 }
 
