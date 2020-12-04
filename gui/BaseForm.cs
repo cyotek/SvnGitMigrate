@@ -87,7 +87,7 @@ namespace Cyotek.Demo.Windows.Forms
     {
       if (!this.DesignMode)
       {
-      //  this.Font = SystemFonts.MessageBoxFont;
+        this.Font = SystemFonts.MessageBoxFont;
       }
 
       base.OnLoad(e);
