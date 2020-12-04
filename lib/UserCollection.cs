@@ -7,6 +7,22 @@ namespace Cyotek.SvnMigrate
   {
     #region Public Methods
 
+    public User Add(string name, string email, string alternateName)
+    {
+      User user;
+
+      user = new User(name, email, alternateName);
+
+      this.Add(user);
+
+      return user;
+    }
+
+    public User Add(string name, string email)
+    {
+      return this.Add(name, email, null);
+    }
+
     public User GetMapping(string name)
     {
       User result;

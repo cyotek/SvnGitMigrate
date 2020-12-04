@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cyotek.Demo.Windows.Forms;
+using System;
 using System.Windows.Forms;
 
 namespace Cyotek.SvnMigrate.Client
 {
-  static class Program
+  internal static class Program
   {
+    #region Private Methods
+
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main()
+    private static void Main()
     {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Application.Run(new MainForm());
     }
+
+    #endregion Private Methods
   }
 }

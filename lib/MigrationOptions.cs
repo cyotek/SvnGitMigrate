@@ -13,6 +13,8 @@ namespace Cyotek.SvnMigrate
 
     public Uri SvnUri { get; set; }
 
+    public SvnChangesetCollection Revisions { get; set; }
+
     #endregion Public Properties
   }
 }

@@ -1,15 +1,24 @@
-﻿using LibGit2Sharp;
+﻿using Cyotek.SvnMigrate;
+using Cyotek.SvnMigrate.Client;
+using LibGit2Sharp;
 using SharpSvn;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace Cyotek.SvnMigrate.Client
+namespace Cyotek.Demo.Windows.Forms
 {
-  public partial class MainForm : Form
+  internal partial class MainForm : BaseForm
   {
+    #region Private Fields
+
+    private SvnChangesetCollection _svnRevisions;
+
+    #endregion Private Fields
+
     #region Public Constructors
 
     public MainForm()
@@ -21,14 +30,22 @@ namespace Cyotek.SvnMigrate.Client
 
     #region Protected Methods
 
+    protected override void OnLoad(EventArgs e)
+    {
+      base.OnLoad(e);
+
+      this.Text = Application.ProductName;
+    }
+
     protected override void OnShown(EventArgs e)
     {
       base.OnShown(e);
 
 #if DEBUG
       //svnTextBox.Text = "https://hades:8443/svn/cyotek/trunk/cyotek/source/Libraries/Cyotek.Web.BbCodeFormatter";
-      svnTextBox.Text = "https://hades:8443/svn/cyotek/trunk/cyotek/source/Applications/ErrorVault";
-      gitTextBox.Text = @"C:\svnmig\" + DateTime.Now.Ticks;
+      svnBranchUrlTextBox.Text = "https://hades:8443/svn/cyotek/trunk/cyotek/source/Applications/ErrorVault";
+      gitRepositoryPathTextBox.Text = @"C:\svnmig\" + DateTime.Now.Ticks;
+      authorMappingsTextBox.Text = "Richard = Richard Moss <richard.moss@cyotek.com>";
 #endif
     }
 
@@ -36,46 +53,165 @@ namespace Cyotek.SvnMigrate.Client
 
     #region Private Methods
 
-    private List<Changeset> BuildChangesets(Uri svnUri)
+    private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      List<Changeset> sets;
+      AboutDialog.ShowAboutDialog();
+    }
 
-      sets = new List<Changeset>();
+    private void AddBlankMapping(string name)
+    {
+      bool found;
+
+      found = false;
+
+      foreach (string line in authorMappingsTextBox.Lines)
+      {
+        if (!string.IsNullOrEmpty(line))
+        {
+          int nameEnd;
+
+          nameEnd = line.IndexOf('=');
+
+          if (nameEnd != -1)
+          {
+            string test;
+
+            test = line.Substring(0, nameEnd).Trim();
+
+            if (string.Equals(name, test, StringComparison.OrdinalIgnoreCase))
+            {
+              found = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!found)
+      {
+        authorMappingsTextBox.AppendText(string.Format("\r\n{0} = {0} <>", name));
+      }
+    }
+
+    private SvnChangesetCollection BuildRevisionsList(Uri svnUri)
+    {
+      SvnChangesetCollection sets;
+
+      sets = new SvnChangesetCollection();
 
       using (SvnClient svn = new SvnClient())
       {
         svn.Log(svnUri, (o, args) =>
         {
-          sets.Add(new Changeset
+          sets.Add(new SvnChangeset
           {
-            Author = args.Author,
+            Author = new User
+            {
+              Name = args.Author
+            },
             Revision = args.Revision,
             Time = args.Time,
-            Log = args.LogMessage
-          }); ;
+            Log = args.LogMessage,
+            IsSelected = true
+          });
           args.Detach();
         });
       }
 
-      sets.Sort((x, y) => x.Revision.CompareTo(y.Revision));
-
       return sets;
     }
 
-    private void Checkout(Uri svnUri, Changeset set, string workPath)
+    private void CancelToolStripStatusLabel_Click(object sender, EventArgs e)
     {
-      this.DeletePath(workPath);
+      migrateBackgroundWorker.CancelAsync();
+    }
 
-      using (SvnClient svn = new SvnClient())
+    private void ChangesetBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+    {
+      string url;
+      SvnChangesetCollection changesets;
+
+      url = (string)e.Argument;
+
+      if (!string.IsNullOrEmpty(url))
       {
-        svn.CheckOut(svnUri, workPath, new SvnCheckOutArgs
+        changesets = this.BuildRevisionsList(new Uri(url));
+      }
+      else
+      {
+        changesets = new SvnChangesetCollection();
+      }
+
+      e.Result = changesets;
+    }
+
+    private void ChangesetBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      revisionsListView.Items.Clear();
+
+      _svnRevisions = (SvnChangesetCollection)e.Result;
+
+      if (e.Error == null)
+      {
+        revisionsListView.BeginUpdate();
+
+        for (int i = 0; i < _svnRevisions.Count; i++)
         {
-          Revision = set.Revision
-        });
+          SvnChangeset changeset;
+
+          changeset = _svnRevisions[i];
+
+          revisionsListView.Items.Add(
+            new ListViewItem
+            {
+              Checked = true,
+              Tag = i,
+              Text = changeset.Revision.ToString(),
+              SubItems =
+              {
+                changeset.Author.ToString(),
+                changeset.Time.ToString(),
+                changeset.Log
+              }
+            });
+
+          this.AddBlankMapping(changeset.Author.Name);
+        }
+
+        revisionsListView.EndUpdate();
+      }
+      else
+      {
+        MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 
-    private void Commit(string gitPath, Changeset set)
+    private void ChangesetTimer_Tick(object sender, EventArgs e)
+    {
+      changesetTimer.Stop();
+
+      changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlTextBox.Text);
+    }
+
+    private void Checkout(Uri svnUri, SvnChangeset set, string workPath)
+    {
+      using (SvnClient svn = new SvnClient())
+      {
+        if (Directory.Exists(workPath))
+        {
+          svn.Switch(workPath, new SvnUriTarget(svnUri, set.Revision));
+        }
+        else
+        {
+          svn.CheckOut(svnUri, workPath, new SvnCheckOutArgs
+          {
+            Revision = set.Revision
+          });
+        }
+      }
+    }
+
+    private void Commit(string gitPath, SvnChangeset set)
     {
       CommitOptions commitOptions;
 
@@ -92,7 +228,7 @@ namespace Cyotek.SvnMigrate.Client
 
         Commands.Stage(repo, "*");
 
-        author = new Signature("Richard Moss", "richard.moss@cyotek.com", set.Time);
+        author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
         committer = author;
 
         commit = repo.Commit(set.Log, author, committer, commitOptions);
@@ -167,24 +303,7 @@ namespace Cyotek.SvnMigrate.Client
     {
       if (Directory.Exists(root))
       {
-        Stack<string> paths;
-
-        paths = new Stack<string>();
-        paths.Push(root);
-
-        do
-        {
-          string path;
-
-          path = paths.Pop();
-
-          this.DeleteFiles(path);
-
-          foreach (string child in Directory.EnumerateDirectories(path))
-          {
-            paths.Push(child);
-          }
-        } while (paths.Count > 0);
+        this.EmptyPath(root);
 
         Directory.Delete(root, true);
       }
@@ -203,31 +322,166 @@ namespace Cyotek.SvnMigrate.Client
       }
     }
 
-    private void migrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+    private void EmptyPath(string root)
+    {
+      if (Directory.Exists(root))
+      {
+        Stack<string> paths;
+
+        paths = new Stack<string>();
+        paths.Push(root);
+
+        do
+        {
+          string path;
+
+          path = paths.Pop();
+
+          this.DeleteFiles(path);
+
+          foreach (string child in Directory.EnumerateDirectories(path))
+          {
+            paths.Push(child);
+          }
+        } while (paths.Count > 0);
+      }
+    }
+
+    private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
+
+    private UserCollection GetAuthorMapping()
+    {
+      UserCollection results;
+
+      results = new UserCollection();
+
+      foreach (string line in authorMappingsTextBox.Lines)
+      {
+        if (!string.IsNullOrEmpty(line))
+        {
+          int nameEnd;
+
+          nameEnd = line.IndexOf('=');
+
+          if (nameEnd != -1)
+          {
+            int emailStart;
+            int emailEnd;
+
+            emailStart = line.IndexOf('<', nameEnd);
+            emailEnd = line.IndexOf('>', emailStart);
+
+            if (emailStart != -1 && emailEnd != -1)
+            {
+              string alternateName;
+              string name;
+              string email;
+
+              alternateName = line.Substring(0, nameEnd).Trim();
+              name = line.Substring(nameEnd + 1, emailStart - (nameEnd + 1)).Trim();
+              email = line.Substring(emailStart + 1, emailEnd - (emailStart + 1)).Trim();
+
+              results.Add(name, email, alternateName);
+            }
+          }
+        }
+      }
+
+      return results;
+    }
+
+    private SvnChangesetCollection GetOrderedRevisions()
+    {
+      SvnChangesetCollection revisions;
+
+      revisions = new SvnChangesetCollection();
+
+      foreach (SvnChangeset revision in _svnRevisions)
+      {
+        if (revision.IsSelected)
+        {
+          revisions.Add(revision);
+        }
+      }
+
+      revisions.Sort();
+
+      return revisions;
+    }
+
+    private void GitRepositoryPathBrowseButton_Click(object sender, EventArgs e)
+    {
+      string path;
+
+      path = FileDialogHelper.GetFolderName("Select git repository &path:", gitRepositoryPathTextBox.Text);
+
+      if (!string.IsNullOrEmpty(path))
+      {
+        gitRepositoryPathTextBox.Text = path;
+      }
+    }
+
+    private bool IsEmptyFolder(string path)
+    {
+      bool result;
+
+      result = true;
+
+      if (Directory.Exists(path))
+      {
+        foreach (string _ in Directory.EnumerateFileSystemEntries(path))
+        {
+          result = false;
+          break;
+        }
+      }
+
+      return result;
+    }
+
+    private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
     {
       MigrationOptions options;
       Uri svnUri;
-      List<Changeset> sets;
+      SvnChangesetCollection sets;
       string workPath;
       string gitPath;
+      ProgressState args;
 
       options = (MigrationOptions)e.Argument;
       svnUri = options.SvnUri;
       workPath = options.WorkingPath;
       gitPath = options.RepositoryPath;
 
-      sets = this.BuildChangesets(svnUri);
+      sets = options.Revisions;
+
       this.CreateGitRepository(gitPath);
+
+      args = new ProgressState
+      {
+        Total = sets.Count
+      };
 
       for (int i = 0; i < sets.Count; i++)
       {
-        Changeset set;
+        SvnChangeset set;
         int progress;
 
         set = sets[i];
-        progress = (int)(((float)i / sets.Count) * 100);
+        progress = Convert.ToInt32((double)i / sets.Count * 100);
 
-        migrateBackgroundWorker.ReportProgress(progress, set);
+        args.Current = i + 1;
+        args.Changeset = set;
+
+        migrateBackgroundWorker.ReportProgress(progress, args);
+
+        if (string.IsNullOrEmpty(set.Author.EmailAddress))
+        {
+          set.Author = options.Authors.GetMapping(set.Author.Name);
+        }
 
         this.Checkout(svnUri, set, workPath);
         this.EmptyGitFolder(gitPath);
@@ -236,101 +490,116 @@ namespace Cyotek.SvnMigrate.Client
 
         if (migrateBackgroundWorker.CancellationPending)
         {
-          break;
+          throw new ApplicationException("User cancelled operation.");
         }
       }
 
       this.DeletePath(workPath);
     }
 
-    private void migrateBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+    private void MigrateBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
-      Changeset set;
+      ProgressState args;
 
-      set = (Changeset)e.UserState;
+      args = (ProgressState)e.UserState;
 
-      logTextBox.AppendText(string.Format("{0}\t{1}\r\n", DateTime.Now.ToString(), set));
-      statusToolStripStatusLabel.Text = string.Format("Migrating revision {0}...", set.Revision);
+      logTextBox.AppendText(string.Format("{0}\t{1}\r\n", DateTime.Now.ToString(), args.Changeset));
+      statusToolStripStatusLabel.Text = string.Format("Migrating revision {0} of {1}...", args.Current, args.Total);
       toolStripProgressBar.Value = e.ProgressPercentage;
     }
 
-    private void migrateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private void MigrateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
       if (e.Error != null)
       {
         MessageBox.Show(string.Format("Migration failed. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-      else if (migrateBackgroundWorker.CancellationPending)
-      {
-        MessageBox.Show("Migration cancelled.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      }
       else
       {
-        MessageBox.Show("Migration complete.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Migration complete.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
 
       statusToolStripStatusLabel.Text = string.Empty; ;
       toolStripProgressBar.Value = 0;
       toolStripProgressBar.Visible = false;
       cancelToolStripStatusLabel.Visible = false;
+      tabList.Enabled = true;
     }
 
-    private void migrateButton_Click(object sender, EventArgs e)
+    private void MigrateButton_Click(object sender, EventArgs e)
     {
       MigrationOptions options;
 
+      Uri.TryCreate(svnBranchUrlTextBox.Text, UriKind.Absolute, out Uri svnUri);
+
       options = new MigrationOptions
       {
-        SvnUri = new Uri(svnTextBox.Text),
-        RepositoryPath = gitTextBox.Text,
+        SvnUri = svnUri,
+        RepositoryPath = gitRepositoryPathTextBox.Text,
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
-        Authors =
-        {
-          new User("Richard Moss","richard.moss@cyotek.com","Richard")
-        }
+        Authors = this.GetAuthorMapping(),
+        Revisions = this.GetOrderedRevisions()
       };
 
-      toolStripProgressBar.Visible = true;
-      cancelToolStripStatusLabel.Visible = true;
+      if (this.ValidateOptions(options))
+      {
+        toolStripProgressBar.Visible = true;
+        cancelToolStripStatusLabel.Visible = true;
+        tabList.Enabled = false;
 
+        migrateBackgroundWorker.RunWorkerAsync(options);
+      }
+    }
 
-      migrateBackgroundWorker.RunWorkerAsync(options);
+    private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
+    }
+
+    private void SvnBranchUrlTextBox_TextChanged(object sender, EventArgs e)
+    {
+      changesetTimer.Stop();
+      changesetTimer.Start();
+    }
+
+    private bool ValidateOptions(MigrationOptions options)
+    {
+      bool result;
+
+      result = false;
+
+      if (options.SvnUri == null)
+      {
+        MessageBox.Show("SVN branch URI required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (string.IsNullOrWhiteSpace(options.RepositoryPath))
+      {
+        MessageBox.Show("Git repository path required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (!this.IsEmptyFolder(options.RepositoryPath))
+      {
+        MessageBox.Show("Git repository location is not empty.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (options.Revisions.Count == 0)
+      {
+        MessageBox.Show("No revisions available.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (options.Revisions.Count(r => r.IsSelected) == 0)
+      {
+        MessageBox.Show("No revisions selected.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (options.Authors.Count == 0)
+      {
+        MessageBox.Show("No authors available.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else
+      {
+        result = true;
+      }
+
+      return result;
     }
 
     #endregion Private Methods
-
-    #region Private Classes
-
-    private class Changeset
-    {
-      #region Public Properties
-
-      public string Author { get; set; }
-
-      public string Log { get; set; }
-
-      public long Revision { get; set; }
-
-      public DateTime Time { get; set; }
-
-      public override string ToString()
-      {
-        return string.Format("Revision: {0}, Time: {1}, Author: {2}, Log: {3}", this.Revision, this.Time, this.Author, this.Log);
-      }
-
-      #endregion Public Properties
-    }
-
-    #endregion Private Classes
-
-    private void cancelToolStripStatusLabel_Click(object sender, EventArgs e)
-    {
-      migrateBackgroundWorker.CancelAsync();
-    }
-
-    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      this.Close();
-    }
   }
 }
