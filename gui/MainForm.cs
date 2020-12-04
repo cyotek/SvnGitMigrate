@@ -3,7 +3,6 @@ using Cyotek.SvnMigrate.Client;
 using LibGit2Sharp;
 using SharpSvn;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -235,116 +234,11 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void CopyFiles(string srcPath, string dstPath)
-    {
-      foreach (string srcFile in Directory.EnumerateFiles(srcPath))
-      {
-        string dstFile;
-
-        dstFile = Path.Combine(dstPath, Path.GetFileName(srcFile));
-
-        File.Copy(srcFile, dstFile);
-      }
-    }
-
-    private void CopyFolder(string src, string dst)
-    {
-      Stack<string> paths;
-
-      if (src[src.Length - 1] == Path.DirectorySeparatorChar || src[src.Length - 1] == Path.DirectorySeparatorChar)
-      {
-        src = src.Substring(0, src.Length - 1);
-      }
-
-      paths = new Stack<string>();
-      paths.Push("");
-
-      do
-      {
-        string relative;
-        string srcPath;
-        string dstPath;
-
-        relative = paths.Pop();
-        srcPath = Path.Combine(src, relative);
-        dstPath = Path.Combine(dst, relative);
-
-        Directory.CreateDirectory(dstPath);
-
-        this.CopyFiles(srcPath, dstPath);
-
-        foreach (string child in Directory.EnumerateDirectories(srcPath))
-        {
-          if (!child.EndsWith("\\.svn", StringComparison.OrdinalIgnoreCase))
-          {
-            paths.Push(child.Substring(src.Length + 1));
-          }
-        }
-      } while (paths.Count > 0);
-    }
-
     private string CreateGitRepository(string path)
     {
       Directory.CreateDirectory(path);
 
       return Repository.Init(path);
-    }
-
-    private void DeleteFiles(string path)
-    {
-      foreach (string fileName in Directory.EnumerateFiles(path))
-      {
-        File.SetAttributes(fileName, FileAttributes.Normal);
-        File.Delete(fileName);
-      }
-    }
-
-    private void DeletePath(string root)
-    {
-      if (Directory.Exists(root))
-      {
-        this.EmptyPath(root);
-
-        Directory.Delete(root, true);
-      }
-    }
-
-    private void EmptyGitFolder(string path)
-    {
-      this.DeleteFiles(path);
-
-      foreach (string child in Directory.EnumerateDirectories(path))
-      {
-        if (!child.EndsWith("\\.git", StringComparison.OrdinalIgnoreCase))
-        {
-          this.DeletePath(child);
-        }
-      }
-    }
-
-    private void EmptyPath(string root)
-    {
-      if (Directory.Exists(root))
-      {
-        Stack<string> paths;
-
-        paths = new Stack<string>();
-        paths.Push(root);
-
-        do
-        {
-          string path;
-
-          path = paths.Pop();
-
-          this.DeleteFiles(path);
-
-          foreach (string child in Directory.EnumerateDirectories(path))
-          {
-            paths.Push(child);
-          }
-        } while (paths.Count > 0);
-      }
     }
 
     private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -484,8 +378,7 @@ namespace Cyotek.Demo.Windows.Forms
         }
 
         this.Checkout(svnUri, set, workPath);
-        this.EmptyGitFolder(gitPath);
-        this.CopyFolder(workPath, gitPath);
+        SimpleFolderSync.SyncFolders(workPath, gitPath);
         this.Commit(gitPath, set);
 
         if (migrateBackgroundWorker.CancellationPending)
@@ -494,7 +387,7 @@ namespace Cyotek.Demo.Windows.Forms
         }
       }
 
-      this.DeletePath(workPath);
+      ShellHelpers.DeletePath(workPath);
     }
 
     private void MigrateBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
