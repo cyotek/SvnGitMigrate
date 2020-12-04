@@ -56,6 +56,9 @@ namespace Cyotek.Demo.Windows.Forms
       this.menuStrip = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveSettingsOnExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveSettingsNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.tabList = new Cyotek.Windows.Forms.TabList();
@@ -67,9 +70,8 @@ namespace Cyotek.Demo.Windows.Forms
       this.panel1 = new System.Windows.Forms.Panel();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
-      this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.saveSettingsOnExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.saveSettingsNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.allowEmptyCommitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -352,6 +354,32 @@ namespace Cyotek.Demo.Windows.Forms
       this.exitToolStripMenuItem.Text = "E&xit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
       // 
+      // optionsToolStripMenuItem
+      // 
+      this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveSettingsOnExitToolStripMenuItem,
+            this.saveSettingsNowToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.allowEmptyCommitsToolStripMenuItem});
+      this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+      this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+      this.optionsToolStripMenuItem.Text = "&Options";
+      // 
+      // saveSettingsOnExitToolStripMenuItem
+      // 
+      this.saveSettingsOnExitToolStripMenuItem.Checked = true;
+      this.saveSettingsOnExitToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.saveSettingsOnExitToolStripMenuItem.Name = "saveSettingsOnExitToolStripMenuItem";
+      this.saveSettingsOnExitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.saveSettingsOnExitToolStripMenuItem.Text = "Save Settings on &Exit";
+      // 
+      // saveSettingsNowToolStripMenuItem
+      // 
+      this.saveSettingsNowToolStripMenuItem.Name = "saveSettingsNowToolStripMenuItem";
+      this.saveSettingsNowToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.saveSettingsNowToolStripMenuItem.Text = "Save Settings &Now";
+      this.saveSettingsNowToolStripMenuItem.Click += new System.EventHandler(this.SaveSettingsNowToolStripMenuItem_Click);
+      // 
       // helpToolStripMenuItem
       // 
       this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -447,29 +475,18 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
       // 
-      // optionsToolStripMenuItem
+      // toolStripMenuItem1
       // 
-      this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveSettingsOnExitToolStripMenuItem,
-            this.saveSettingsNowToolStripMenuItem});
-      this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-      this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-      this.optionsToolStripMenuItem.Text = "&Options";
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 6);
       // 
-      // saveSettingsOnExitToolStripMenuItem
+      // allowEmptyCommitsToolStripMenuItem
       // 
-      this.saveSettingsOnExitToolStripMenuItem.Checked = true;
-      this.saveSettingsOnExitToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.saveSettingsOnExitToolStripMenuItem.Name = "saveSettingsOnExitToolStripMenuItem";
-      this.saveSettingsOnExitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-      this.saveSettingsOnExitToolStripMenuItem.Text = "Save Settings on &Exit";
-      // 
-      // saveSettingsNowToolStripMenuItem
-      // 
-      this.saveSettingsNowToolStripMenuItem.Name = "saveSettingsNowToolStripMenuItem";
-      this.saveSettingsNowToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-      this.saveSettingsNowToolStripMenuItem.Text = "Save Settings &Now";
-      this.saveSettingsNowToolStripMenuItem.Click += new System.EventHandler(this.SaveSettingsNowToolStripMenuItem_Click);
+      this.allowEmptyCommitsToolStripMenuItem.CheckOnClick = true;
+      this.allowEmptyCommitsToolStripMenuItem.Name = "allowEmptyCommitsToolStripMenuItem";
+      this.allowEmptyCommitsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.allowEmptyCommitsToolStripMenuItem.Text = "&Allow Empty Commits";
+      this.allowEmptyCommitsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.AllowEmptyCommitsToolStripMenuItem_CheckedChanged);
       // 
       // MainForm
       // 
@@ -549,6 +566,8 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem saveSettingsOnExitToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem saveSettingsNowToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+    private System.Windows.Forms.ToolStripMenuItem allowEmptyCommitsToolStripMenuItem;
   }
 }
 

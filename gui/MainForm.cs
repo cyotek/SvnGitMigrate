@@ -98,6 +98,11 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
+    private void AllowEmptyCommitsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+    {
+      Settings.Default.AllowEmptyCommits = allowEmptyCommitsToolStripMenuItem.Checked;
+    }
+
     private SvnChangesetCollection BuildRevisionsList(Uri svnUri)
     {
       SvnChangesetCollection sets;
@@ -206,14 +211,22 @@ namespace Cyotek.Demo.Windows.Forms
       {
         if (Directory.Exists(workPath))
         {
-          svn.Switch(workPath, new SvnUriTarget(svnUri, set.Revision));
+          try
+          {
+            svn.Switch(workPath, new SvnUriTarget(svnUri, set.Revision));
+          }
+          catch (SvnFileSystemException)
+          {
+            // this seems to happen when you try to switch to a branch
+            // without any file changes - revision 814 in Cyotek triggers this
+            // in this case, we do a full checkout which seems to succeed fine
+            ShellHelpers.DeletePath(workPath);
+            this.FullCheckout(svn, svnUri, set, workPath);
+          }
         }
         else
         {
-          svn.CheckOut(svnUri, workPath, new SvnCheckOutArgs
-          {
-            Revision = set.Revision
-          });
+          this.FullCheckout(svn, svnUri, set, workPath);
         }
       }
     }
@@ -224,7 +237,7 @@ namespace Cyotek.Demo.Windows.Forms
 
       commitOptions = new CommitOptions
       {
-        AllowEmptyCommit = true
+        AllowEmptyCommit = Settings.Default.AllowEmptyCommits
       };
 
       using (Repository repo = new Repository(gitPath))
@@ -252,6 +265,14 @@ namespace Cyotek.Demo.Windows.Forms
     private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       this.Close();
+    }
+
+    private void FullCheckout(SvnClient svn, Uri svnUri, SvnChangeset set, string workPath)
+    {
+      svn.CheckOut(svnUri, workPath, new SvnCheckOutArgs
+      {
+        Revision = set.Revision
+      });
     }
 
     private UserCollection GetAuthorMapping()
@@ -354,6 +375,7 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
+      allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
     }
 
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -399,7 +421,16 @@ namespace Cyotek.Demo.Windows.Forms
 
         this.Checkout(svnUri, set, workPath);
         SimpleFolderSync.SyncFolders(workPath, gitPath);
-        this.Commit(gitPath, set);
+
+        try
+        {
+          this.Commit(gitPath, set);
+        }
+        catch (EmptyCommitException)
+        {
+          // ignore, if we get this the user has
+          // disabled the option to allow empty commits
+        }
 
         if (migrateBackgroundWorker.CancellationPending)
         {
