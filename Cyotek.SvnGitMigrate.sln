@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.SvnMigrate.Client", "gui\Cyotek.SvnMigrate.Client.csproj", "{1A1C8905-6EEC-44F5-A8EA-3A8E4F93EEBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyotek.SvnMigrate", "lib\Cyotek.SvnMigrate.csproj", "{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cyotek.SvnMigrate", "lib\Cyotek.SvnMigrate.csproj", "{D7BDC53B-FB01-48F4-B6EC-315FF64ABBF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

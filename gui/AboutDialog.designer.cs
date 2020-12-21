@@ -75,6 +75,7 @@
       this.iconPictureBox.Location = new System.Drawing.Point(12, 12);
       this.iconPictureBox.Name = "iconPictureBox";
       this.iconPictureBox.Size = new System.Drawing.Size(32, 32);
+      this.iconPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.iconPictureBox.TabIndex = 4;
       this.iconPictureBox.TabStop = false;
       // 

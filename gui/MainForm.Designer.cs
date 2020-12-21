@@ -36,6 +36,7 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox gitRepositoryGroupBox;
       System.Windows.Forms.Label gitRepositoryPathLabel;
       System.Windows.Forms.GroupBox authorsGroupBox;
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.label1 = new System.Windows.Forms.Label();
       this.svnBranchUrlTextBox = new System.Windows.Forms.TextBox();
       this.revisionsListView = new Cyotek.Windows.Forms.ListView();
@@ -59,6 +60,8 @@ namespace Cyotek.Demo.Windows.Forms
       this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.saveSettingsOnExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.saveSettingsNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.allowEmptyCommitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.tabList = new Cyotek.Windows.Forms.TabList();
@@ -70,8 +73,6 @@ namespace Cyotek.Demo.Windows.Forms
       this.panel1 = new System.Windows.Forms.Panel();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
-      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.allowEmptyCommitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -350,7 +351,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
       this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.exitToolStripMenuItem.Text = "E&xit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
       // 
@@ -380,6 +381,19 @@ namespace Cyotek.Demo.Windows.Forms
       this.saveSettingsNowToolStripMenuItem.Text = "Save Settings &Now";
       this.saveSettingsNowToolStripMenuItem.Click += new System.EventHandler(this.SaveSettingsNowToolStripMenuItem_Click);
       // 
+      // toolStripMenuItem1
+      // 
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 6);
+      // 
+      // allowEmptyCommitsToolStripMenuItem
+      // 
+      this.allowEmptyCommitsToolStripMenuItem.CheckOnClick = true;
+      this.allowEmptyCommitsToolStripMenuItem.Name = "allowEmptyCommitsToolStripMenuItem";
+      this.allowEmptyCommitsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.allowEmptyCommitsToolStripMenuItem.Text = "&Allow Empty Commits";
+      this.allowEmptyCommitsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.AllowEmptyCommitsToolStripMenuItem_CheckedChanged);
+      // 
       // helpToolStripMenuItem
       // 
       this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -391,7 +405,7 @@ namespace Cyotek.Demo.Windows.Forms
       // aboutToolStripMenuItem
       // 
       this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.aboutToolStripMenuItem.Text = "&About";
       this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
       // 
@@ -475,19 +489,6 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
       // 
-      // toolStripMenuItem1
-      // 
-      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(190, 6);
-      // 
-      // allowEmptyCommitsToolStripMenuItem
-      // 
-      this.allowEmptyCommitsToolStripMenuItem.CheckOnClick = true;
-      this.allowEmptyCommitsToolStripMenuItem.Name = "allowEmptyCommitsToolStripMenuItem";
-      this.allowEmptyCommitsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-      this.allowEmptyCommitsToolStripMenuItem.Text = "&Allow Empty Commits";
-      this.allowEmptyCommitsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.AllowEmptyCommitsToolStripMenuItem_CheckedChanged);
-      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -499,6 +500,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.Controls.Add(this.statusStrip);
       this.Controls.Add(this.menuStrip);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip;
       this.MaximizeBox = true;
       this.MinimizeBox = true;
