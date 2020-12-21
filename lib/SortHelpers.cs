@@ -9,7 +9,10 @@ namespace Cyotek.SvnMigrate
 
     public static void QuickSort<T>(IList<T> values, Comparison<T> comparison)
     {
-      SortHelpers.QuickSort(values, comparison, 0, values.Count - 1);
+      if (values.Count > 0)
+      {
+        SortHelpers.QuickSort(values, comparison, 0, values.Count - 1);
+      }
     }
 
     #endregion Public Methods
