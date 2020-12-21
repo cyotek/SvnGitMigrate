@@ -419,6 +419,7 @@ namespace Cyotek.Demo.Windows.Forms
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
       allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
+      useExistingRepositoryCheckBox.Checked = settings.UseExistingRepository;
     }
 
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -521,7 +522,8 @@ namespace Cyotek.Demo.Windows.Forms
         RepositoryPath = gitRepositoryPathTextBox.Text,
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
         Authors = this.GetAuthorMapping(),
-        Revisions = this.GetOrderedRevisions()
+        Revisions = this.GetOrderedRevisions(),
+        UseExistingRepository = useExistingRepositoryCheckBox.Checked
       };
 
       if (this.ValidateOptions(options))
@@ -593,6 +595,7 @@ namespace Cyotek.Demo.Windows.Forms
       settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
+      settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
       settings.SvnBranchUriMru = new StringCollection();
 
       for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
@@ -671,9 +674,13 @@ namespace Cyotek.Demo.Windows.Forms
       {
         MessageBox.Show("Git repository path required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (!this.IsEmptyFolder(options.RepositoryPath))
+      else if (!options.UseExistingRepository && !this.IsEmptyFolder(options.RepositoryPath))
       {
         MessageBox.Show("Git repository location is not empty.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else if (options.UseExistingRepository && !Repository.IsValid(options.RepositoryPath))
+      {
+        MessageBox.Show("Git repository location does not point to a valid Git repository.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       else if (options.Revisions.Count == 0)
       {

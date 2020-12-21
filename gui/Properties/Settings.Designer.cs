@@ -105,5 +105,17 @@ namespace Cyotek.SvnMigrate.Client.Properties {
                 this["SvnBranchUriMru"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExistingRepository {
+            get {
+                return ((bool)(this["UseExistingRepository"]));
+            }
+            set {
+                this["UseExistingRepository"] = value;
+            }
+        }
     }
 }

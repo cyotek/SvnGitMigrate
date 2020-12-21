@@ -37,6 +37,7 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.Label gitRepositoryPathLabel;
       System.Windows.Forms.GroupBox authorsGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+      this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.svnBranchUrlComboBox = new System.Windows.Forms.ComboBox();
       this.revisionsListView = new Cyotek.Windows.Forms.ListView();
@@ -75,7 +76,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
-      this.refreshButton = new System.Windows.Forms.Button();
+      this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -109,6 +110,17 @@ namespace Cyotek.Demo.Windows.Forms
       repositoryGroupBox.TabIndex = 0;
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
+      // 
+      // refreshButton
+      // 
+      this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.refreshButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
+      this.refreshButton.Location = new System.Drawing.Point(652, 17);
+      this.refreshButton.Name = "refreshButton";
+      this.refreshButton.Size = new System.Drawing.Size(23, 23);
+      this.refreshButton.TabIndex = 2;
+      this.refreshButton.UseVisualStyleBackColor = true;
+      this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
       // 
       // label1
       // 
@@ -190,9 +202,9 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       migrateGroupBox.Controls.Add(this.logTextBox);
-      migrateGroupBox.Location = new System.Drawing.Point(3, 63);
+      migrateGroupBox.Location = new System.Drawing.Point(3, 81);
       migrateGroupBox.Name = "migrateGroupBox";
-      migrateGroupBox.Size = new System.Drawing.Size(681, 353);
+      migrateGroupBox.Size = new System.Drawing.Size(681, 335);
       migrateGroupBox.TabIndex = 1;
       migrateGroupBox.TabStop = false;
       migrateGroupBox.Text = "&Log";
@@ -207,7 +219,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
       this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.logTextBox.Size = new System.Drawing.Size(669, 328);
+      this.logTextBox.Size = new System.Drawing.Size(669, 310);
       this.logTextBox.TabIndex = 0;
       this.logTextBox.WordWrap = false;
       // 
@@ -215,12 +227,13 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       gitRepositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      gitRepositoryGroupBox.Controls.Add(this.useExistingRepositoryCheckBox);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathBrowseButton);
       gitRepositoryGroupBox.Controls.Add(gitRepositoryPathLabel);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathTextBox);
       gitRepositoryGroupBox.Location = new System.Drawing.Point(3, 3);
       gitRepositoryGroupBox.Name = "gitRepositoryGroupBox";
-      gitRepositoryGroupBox.Size = new System.Drawing.Size(681, 54);
+      gitRepositoryGroupBox.Size = new System.Drawing.Size(681, 72);
       gitRepositoryGroupBox.TabIndex = 0;
       gitRepositoryGroupBox.TabStop = false;
       gitRepositoryGroupBox.Text = "Repository";
@@ -239,7 +252,7 @@ namespace Cyotek.Demo.Windows.Forms
       // gitRepositoryPathLabel
       // 
       gitRepositoryPathLabel.AutoSize = true;
-      gitRepositoryPathLabel.Location = new System.Drawing.Point(6, 22);
+      gitRepositoryPathLabel.Location = new System.Drawing.Point(3, 22);
       gitRepositoryPathLabel.Name = "gitRepositoryPathLabel";
       gitRepositoryPathLabel.Size = new System.Drawing.Size(85, 13);
       gitRepositoryPathLabel.TabIndex = 0;
@@ -249,9 +262,9 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.gitRepositoryPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathTextBox.Location = new System.Drawing.Point(97, 19);
+      this.gitRepositoryPathTextBox.Location = new System.Drawing.Point(94, 19);
       this.gitRepositoryPathTextBox.Name = "gitRepositoryPathTextBox";
-      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(497, 20);
+      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(500, 20);
       this.gitRepositoryPathTextBox.TabIndex = 1;
       // 
       // authorsGroupBox
@@ -505,16 +518,15 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
       // 
-      // refreshButton
+      // useExistingRepositoryCheckBox
       // 
-      this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.refreshButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshButton.Location = new System.Drawing.Point(652, 17);
-      this.refreshButton.Name = "refreshButton";
-      this.refreshButton.Size = new System.Drawing.Size(23, 23);
-      this.refreshButton.TabIndex = 2;
-      this.refreshButton.UseVisualStyleBackColor = true;
-      this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+      this.useExistingRepositoryCheckBox.AutoSize = true;
+      this.useExistingRepositoryCheckBox.Location = new System.Drawing.Point(6, 45);
+      this.useExistingRepositoryCheckBox.Name = "useExistingRepositoryCheckBox";
+      this.useExistingRepositoryCheckBox.Size = new System.Drawing.Size(131, 17);
+      this.useExistingRepositoryCheckBox.TabIndex = 3;
+      this.useExistingRepositoryCheckBox.Text = "Use &existing repository";
+      this.useExistingRepositoryCheckBox.UseVisualStyleBackColor = true;
       // 
       // MainForm
       // 
@@ -600,6 +612,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripStatusLabel revisionCountToolStripStatusLabel;
     private System.Windows.Forms.Timer selectionChangeTimer;
     private System.Windows.Forms.Button refreshButton;
+    private System.Windows.Forms.CheckBox useExistingRepositoryCheckBox;
   }
 }
 
