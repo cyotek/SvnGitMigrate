@@ -52,6 +52,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.migrateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.statusStrip = new System.Windows.Forms.StatusStrip();
       this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.revisionCountToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
       this.cancelToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -73,6 +74,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.commandPanel = new System.Windows.Forms.Panel();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
+      this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -299,6 +301,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusToolStripStatusLabel,
+            this.revisionCountToolStripStatusLabel,
             this.toolStripProgressBar,
             this.cancelToolStripStatusLabel});
       this.statusStrip.Location = new System.Drawing.Point(0, 492);
@@ -309,9 +312,15 @@ namespace Cyotek.Demo.Windows.Forms
       // statusToolStripStatusLabel
       // 
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(830, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(701, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // revisionCountToolStripStatusLabel
+      // 
+      this.revisionCountToolStripStatusLabel.Name = "revisionCountToolStripStatusLabel";
+      this.revisionCountToolStripStatusLabel.Size = new System.Drawing.Size(129, 17);
+      this.revisionCountToolStripStatusLabel.Text = "0 Revisions (0 Selected)";
       // 
       // toolStripProgressBar
       // 
@@ -490,6 +499,10 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
       // 
+      // selectionChangeTimer
+      // 
+      this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -571,6 +584,8 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripMenuItem saveSettingsNowToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     private System.Windows.Forms.ToolStripMenuItem allowEmptyCommitsToolStripMenuItem;
+    private System.Windows.Forms.ToolStripStatusLabel revisionCountToolStripStatusLabel;
+    private System.Windows.Forms.Timer selectionChangeTimer;
   }
 }
 

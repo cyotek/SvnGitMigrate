@@ -200,6 +200,7 @@ namespace Cyotek.Demo.Windows.Forms
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
+      this.UpdateSelectionCount();
       this.ResetProgressUi();
     }
 
@@ -535,6 +536,9 @@ namespace Cyotek.Demo.Windows.Forms
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
+
+      selectionChangeTimer.Stop();
+      selectionChangeTimer.Start();
     }
 
     private void SaveSettings()
@@ -555,6 +559,13 @@ namespace Cyotek.Demo.Windows.Forms
       this.SaveSettings();
     }
 
+    private void SelectionChangeTimer_Tick(object sender, EventArgs e)
+    {
+      selectionChangeTimer.Stop();
+
+      this.UpdateSelectionCount();
+    }
+
     private void SvnBranchUrlTextBox_TextChanged(object sender, EventArgs e)
     {
       changesetTimer.Stop();
@@ -565,6 +576,11 @@ namespace Cyotek.Demo.Windows.Forms
     {
       previousButton.Enabled = tabList.SelectedIndex > 0;
       nextButton.Enabled = tabList.SelectedIndex < tabList.TabListPageCount - 1;
+    }
+
+    private void UpdateSelectionCount()
+    {
+      revisionCountToolStripStatusLabel.Text = string.Format("{0} Revisions ({1} Selected)", revisionsListView.Items.Count, revisionsListView.CheckedIndices.Count);
     }
 
     private bool ValidateOptions(MigrationOptions options)
