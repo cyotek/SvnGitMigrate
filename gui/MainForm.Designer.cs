@@ -70,7 +70,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.gitTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
-      this.panel1 = new System.Windows.Forms.Panel();
+      this.commandPanel = new System.Windows.Forms.Panel();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
@@ -90,7 +90,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.svnTabListPage.SuspendLayout();
       this.authorMappingTabListPage.SuspendLayout();
       this.gitTabListPage.SuspendLayout();
-      this.panel1.SuspendLayout();
+      this.commandPanel.SuspendLayout();
       this.SuspendLayout();
       // 
       // repositoryGroupBox
@@ -351,7 +351,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
       this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
       this.exitToolStripMenuItem.Text = "E&xit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
       // 
@@ -405,7 +405,7 @@ namespace Cyotek.Demo.Windows.Forms
       // aboutToolStripMenuItem
       // 
       this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
       this.aboutToolStripMenuItem.Text = "&About";
       this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
       // 
@@ -446,24 +446,25 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // changesetBackgroundWorker
       // 
+      this.changesetBackgroundWorker.WorkerSupportsCancellation = true;
       this.changesetBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ChangesetBackgroundWorker_DoWork);
       this.changesetBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ChangesetBackgroundWorker_RunWorkerCompleted);
       // 
       // changesetTimer
       // 
-      this.changesetTimer.Interval = 250;
+      this.changesetTimer.Interval = 500;
       this.changesetTimer.Tick += new System.EventHandler(this.ChangesetTimer_Tick);
       // 
-      // panel1
+      // commandPanel
       // 
-      this.panel1.Controls.Add(this.previousButton);
-      this.panel1.Controls.Add(this.nextButton);
-      this.panel1.Controls.Add(this.migrateButton);
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(0, 451);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(845, 41);
-      this.panel1.TabIndex = 2;
+      this.commandPanel.Controls.Add(this.previousButton);
+      this.commandPanel.Controls.Add(this.nextButton);
+      this.commandPanel.Controls.Add(this.migrateButton);
+      this.commandPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.commandPanel.Location = new System.Drawing.Point(0, 451);
+      this.commandPanel.Name = "commandPanel";
+      this.commandPanel.Size = new System.Drawing.Size(845, 41);
+      this.commandPanel.TabIndex = 2;
       // 
       // previousButton
       // 
@@ -496,7 +497,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(845, 514);
       this.Controls.Add(this.tabList);
-      this.Controls.Add(this.panel1);
+      this.Controls.Add(this.commandPanel);
       this.Controls.Add(this.statusStrip);
       this.Controls.Add(this.menuStrip);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
@@ -526,7 +527,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.svnTabListPage.ResumeLayout(false);
       this.authorMappingTabListPage.ResumeLayout(false);
       this.gitTabListPage.ResumeLayout(false);
-      this.panel1.ResumeLayout(false);
+      this.commandPanel.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -562,7 +563,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox gitRepositoryPathTextBox;
     private System.Windows.Forms.TextBox authorMappingsTextBox;
     private System.Windows.Forms.Button gitRepositoryPathBrowseButton;
-    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Panel commandPanel;
     private System.Windows.Forms.Button previousButton;
     private System.Windows.Forms.Button nextButton;
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;

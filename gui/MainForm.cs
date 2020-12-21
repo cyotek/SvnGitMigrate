@@ -125,6 +125,8 @@ namespace Cyotek.Demo.Windows.Forms
             IsSelected = true
           });
           args.Detach();
+
+          args.Cancel = changesetBackgroundWorker.CancellationPending;
         });
       }
 
@@ -133,6 +135,7 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void CancelToolStripStatusLabel_Click(object sender, EventArgs e)
     {
+      changesetBackgroundWorker.CancelAsync();
       migrateBackgroundWorker.CancelAsync();
     }
 
@@ -196,11 +199,15 @@ namespace Cyotek.Demo.Windows.Forms
 
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
+
+      this.ResetProgressUi();
     }
 
     private void ChangesetTimer_Tick(object sender, EventArgs e)
     {
       changesetTimer.Stop();
+
+      this.PrepareProgressUi("Building revision list...");
 
       changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlTextBox.Text);
     }
@@ -463,11 +470,7 @@ namespace Cyotek.Demo.Windows.Forms
         MessageBox.Show("Migration complete.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
 
-      statusToolStripStatusLabel.Text = string.Empty; ;
-      toolStripProgressBar.Value = 0;
-      toolStripProgressBar.Visible = false;
-      cancelToolStripStatusLabel.Visible = false;
-      tabList.Enabled = true;
+      this.ResetProgressUi();
     }
 
     private void MigrateButton_Click(object sender, EventArgs e)
@@ -487,9 +490,7 @@ namespace Cyotek.Demo.Windows.Forms
 
       if (this.ValidateOptions(options))
       {
-        toolStripProgressBar.Visible = true;
-        cancelToolStripStatusLabel.Visible = true;
-        tabList.Enabled = false;
+        this.PrepareProgressUi("Migrating...");
 
         migrateBackgroundWorker.RunWorkerAsync(options);
       }
@@ -500,9 +501,35 @@ namespace Cyotek.Demo.Windows.Forms
       tabList.SelectedIndex++;
     }
 
+    private void PrepareProgressUi(string message)
+    {
+      Cursor.Current = Cursors.WaitCursor;
+      this.UseWaitCursor = true;
+
+      statusToolStripStatusLabel.Text = message;
+
+      toolStripProgressBar.Visible = true;
+      cancelToolStripStatusLabel.Visible = true;
+      tabList.Enabled = false;
+      commandPanel.Enabled = false;
+    }
+
     private void PreviousButton_Click(object sender, EventArgs e)
     {
       tabList.SelectedIndex--;
+    }
+
+    private void ResetProgressUi()
+    {
+      Cursor.Current = Cursors.Default;
+      this.UseWaitCursor = false;
+
+      statusToolStripStatusLabel.Text = string.Empty;
+      toolStripProgressBar.Value = 0;
+      toolStripProgressBar.Visible = false;
+      cancelToolStripStatusLabel.Visible = false;
+      tabList.Enabled = true;
+      commandPanel.Enabled = true;
     }
 
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
