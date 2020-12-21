@@ -123,6 +123,9 @@
     <Content Include="..\res\icon.ico">
       <Link>icon.ico</Link>
     </Content>
+    <Content Include="..\res\refresh.png">
+      <Link>resources\refresh.png</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

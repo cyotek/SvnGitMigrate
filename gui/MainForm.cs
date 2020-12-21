@@ -4,6 +4,7 @@ using Cyotek.SvnMigrate.Client.Properties;
 using LibGit2Sharp;
 using SharpSvn;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Cyotek.Demo.Windows.Forms
   internal partial class MainForm : BaseForm
   {
     #region Private Fields
+
+    private string _lastScannedUrl;
 
     private SvnChangesetCollection _svnRevisions;
 
@@ -192,10 +195,14 @@ namespace Cyotek.Demo.Windows.Forms
         }
 
         revisionsListView.EndUpdate();
+
+        _lastScannedUrl = svnBranchUrlComboBox.Text;
+        this.UpdateMru();
       }
       else
       {
         _svnRevisions = new SvnChangesetCollection();
+        _lastScannedUrl = null;
 
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
@@ -206,11 +213,7 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void ChangesetTimer_Tick(object sender, EventArgs e)
     {
-      changesetTimer.Stop();
-
-      this.PrepareProgressUi("Building revision list...");
-
-      changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlTextBox.Text);
+      this.LoadRevisions();
     }
 
     private void Checkout(Uri svnUri, SvnChangeset set, string workPath)
@@ -373,13 +376,45 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
+    private void LoadMru(Settings settings)
+    {
+      svnBranchUrlComboBox.Items.Clear();
+
+      if (settings.SvnBranchUriMru != null)
+      {
+        svnBranchUrlComboBox.BeginUpdate();
+        foreach (string uri in settings.SvnBranchUriMru)
+        {
+          svnBranchUrlComboBox.Items.Add(uri);
+        }
+        svnBranchUrlComboBox.EndUpdate();
+      }
+    }
+
+    private void LoadRevisions()
+    {
+      string uri;
+
+      changesetTimer.Stop();
+
+      uri = svnBranchUrlComboBox.Text;
+
+      if (!string.Equals(uri, _lastScannedUrl))
+      {
+        this.PrepareProgressUi("Building revision list...");
+
+        changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlComboBox.Text);
+      }
+    }
+
     private void LoadSettings()
     {
       Settings settings;
 
       settings = Settings.Default;
 
-      svnBranchUrlTextBox.Text = settings.SvnBranchUri;
+      this.LoadMru(settings);
+      svnBranchUrlComboBox.Text = settings.SvnBranchUri;
       gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
@@ -478,7 +513,7 @@ namespace Cyotek.Demo.Windows.Forms
     {
       MigrationOptions options;
 
-      Uri.TryCreate(svnBranchUrlTextBox.Text, UriKind.Absolute, out Uri svnUri);
+      Uri.TryCreate(svnBranchUrlComboBox.Text, UriKind.Absolute, out Uri svnUri);
 
       options = new MigrationOptions
       {
@@ -520,6 +555,13 @@ namespace Cyotek.Demo.Windows.Forms
       tabList.SelectedIndex--;
     }
 
+    private void RefreshButton_Click(object sender, EventArgs e)
+    {
+      _lastScannedUrl = null;
+
+      this.LoadRevisions();
+    }
+
     private void ResetProgressUi()
     {
       Cursor.Current = Cursors.Default;
@@ -547,10 +589,17 @@ namespace Cyotek.Demo.Windows.Forms
 
       settings = Settings.Default;
 
-      settings.SvnBranchUri = svnBranchUrlTextBox.Text;
+      settings.SvnBranchUri = svnBranchUrlComboBox.Text;
       settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
+      settings.SvnBranchUriMru = new StringCollection();
+
+      for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
+      {
+        settings.SvnBranchUriMru.Add((string)svnBranchUrlComboBox.Items[i]);
+      }
+
       settings.Save();
     }
 
@@ -576,6 +625,31 @@ namespace Cyotek.Demo.Windows.Forms
     {
       previousButton.Enabled = tabList.SelectedIndex > 0;
       nextButton.Enabled = tabList.SelectedIndex < tabList.TabListPageCount - 1;
+    }
+
+    private void UpdateMru()
+    {
+      string uri;
+      int index;
+
+      uri = svnBranchUrlComboBox.Text;
+      index = svnBranchUrlComboBox.FindStringExact(uri);
+
+      if (index != -1 && index != 0)
+      {
+        svnBranchUrlComboBox.Items.RemoveAt(index);
+      }
+
+      if (index != 0)
+      {
+        svnBranchUrlComboBox.Items.Insert(0, uri);
+        svnBranchUrlComboBox.SelectedIndex = 0;
+      }
+
+      while (svnBranchUrlComboBox.Items.Count > 256)
+      {
+        svnBranchUrlComboBox.Items.RemoveAt(svnBranchUrlComboBox.Items.Count - 1);
+      }
     }
 
     private void UpdateSelectionCount()

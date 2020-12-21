@@ -94,5 +94,16 @@ namespace Cyotek.SvnMigrate.Client.Properties {
                 this["AllowEmptyCommits"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SvnBranchUriMru {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SvnBranchUriMru"]));
+            }
+            set {
+                this["SvnBranchUriMru"] = value;
+            }
+        }
     }
 }

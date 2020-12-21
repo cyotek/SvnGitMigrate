@@ -38,7 +38,7 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox authorsGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.label1 = new System.Windows.Forms.Label();
-      this.svnBranchUrlTextBox = new System.Windows.Forms.TextBox();
+      this.svnBranchUrlComboBox = new System.Windows.Forms.ComboBox();
       this.revisionsListView = new Cyotek.Windows.Forms.ListView();
       this.revisionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -75,6 +75,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
+      this.refreshButton = new System.Windows.Forms.Button();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -99,8 +100,9 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       repositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      repositoryGroupBox.Controls.Add(this.refreshButton);
       repositoryGroupBox.Controls.Add(this.label1);
-      repositoryGroupBox.Controls.Add(this.svnBranchUrlTextBox);
+      repositoryGroupBox.Controls.Add(this.svnBranchUrlComboBox);
       repositoryGroupBox.Location = new System.Drawing.Point(3, 3);
       repositoryGroupBox.Name = "repositoryGroupBox";
       repositoryGroupBox.Size = new System.Drawing.Size(681, 54);
@@ -117,15 +119,15 @@ namespace Cyotek.Demo.Windows.Forms
       this.label1.TabIndex = 0;
       this.label1.Text = "&Branch URL:";
       // 
-      // svnBranchUrlTextBox
+      // svnBranchUrlComboBox
       // 
-      this.svnBranchUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.svnBranchUrlComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.svnBranchUrlTextBox.Location = new System.Drawing.Point(81, 19);
-      this.svnBranchUrlTextBox.Name = "svnBranchUrlTextBox";
-      this.svnBranchUrlTextBox.Size = new System.Drawing.Size(594, 20);
-      this.svnBranchUrlTextBox.TabIndex = 1;
-      this.svnBranchUrlTextBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
+      this.svnBranchUrlComboBox.Location = new System.Drawing.Point(81, 19);
+      this.svnBranchUrlComboBox.Name = "svnBranchUrlComboBox";
+      this.svnBranchUrlComboBox.Size = new System.Drawing.Size(565, 21);
+      this.svnBranchUrlComboBox.TabIndex = 1;
+      this.svnBranchUrlComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
       // revisionsGroupBox
       // 
@@ -503,6 +505,17 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
       // 
+      // refreshButton
+      // 
+      this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.refreshButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
+      this.refreshButton.Location = new System.Drawing.Point(652, 17);
+      this.refreshButton.Name = "refreshButton";
+      this.refreshButton.Size = new System.Drawing.Size(23, 23);
+      this.refreshButton.TabIndex = 2;
+      this.refreshButton.UseVisualStyleBackColor = true;
+      this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -549,7 +562,7 @@ namespace Cyotek.Demo.Windows.Forms
     #endregion
 
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox svnBranchUrlTextBox;
+    private System.Windows.Forms.ComboBox svnBranchUrlComboBox;
     private System.Windows.Forms.Button migrateButton;
     private System.ComponentModel.BackgroundWorker migrateBackgroundWorker;
     private System.Windows.Forms.StatusStrip statusStrip;
@@ -586,6 +599,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripMenuItem allowEmptyCommitsToolStripMenuItem;
     private System.Windows.Forms.ToolStripStatusLabel revisionCountToolStripStatusLabel;
     private System.Windows.Forms.Timer selectionChangeTimer;
+    private System.Windows.Forms.Button refreshButton;
   }
 }
 
