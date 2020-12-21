@@ -530,6 +530,8 @@ namespace Cyotek.Demo.Windows.Forms
       {
         this.PrepareProgressUi("Migrating...");
 
+        tabList.SelectedPage = gitTabListPage;
+
         migrateBackgroundWorker.RunWorkerAsync(options);
       }
     }

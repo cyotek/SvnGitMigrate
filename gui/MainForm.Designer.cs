@@ -46,6 +46,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.logTextBox = new System.Windows.Forms.TextBox();
+      this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
       this.gitRepositoryPathTextBox = new System.Windows.Forms.TextBox();
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
@@ -76,7 +77,6 @@ namespace Cyotek.Demo.Windows.Forms
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
-      this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -218,10 +218,9 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Multiline = true;
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
-      this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.logTextBox.Size = new System.Drawing.Size(669, 310);
       this.logTextBox.TabIndex = 0;
-      this.logTextBox.WordWrap = false;
       // 
       // gitRepositoryGroupBox
       // 
@@ -237,6 +236,16 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryGroupBox.TabIndex = 0;
       gitRepositoryGroupBox.TabStop = false;
       gitRepositoryGroupBox.Text = "Repository";
+      // 
+      // useExistingRepositoryCheckBox
+      // 
+      this.useExistingRepositoryCheckBox.AutoSize = true;
+      this.useExistingRepositoryCheckBox.Location = new System.Drawing.Point(6, 45);
+      this.useExistingRepositoryCheckBox.Name = "useExistingRepositoryCheckBox";
+      this.useExistingRepositoryCheckBox.Size = new System.Drawing.Size(131, 17);
+      this.useExistingRepositoryCheckBox.TabIndex = 3;
+      this.useExistingRepositoryCheckBox.Text = "Use &existing repository";
+      this.useExistingRepositoryCheckBox.UseVisualStyleBackColor = true;
       // 
       // gitRepositoryPathBrowseButton
       // 
@@ -517,16 +526,6 @@ namespace Cyotek.Demo.Windows.Forms
       // selectionChangeTimer
       // 
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
-      // 
-      // useExistingRepositoryCheckBox
-      // 
-      this.useExistingRepositoryCheckBox.AutoSize = true;
-      this.useExistingRepositoryCheckBox.Location = new System.Drawing.Point(6, 45);
-      this.useExistingRepositoryCheckBox.Name = "useExistingRepositoryCheckBox";
-      this.useExistingRepositoryCheckBox.Size = new System.Drawing.Size(131, 17);
-      this.useExistingRepositoryCheckBox.TabIndex = 3;
-      this.useExistingRepositoryCheckBox.Text = "Use &existing repository";
-      this.useExistingRepositoryCheckBox.UseVisualStyleBackColor = true;
       // 
       // MainForm
       // 
