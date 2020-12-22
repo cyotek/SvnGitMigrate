@@ -2,6 +2,16 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+// Cyotek Svn2Git Migration Utility
+
+// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+
+// This work is licensed under the MIT License.
+// See LICENSE.TXT for the full text
+
+// Found this example useful?
+// https://www.paypal.me/cyotek
+
 [assembly: AssemblyTitle("Cyotek Svn2Git Migration Utility (GUI)")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
