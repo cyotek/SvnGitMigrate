@@ -36,6 +36,9 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox gitRepositoryGroupBox;
       System.Windows.Forms.Label gitRepositoryPathLabel;
       System.Windows.Forms.GroupBox authorsGroupBox;
+      System.Windows.Forms.SplitContainer globsSplitContainer;
+      System.Windows.Forms.GroupBox includesGroupBox;
+      System.Windows.Forms.GroupBox excludesGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
@@ -50,6 +53,8 @@ namespace Cyotek.Demo.Windows.Forms
       this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
       this.gitRepositoryPathTextBox = new System.Windows.Forms.TextBox();
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
+      this.includesTextBox = new System.Windows.Forms.TextBox();
+      this.excludesTextBox = new System.Windows.Forms.TextBox();
       this.migrateButton = new System.Windows.Forms.Button();
       this.migrateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -70,6 +75,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.tabList = new Cyotek.Windows.Forms.TabList();
       this.svnTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.authorMappingTabListPage = new Cyotek.Windows.Forms.TabListPage();
+      this.globsTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.gitTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
@@ -83,16 +89,26 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryGroupBox = new System.Windows.Forms.GroupBox();
       gitRepositoryPathLabel = new System.Windows.Forms.Label();
       authorsGroupBox = new System.Windows.Forms.GroupBox();
+      globsSplitContainer = new System.Windows.Forms.SplitContainer();
+      includesGroupBox = new System.Windows.Forms.GroupBox();
+      excludesGroupBox = new System.Windows.Forms.GroupBox();
       repositoryGroupBox.SuspendLayout();
       revisionsGroupBox.SuspendLayout();
       migrateGroupBox.SuspendLayout();
       gitRepositoryGroupBox.SuspendLayout();
       authorsGroupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(globsSplitContainer)).BeginInit();
+      globsSplitContainer.Panel1.SuspendLayout();
+      globsSplitContainer.Panel2.SuspendLayout();
+      globsSplitContainer.SuspendLayout();
+      includesGroupBox.SuspendLayout();
+      excludesGroupBox.SuspendLayout();
       this.statusStrip.SuspendLayout();
       this.menuStrip.SuspendLayout();
       this.tabList.SuspendLayout();
       this.svnTabListPage.SuspendLayout();
       this.authorMappingTabListPage.SuspendLayout();
+      this.globsTabListPage.SuspendLayout();
       this.gitTabListPage.SuspendLayout();
       this.commandPanel.SuspendLayout();
       this.SuspendLayout();
@@ -291,16 +307,82 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // authorMappingsTextBox
       // 
+      this.authorMappingsTextBox.AcceptsReturn = true;
       this.authorMappingsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.authorMappingsTextBox.Location = new System.Drawing.Point(6, 19);
       this.authorMappingsTextBox.Multiline = true;
       this.authorMappingsTextBox.Name = "authorMappingsTextBox";
-      this.authorMappingsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.authorMappingsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.authorMappingsTextBox.Size = new System.Drawing.Size(669, 388);
       this.authorMappingsTextBox.TabIndex = 1;
-      this.authorMappingsTextBox.WordWrap = false;
+      // 
+      // globsSplitContainer
+      // 
+      globsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      globsSplitContainer.Location = new System.Drawing.Point(0, 0);
+      globsSplitContainer.Name = "globsSplitContainer";
+      globsSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      // 
+      // globsSplitContainer.Panel1
+      // 
+      globsSplitContainer.Panel1.Controls.Add(includesGroupBox);
+      // 
+      // globsSplitContainer.Panel2
+      // 
+      globsSplitContainer.Panel2.Controls.Add(excludesGroupBox);
+      globsSplitContainer.Size = new System.Drawing.Size(687, 419);
+      globsSplitContainer.SplitterDistance = 207;
+      globsSplitContainer.TabIndex = 0;
+      // 
+      // includesGroupBox
+      // 
+      includesGroupBox.Controls.Add(this.includesTextBox);
+      includesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      includesGroupBox.Location = new System.Drawing.Point(0, 0);
+      includesGroupBox.Name = "includesGroupBox";
+      includesGroupBox.Size = new System.Drawing.Size(687, 207);
+      includesGroupBox.TabIndex = 0;
+      includesGroupBox.TabStop = false;
+      includesGroupBox.Text = "&Inclusion Patterns";
+      // 
+      // includesTextBox
+      // 
+      this.includesTextBox.AcceptsReturn = true;
+      this.includesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.includesTextBox.Location = new System.Drawing.Point(6, 19);
+      this.includesTextBox.Multiline = true;
+      this.includesTextBox.Name = "includesTextBox";
+      this.includesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.includesTextBox.Size = new System.Drawing.Size(675, 182);
+      this.includesTextBox.TabIndex = 2;
+      // 
+      // excludesGroupBox
+      // 
+      excludesGroupBox.Controls.Add(this.excludesTextBox);
+      excludesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      excludesGroupBox.Location = new System.Drawing.Point(0, 0);
+      excludesGroupBox.Name = "excludesGroupBox";
+      excludesGroupBox.Size = new System.Drawing.Size(687, 208);
+      excludesGroupBox.TabIndex = 1;
+      excludesGroupBox.TabStop = false;
+      excludesGroupBox.Text = "&Exclusion Patterns";
+      // 
+      // excludesTextBox
+      // 
+      this.excludesTextBox.AcceptsReturn = true;
+      this.excludesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.excludesTextBox.Location = new System.Drawing.Point(6, 19);
+      this.excludesTextBox.Multiline = true;
+      this.excludesTextBox.Name = "excludesTextBox";
+      this.excludesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.excludesTextBox.Size = new System.Drawing.Size(675, 183);
+      this.excludesTextBox.TabIndex = 2;
       // 
       // migrateButton
       // 
@@ -446,6 +528,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.tabList.Controls.Add(this.svnTabListPage);
       this.tabList.Controls.Add(this.authorMappingTabListPage);
+      this.tabList.Controls.Add(this.globsTabListPage);
       this.tabList.Controls.Add(this.gitTabListPage);
       this.tabList.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabList.Location = new System.Drawing.Point(0, 24);
@@ -468,6 +551,13 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage.Name = "authorMappingTabListPage";
       this.authorMappingTabListPage.Size = new System.Drawing.Size(687, 419);
       this.authorMappingTabListPage.Text = "Author Mapping";
+      // 
+      // globsTabListPage
+      // 
+      this.globsTabListPage.Controls.Add(globsSplitContainer);
+      this.globsTabListPage.Name = "globsTabListPage";
+      this.globsTabListPage.Size = new System.Drawing.Size(687, 419);
+      this.globsTabListPage.Text = "Inclusion / Exclusion";
       // 
       // gitTabListPage
       // 
@@ -556,6 +646,14 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryGroupBox.PerformLayout();
       authorsGroupBox.ResumeLayout(false);
       authorsGroupBox.PerformLayout();
+      globsSplitContainer.Panel1.ResumeLayout(false);
+      globsSplitContainer.Panel2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(globsSplitContainer)).EndInit();
+      globsSplitContainer.ResumeLayout(false);
+      includesGroupBox.ResumeLayout(false);
+      includesGroupBox.PerformLayout();
+      excludesGroupBox.ResumeLayout(false);
+      excludesGroupBox.PerformLayout();
       this.statusStrip.ResumeLayout(false);
       this.statusStrip.PerformLayout();
       this.menuStrip.ResumeLayout(false);
@@ -563,6 +661,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.tabList.ResumeLayout(false);
       this.svnTabListPage.ResumeLayout(false);
       this.authorMappingTabListPage.ResumeLayout(false);
+      this.globsTabListPage.ResumeLayout(false);
       this.gitTabListPage.ResumeLayout(false);
       this.commandPanel.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -612,6 +711,9 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.Timer selectionChangeTimer;
     private System.Windows.Forms.Button refreshButton;
     private System.Windows.Forms.CheckBox useExistingRepositoryCheckBox;
+    private Cyotek.Windows.Forms.TabListPage globsTabListPage;
+    private System.Windows.Forms.TextBox includesTextBox;
+    private System.Windows.Forms.TextBox excludesTextBox;
   }
 }
 

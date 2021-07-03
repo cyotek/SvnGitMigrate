@@ -55,9 +55,32 @@ the _Use existing repository_ option. This can be useful if you
 are having to build a Git repository from multiple sources, e.g.
 if a root folder was renamed or moved.
 
+## Inclusions and Exclusions
+
+![Defining exclusions][step4]
+
+If there are files you want to exclude from the new repository
+(for example a scratch program full of credentials that should
+never have been committed to begin with!), you can configure a
+set of include or exclude patterns to manage which files will be
+copied from each SVN checkout to the Git repository.
+
+Enter glob patterns in either the inclusion or exclusion fields,
+or both. Files will only be included if they are both included
+and not excluded. If the includes field is blank, then all files
+are included. If the excludes field is blank, then no files will
+be excluded.
+
+For example, if you had a folder named `/src/Scratch` in your
+repository which you didn't want migrated, then you could enter
+the glob `/**/Scratch` to the exclusion list.
+
+Don't use backslashes in globs, the migration tool will
+automatically handle conversion from Windows paths.
+
 ## Migrate
 
-![Selecting the Git Repository][step4]
+![Selecting the Git Repository][step5]
 
 Click the Migrate button to start the process. For each selected
 revision, this tool will check that out, sync the contents with
@@ -67,3 +90,4 @@ the Git repository, then perform a commit.
 [step2]: res/step2.png
 [step3]: res/step3.png
 [step4]: res/step4.png
+[step5]: res/step5.png

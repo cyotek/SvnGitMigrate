@@ -8,17 +8,18 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-201 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
-// https://www.paypal.me/cyotek
+// https://www.cyotek.com/contribute
 
 namespace Cyotek.Demo.Windows.Forms
 {
@@ -337,6 +338,43 @@ namespace Cyotek.Demo.Windows.Forms
       return results;
     }
 
+    private StringCollection GetGlobs(TextBox control)
+    {
+      StringCollection result;
+      string[] lines;
+
+      result = new StringCollection();
+      lines = control.Lines;
+
+      for (int i = 0; i < lines.Length; i++)
+      {
+        string line;
+
+        line = lines[i].Trim();
+
+        if (!string.IsNullOrWhiteSpace(line) && !result.Contains(line))
+        {
+          result.Add(line);
+        }
+      }
+
+      return result;
+    }
+
+    private StringCollection GetMru()
+    {
+      StringCollection result;
+
+      result = new StringCollection();
+
+      for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
+      {
+        result.Add((string)svnBranchUrlComboBox.Items[i]);
+      }
+
+      return result;
+    }
+
     private SvnChangesetCollection GetOrderedRevisions()
     {
       SvnChangesetCollection revisions;
@@ -386,6 +424,27 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
+    private void LoadGlobs(TextBox control, StringCollection globs)
+    {
+      if (globs != null && globs.Count>0)
+      {
+        StringBuilder sb;
+
+        sb = new StringBuilder();
+
+        for (int i = 0; i < globs.Count; i++)
+        {
+          sb.AppendLine(globs[i]);
+        }
+
+        control.Text = sb.ToString();
+      }
+      else
+      {
+        control.Text = string.Empty;
+      }
+    }
+
     private void LoadMru(Settings settings)
     {
       svnBranchUrlComboBox.Items.Clear();
@@ -422,7 +481,6 @@ namespace Cyotek.Demo.Windows.Forms
       Settings settings;
 
       settings = Settings.Default;
-
       this.LoadMru(settings);
       svnBranchUrlComboBox.Text = settings.SvnBranchUri;
       gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
@@ -430,6 +488,8 @@ namespace Cyotek.Demo.Windows.Forms
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
       allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
       useExistingRepositoryCheckBox.Checked = settings.UseExistingRepository;
+      this.LoadGlobs(includesTextBox, settings.IncludeGlobs);
+      this.LoadGlobs(excludesTextBox, settings.ExcludeGlobs);
     }
 
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -474,7 +534,7 @@ namespace Cyotek.Demo.Windows.Forms
         }
 
         this.Checkout(svnUri, set, workPath);
-        SimpleFolderSync.SyncFolders(workPath, gitPath);
+        SimpleFolderSync.SyncFolders(workPath, gitPath, this.GetGlobs(includesTextBox), this.GetGlobs(excludesTextBox));
 
         try
         {
@@ -608,12 +668,9 @@ namespace Cyotek.Demo.Windows.Forms
       settings.AuthorMapping = authorMappingsTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
-      settings.SvnBranchUriMru = new StringCollection();
-
-      for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
-      {
-        settings.SvnBranchUriMru.Add((string)svnBranchUrlComboBox.Items[i]);
-      }
+      settings.SvnBranchUriMru = this.GetMru();
+      settings.IncludeGlobs = this.GetGlobs(includesTextBox);
+      settings.ExcludeGlobs = this.GetGlobs(excludesTextBox);
 
       settings.Save();
     }

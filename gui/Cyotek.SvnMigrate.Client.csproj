@@ -42,6 +42,9 @@
     <Reference Include="Cyotek.Windows.Forms.TabList, Version=2.0.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
       <HintPath>..\packages\CyotekTabList.2.2.0\lib\net35\Cyotek.Windows.Forms.TabList.dll</HintPath>
     </Reference>
+    <Reference Include="DotNet.Glob, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b68cc888b4f632d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNet.Glob.3.1.2\lib\net46\DotNet.Glob.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <HintPath>..\packages\LibGit2Sharp.0.26.2\lib\net46\LibGit2Sharp.dll</HintPath>
     </Reference>
