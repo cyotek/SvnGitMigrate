@@ -40,24 +40,9 @@ detected authors for the selected revisions, for each author
 ensure there is a name and email address in the pattern
 `svn_name = git_name <git_email>`.
 
-## Selecting the Git Repository
-
-![Selecting the Git Repository][step3]
-
-Enter the local folder where the Git repository will be located.
-
-If you are creating a new repository, ensure the folder is empty
-the _Use existing repository_ option is unchecked.
-
-If you want to append the commits to an existing repository,
-ensure the folder points to the existing repository and check
-the _Use existing repository_ option. This can be useful if you
-are having to build a Git repository from multiple sources, e.g.
-if a root folder was renamed or moved.
-
 ## Inclusions and Exclusions
 
-![Defining exclusions][step4]
+![Defining exclusions][step3]
 
 If there are files you want to exclude from the new repository
 (for example a scratch program full of credentials that should
@@ -77,6 +62,21 @@ the glob `/**/Scratch` to the exclusion list.
 
 Don't use backslashes in globs, the migration tool will
 automatically handle conversion from Windows paths.
+
+## Selecting the Git Repository
+
+![Selecting the Git Repository][step4]
+
+Enter the local folder where the Git repository will be located.
+
+If you are creating a new repository, ensure the folder is empty
+the _Use existing repository_ option is unchecked.
+
+If you want to append the commits to an existing repository,
+ensure the folder points to the existing repository and check
+the _Use existing repository_ option. This can be useful if you
+are having to build a Git repository from multiple sources, e.g.
+if a root folder was renamed or moved.
 
 ## Migrate
 
