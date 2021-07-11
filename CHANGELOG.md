@@ -2,6 +2,20 @@
 
 ## Change Log
 
+### 1.2
+
+#### Changed
+
+* Glob pattern matching now applies to SVN revisions, preventing
+  needless checkouts if none of the files in the revision will
+  be processed
+
+#### Fixed
+
+* Migration log would sometimes list the same SVN revision
+  multiple times even though each revision is only processed
+  once
+
 ### 1.1
 
 #### Added

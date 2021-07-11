@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="FileCompare.cs" />
     <Compile Include="FileDialogHelper.cs" />
+    <Compile Include="GlobMatcher.cs" />
     <Compile Include="ListView.cs">
       <SubType>Component</SubType>
     </Compile>

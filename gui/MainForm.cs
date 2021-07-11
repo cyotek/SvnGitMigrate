@@ -127,17 +127,20 @@ namespace Cyotek.Demo.Windows.Forms
       {
         svn.Log(svnUri, (o, args) =>
         {
-          sets.Add(new SvnChangeset
+          SvnChangeset changeset;
+
+          changeset = new SvnChangeset
           {
-            Author = new User
-            {
-              Name = args.Author
-            },
+            Author = new User { Name = args.Author },
             Revision = args.Revision,
             Time = args.Time,
             Log = args.LogMessage,
             IsSelected = true
-          });
+          };
+
+          changeset.ChangedPaths.AddRange(args.ChangedPaths.Select(p => p.Path).ToArray());
+
+          sets.Add(changeset);
           args.Detach();
 
           args.Cancel = changesetBackgroundWorker.CancellationPending;
@@ -426,7 +429,7 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void LoadGlobs(TextBox control, StringCollection globs)
     {
-      if (globs != null && globs.Count>0)
+      if (globs != null && globs.Count > 0)
       {
         StringBuilder sb;
 
@@ -499,51 +502,62 @@ namespace Cyotek.Demo.Windows.Forms
       SvnChangesetCollection sets;
       string workPath;
       string gitPath;
-      ProgressState args;
+      StringCollection includes;
+      StringCollection excludes;
 
       options = (MigrationOptions)e.Argument;
       svnUri = options.SvnUri;
       workPath = options.WorkingPath;
       gitPath = options.RepositoryPath;
+      includes = this.GetGlobs(includesTextBox);
+      excludes = this.GetGlobs(excludesTextBox);
 
       sets = options.Revisions;
 
       this.CreateGitRepository(gitPath);
 
-      args = new ProgressState
-      {
-        Total = sets.Count
-      };
-
       for (int i = 0; i < sets.Count; i++)
       {
         SvnChangeset set;
         int progress;
+        ProgressState args;
 
         set = sets[i];
         progress = Convert.ToInt32((double)i / sets.Count * 100);
 
-        args.Current = i + 1;
-        args.Changeset = set;
-
-        migrateBackgroundWorker.ReportProgress(progress, args);
+        args = new ProgressState
+        {
+          Total = sets.Count,
+          Current = i + 1,
+          Changeset = set
+        };
 
         if (string.IsNullOrEmpty(set.Author.EmailAddress))
         {
           set.Author = options.Authors.GetMapping(set.Author.Name);
         }
 
-        this.Checkout(svnUri, set, workPath);
-        SimpleFolderSync.SyncFolders(workPath, gitPath, this.GetGlobs(includesTextBox), this.GetGlobs(excludesTextBox));
+        if (this.ShouldCheckout(set, includes, excludes))
+        {
+          migrateBackgroundWorker.ReportProgress(progress, args);
 
-        try
-        {
-          this.Commit(gitPath, set);
+          this.Checkout(svnUri, set, workPath);
+          SimpleFolderSync.SyncFolders(workPath, gitPath, includes, excludes);
+
+          try
+          {
+            this.Commit(gitPath, set);
+          }
+          catch (EmptyCommitException)
+          {
+            // ignore, if we get this the user has
+            // disabled the option to allow empty commits
+          }
         }
-        catch (EmptyCommitException)
+        else
         {
-          // ignore, if we get this the user has
-          // disabled the option to allow empty commits
+          args.Changeset = null;
+          migrateBackgroundWorker.ReportProgress(progress, args);
         }
 
         if (migrateBackgroundWorker.CancellationPending)
@@ -555,15 +569,25 @@ namespace Cyotek.Demo.Windows.Forms
       ShellHelpers.DeletePath(workPath);
     }
 
+    private bool ShouldCheckout(SvnChangeset set, StringCollection includeGlobs, StringCollection excludeGlobs)
+    {
+      return GlobMatcher.IsIncluded(set.ChangedPaths, includeGlobs) && !GlobMatcher.IsExcluded(set.ChangedPaths, excludeGlobs);
+    }
+
     private void MigrateBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
       ProgressState args;
 
       args = (ProgressState)e.UserState;
 
-      logTextBox.AppendText(string.Format("{0}\t{1}\r\n", DateTime.Now.ToString(), args.Changeset));
       statusToolStripStatusLabel.Text = string.Format("Migrating revision {0} of {1}...", args.Current, args.Total);
       toolStripProgressBar.Value = e.ProgressPercentage;
+      statusStrip.Refresh();
+
+      if (args.Changeset != null)
+      {
+        logTextBox.AppendText(string.Format("{0}\t{1}\r\n", DateTime.Now.ToString(), args.Changeset));
+      }
     }
 
     private void MigrateBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

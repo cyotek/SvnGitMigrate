@@ -1,5 +1,4 @@
 ﻿using DotNet.Globbing;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 
@@ -17,12 +16,6 @@ namespace Cyotek.SvnMigrate.Client
 {
   internal static class SimpleFolderSync
   {
-    #region Private Fields
-
-    private static Dictionary<string, Glob> _globCache = new Dictionary<string, Glob>();
-
-    #endregion Private Fields
-
     #region Public Methods
 
     public static void SyncFolders(string src, string dst, StringCollection includeGlobs, StringCollection excludeGlobs)
@@ -30,8 +23,8 @@ namespace Cyotek.SvnMigrate.Client
       Glob[] includes;
       Glob[] excludes;
 
-      includes = SimpleFolderSync.PrepareGlobs(includeGlobs);
-      excludes = SimpleFolderSync.PrepareGlobs(excludeGlobs);
+      includes = GlobMatcher.PrepareGlobs(includeGlobs);
+      excludes = GlobMatcher.PrepareGlobs(excludeGlobs);
 
       SimpleFolderSync.SyncFolders(src, dst, includes, excludes);
     }
@@ -44,7 +37,7 @@ namespace Cyotek.SvnMigrate.Client
     {
       foreach (string srcFile in Directory.EnumerateFiles(src))
       {
-        if (SimpleFolderSync.IsIncluded(srcFile, includes) && !SimpleFolderSync.IsExcluded(srcFile, excludes))
+        if (GlobMatcher.IsIncluded(srcFile, includes) && !GlobMatcher.IsExcluded(srcFile, excludes))
         {
           string dstFile;
           FileInfo dstInfo;
@@ -66,7 +59,7 @@ namespace Cyotek.SvnMigrate.Client
     {
       foreach (string srcFolder in Directory.EnumerateDirectories(src))
       {
-        if (SimpleFolderSync.IsIncluded(srcFolder, includes) && !SimpleFolderSync.IsExcluded(srcFolder, excludes))
+        if (GlobMatcher.IsIncluded(srcFolder, includes) && !GlobMatcher.IsExcluded(srcFolder, excludes))
         {
           string name;
           string dstFolder;
@@ -114,75 +107,6 @@ namespace Cyotek.SvnMigrate.Client
           ShellHelpers.DeletePath(dstFolder);
         }
       }
-    }
-
-    private static bool IsExcluded(string file, Glob[] globs)
-    {
-      return globs.Length != 0 && SimpleFolderSync.IsMatch(file, globs);
-    }
-
-    private static bool IsIncluded(string file, Glob[] globs)
-    {
-      return globs.Length == 0 || SimpleFolderSync.IsMatch(file, globs);
-    }
-
-    private static bool IsMatch(string file, Glob[] globs)
-    {
-      bool result;
-
-      result = false;
-
-      if (Path.IsPathRooted(file) && file[1] == ':')
-      {
-        file = file.Substring(2);
-      }
-
-      if (file.IndexOf('\\') != -1)
-      {
-        file = file.Replace('\\', '/'); // Normalise paths for Unix as there's no option in the glob lib
-      }
-
-      for (int i = 0; i < globs.Length; i++)
-      {
-        if (globs[i].IsMatch(file))
-        {
-          result = true;
-          break;
-        }
-      }
-
-      return result;
-    }
-
-    private static Glob[] PrepareGlobs(StringCollection patterns)
-    {
-      Glob[] results;
-
-      if (patterns == null || patterns.Count == 0)
-      {
-        results = new Glob[0];
-      }
-      else
-      {
-        results = new Glob[patterns.Count];
-
-        for (int i = 0; i < results.Length; i++)
-        {
-          string pattern;
-
-          pattern = patterns[i];
-
-          if (!_globCache.TryGetValue(pattern, out Glob instance))
-          {
-            instance = Glob.Parse(patterns[i]);
-            _globCache.Add(pattern, instance);
-          }
-
-          results[i] = instance;
-        }
-      }
-
-      return results;
     }
 
     private static void SyncFolders(string src, string dst, Glob[] includes, Glob[] excludes)
