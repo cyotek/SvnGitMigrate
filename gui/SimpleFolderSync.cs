@@ -49,6 +49,7 @@ namespace Cyotek.SvnMigrate.Client
 
           if (!dstInfo.Exists || dstInfo.Length != srcInfo.Length || !FileCompare.AreSame(srcFile, dstFile))
           {
+            Directory.CreateDirectory(dst);
             File.Copy(srcFile, dstFile, true);
           }
         }
@@ -59,52 +60,53 @@ namespace Cyotek.SvnMigrate.Client
     {
       foreach (string srcFolder in Directory.EnumerateDirectories(src))
       {
-        if (GlobMatcher.IsIncluded(srcFolder, includes) && !GlobMatcher.IsExcluded(srcFolder, excludes))
+        string name;
+        string dstFolder;
+
+        name = Path.GetFileName(srcFolder);
+        dstFolder = Path.Combine(dst, name);
+
+        if (name != ".svn")
         {
-          string name;
-          string dstFolder;
-
-          name = Path.GetFileName(srcFolder);
-          dstFolder = Path.Combine(dst, name);
-
-          if (name != ".svn")
-          {
-            Directory.CreateDirectory(dstFolder);
-
-            SimpleFolderSync.SyncFolders(srcFolder, dstFolder, includes, excludes);
-          }
+          SimpleFolderSync.SyncFolders(srcFolder, dstFolder, includes, excludes);
         }
       }
     }
 
     private static void DeleteRemovedFiles(string src, string dst)
     {
-      foreach (string dstFile in Directory.EnumerateFiles(dst))
+      if (Directory.Exists(dst))
       {
-        string srcFile;
-
-        srcFile = Path.Combine(src, Path.GetFileName(dstFile));
-
-        if (!File.Exists(srcFile))
+        foreach (string dstFile in Directory.EnumerateFiles(dst))
         {
-          File.Delete(dstFile);
+          string srcFile;
+
+          srcFile = Path.Combine(src, Path.GetFileName(dstFile));
+
+          if (!File.Exists(srcFile))
+          {
+            File.Delete(dstFile);
+          }
         }
       }
     }
 
     private static void DeleteRemovedFolders(string src, string dst)
     {
-      foreach (string dstFolder in Directory.EnumerateDirectories(dst))
+      if (Directory.Exists(dst))
       {
-        string name;
-        string srcFolder;
-
-        name = Path.GetFileName(dstFolder);
-        srcFolder = Path.Combine(src, name);
-
-        if (name != ".git" && !Directory.Exists(srcFolder))
+        foreach (string dstFolder in Directory.EnumerateDirectories(dst))
         {
-          ShellHelpers.DeletePath(dstFolder);
+          string name;
+          string srcFolder;
+
+          name = Path.GetFileName(dstFolder);
+          srcFolder = Path.Combine(src, name);
+
+          if (name != ".git" && !Directory.Exists(srcFolder))
+          {
+            ShellHelpers.DeletePath(dstFolder);
+          }
         }
       }
     }

@@ -2,6 +2,14 @@
 
 ## Change Log
 
+### 1.3
+
+#### Changed
+
+* Glob pattern matching no longer applies to folder names,
+  preventing issues where files were checked out of SVN but not
+  synced into the Git repository
+
 ### 1.2
 
 #### Changed
