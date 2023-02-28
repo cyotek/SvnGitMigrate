@@ -1,6 +1,7 @@
 ﻿using Cyotek.SvnMigrate;
 using Cyotek.SvnMigrate.Client;
 using Cyotek.SvnMigrate.Client.Properties;
+using DotNet.Globbing;
 using LibGit2Sharp;
 using SharpSvn;
 using System;
@@ -287,6 +288,76 @@ namespace Cyotek.Demo.Windows.Forms
       return Repository.Init(path);
     }
 
+    private MigrationOptions CreateMigrationOptions()
+    {
+      MigrationOptions options;
+
+      Uri.TryCreate(svnBranchUrlComboBox.Text, UriKind.Absolute, out Uri svnUri);
+
+      options = new MigrationOptions
+      {
+        SvnUri = svnUri,
+        RepositoryPath = gitRepositoryPathTextBox.Text,
+        WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
+        Authors = this.GetAuthorMapping(),
+        Revisions = this.GetOrderedRevisions(),
+        UseExistingRepository = useExistingRepositoryCheckBox.Checked
+      };
+
+      return options;
+    }
+
+    private void EnumerateSvnChangeSets(BackgroundWorker worker, MigrationOptions options, Action<SvnChangeset> operation)
+    {
+      SvnChangesetCollection sets;
+      Glob[] includes;
+      Glob[] excludes;
+
+      includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
+      excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
+
+      sets = options.Revisions;
+
+      for (int i = 0; i < sets.Count; i++)
+      {
+        SvnChangeset set;
+        int progress;
+        ProgressState args;
+
+        set = sets[i];
+        progress = Convert.ToInt32((double)i / sets.Count * 100);
+
+        args = new ProgressState
+        {
+          Total = sets.Count,
+          Current = i + 1,
+          Changeset = set
+        };
+
+        if (string.IsNullOrEmpty(set.Author.EmailAddress))
+        {
+          set.Author = options.Authors.GetMapping(set.Author.Name);
+        }
+
+        if (this.ShouldCheckout(set, includes, excludes))
+        {
+          worker.ReportProgress(progress, args);
+
+          operation(set);
+        }
+        else
+        {
+          args.Changeset = null;
+          worker.ReportProgress(progress, args);
+        }
+
+        if (worker.CancellationPending)
+        {
+          throw new OperationCanceledException();
+        }
+      }
+    }
+
     private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       this.Close();
@@ -512,66 +583,25 @@ namespace Cyotek.Demo.Windows.Forms
       includes = this.GetGlobs(includesTextBox);
       excludes = this.GetGlobs(excludesTextBox);
 
-      sets = options.Revisions;
-
       this.CreateGitRepository(gitPath);
 
-      for (int i = 0; i < sets.Count; i++)
+      this.EnumerateSvnChangeSets(migrateBackgroundWorker, options, set =>
       {
-        SvnChangeset set;
-        int progress;
-        ProgressState args;
+        this.Checkout(svnUri, set, workPath);
+        SimpleFolderSync.SyncFolders(workPath, gitPath, includes, excludes);
 
-        set = sets[i];
-        progress = Convert.ToInt32((double)i / sets.Count * 100);
-
-        args = new ProgressState
+        try
         {
-          Total = sets.Count,
-          Current = i + 1,
-          Changeset = set
-        };
-
-        if (string.IsNullOrEmpty(set.Author.EmailAddress))
-        {
-          set.Author = options.Authors.GetMapping(set.Author.Name);
+          this.Commit(gitPath, set);
         }
-
-        if (this.ShouldCheckout(set, includes, excludes))
+        catch (EmptyCommitException)
         {
-          migrateBackgroundWorker.ReportProgress(progress, args);
-
-          this.Checkout(svnUri, set, workPath);
-          SimpleFolderSync.SyncFolders(workPath, gitPath, includes, excludes);
-
-          try
-          {
-            this.Commit(gitPath, set);
-          }
-          catch (EmptyCommitException)
-          {
-            // ignore, if we get this the user has
-            // disabled the option to allow empty commits
-          }
+          // ignore, if we get this the user has
+          // disabled the option to allow empty commits
         }
-        else
-        {
-          args.Changeset = null;
-          migrateBackgroundWorker.ReportProgress(progress, args);
-        }
-
-        if (migrateBackgroundWorker.CancellationPending)
-        {
-          throw new ApplicationException("User cancelled operation.");
-        }
-      }
+      });
 
       ShellHelpers.DeletePath(workPath);
-    }
-
-    private bool ShouldCheckout(SvnChangeset set, StringCollection includeGlobs, StringCollection excludeGlobs)
-    {
-      return GlobMatcher.IsIncluded(set.ChangedPaths, includeGlobs) && !GlobMatcher.IsExcluded(set.ChangedPaths, excludeGlobs);
     }
 
     private void MigrateBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -608,17 +638,7 @@ namespace Cyotek.Demo.Windows.Forms
     {
       MigrationOptions options;
 
-      Uri.TryCreate(svnBranchUrlComboBox.Text, UriKind.Absolute, out Uri svnUri);
-
-      options = new MigrationOptions
-      {
-        SvnUri = svnUri,
-        RepositoryPath = gitRepositoryPathTextBox.Text,
-        WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
-        Authors = this.GetAuthorMapping(),
-        Revisions = this.GetOrderedRevisions(),
-        UseExistingRepository = useExistingRepositoryCheckBox.Checked
-      };
+      options = this.CreateMigrationOptions();
 
       if (this.ValidateOptions(options))
       {
@@ -710,6 +730,26 @@ namespace Cyotek.Demo.Windows.Forms
 
       this.UpdateSelectionCount();
     }
+
+    private bool ShouldCheckout(SvnChangeset set, Glob[] includeGlobs, Glob[] excludeGlobs)
+    {
+      bool result;
+
+      result = false;
+
+      foreach (string fileName in set.ChangedPaths)
+      {
+        if (GlobMatcher.ShouldInclude(fileName, includeGlobs, excludeGlobs))
+        {
+          result = true;
+          break;
+        }
+      }
+
+      return result;
+    }
+
+
 
     private void SvnBranchUrlTextBox_TextChanged(object sender, EventArgs e)
     {
