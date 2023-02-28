@@ -10,7 +10,7 @@ SET RELDIR=gui\bin\Release\
 
 CD %SCRIPTPATH%
 
-CALL %CTKBLDROOT%setupEnv.cmd
+CALL %CTKBLDROOT%\setupEnv.cmd
 
 REM Build and sign the file
 %msbuildexe% %SLNNAME% /p:Configuration=Release /verbosity:minimal /nologo /t:Clean,Build
@@ -19,17 +19,19 @@ IF EXIST dist RMDIR dist /Q /S
 
 IF NOT EXIST dist MKDIR dist
 
-COPY /y %RELDIR%ctksvnmg.exe                      .\dist\ctksvnmg.exe
-COPY /y %RELDIR%ctksvnmg.exe.config               .\dist\ctksvnmg.exe.config
-COPY /y %RELDIR%Cyotek.SvnMigrate.dll             .\dist\Cyotek.SvnMigrate.dll
-COPY /y %RELDIR%Cyotek.SvnMigrate.dll             .\dist\Cyotek.SvnMigrate.dll
-COPY /y %RELDIR%Cyotek.Windows.Forms.TabList.dll  .\dist\Cyotek.Windows.Forms.TabList.dll
-COPY /y %RELDIR%DotNet.Glob.dll                   .\dist\DotNet.Glob.dll
-COPY /y %RELDIR%LibGit2Sharp.dll                  .\dist\LibGit2Sharp.dll
-COPY /y %RELDIR%LibGit2Sharp.dll.config           .\dist\LibGit2Sharp.dll.config
-COPY /y %RELDIR%SharpSvn.dll                      .\dist\SharpSvn.dll
-COPY /y %RELDIR%SharpSvn.UI.dll                   .\dist\SharpSvn.UI.dll
-COPY /y %RELDIR%SharpPlink-Win32.svnExe           .\dist\SharpPlink-Win32.svnExe
+COPY /y %RELDIR%ctksvnmg.exe                      .\dist
+COPY /y %RELDIR%ctksvnmg.exe.config               .\dist
+COPY /y %RELDIR%Cyotek.SvnMigrate.dll             .\dist
+COPY /y %RELDIR%Cyotek.Windows.Forms.TabList.dll  .\dist
+COPY /y %RELDIR%DotNet.Glob.dll                   .\dist
+COPY /y %RELDIR%LibGit2Sharp.dll                  .\dist
+COPY /y %RELDIR%LibGit2Sharp.dll.config           .\dist
+COPY /y %RELDIR%SharpSvn.dll                      .\dist
+COPY /y %RELDIR%SharpSvn.UI.dll                   .\dist
+COPY /y %RELDIR%SharpPlink-Win32.svnExe           .\dist
+COPY /y %RELDIR%README.md                         .\dist
+COPY /y %RELDIR%CHANGELOG.md                      .\dist
+COPY /y %RELDIR%LICENSE.txt                       .\dist
 
 XCOPY %RELDIR%lib .\dist\lib /E /V /I /Q /H /K
 

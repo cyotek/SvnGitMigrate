@@ -80,9 +80,11 @@ namespace Cyotek.Demo.Windows.Forms
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
       this.commandPanel = new System.Windows.Forms.Panel();
+      this.previewButton = new System.Windows.Forms.Button();
       this.previousButton = new System.Windows.Forms.Button();
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
+      this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -390,7 +392,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.migrateButton.Location = new System.Drawing.Point(763, 6);
       this.migrateButton.Name = "migrateButton";
       this.migrateButton.Size = new System.Drawing.Size(75, 23);
-      this.migrateButton.TabIndex = 2;
+      this.migrateButton.TabIndex = 3;
       this.migrateButton.Text = "&Migrate";
       this.migrateButton.UseVisualStyleBackColor = true;
       this.migrateButton.Click += new System.EventHandler(this.MigrateButton_Click);
@@ -580,6 +582,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // commandPanel
       // 
+      this.commandPanel.Controls.Add(this.previewButton);
       this.commandPanel.Controls.Add(this.previousButton);
       this.commandPanel.Controls.Add(this.nextButton);
       this.commandPanel.Controls.Add(this.migrateButton);
@@ -589,11 +592,23 @@ namespace Cyotek.Demo.Windows.Forms
       this.commandPanel.Size = new System.Drawing.Size(845, 41);
       this.commandPanel.TabIndex = 2;
       // 
+      // previewButton
+      // 
+      this.previewButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.previewButton.Location = new System.Drawing.Point(676, 6);
+      this.previewButton.Margin = new System.Windows.Forms.Padding(3, 3, 9, 3);
+      this.previewButton.Name = "previewButton";
+      this.previewButton.Size = new System.Drawing.Size(75, 23);
+      this.previewButton.TabIndex = 2;
+      this.previewButton.Text = "Pre&view";
+      this.previewButton.UseVisualStyleBackColor = true;
+      this.previewButton.Click += new System.EventHandler(this.PreviewButton_Click);
+      // 
       // previousButton
       // 
       this.previousButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.previousButton.Enabled = false;
-      this.previousButton.Location = new System.Drawing.Point(595, 6);
+      this.previousButton.Location = new System.Drawing.Point(508, 6);
       this.previousButton.Name = "previousButton";
       this.previousButton.Size = new System.Drawing.Size(75, 23);
       this.previousButton.TabIndex = 0;
@@ -604,7 +619,7 @@ namespace Cyotek.Demo.Windows.Forms
       // nextButton
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.nextButton.Location = new System.Drawing.Point(676, 6);
+      this.nextButton.Location = new System.Drawing.Point(589, 6);
       this.nextButton.Margin = new System.Windows.Forms.Padding(3, 3, 9, 3);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(75, 23);
@@ -616,6 +631,14 @@ namespace Cyotek.Demo.Windows.Forms
       // selectionChangeTimer
       // 
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
+      // 
+      // previewBackgroundWorker
+      // 
+      this.previewBackgroundWorker.WorkerReportsProgress = true;
+      this.previewBackgroundWorker.WorkerSupportsCancellation = true;
+      this.previewBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreviewBackgroundWorker_DoWork);
+      this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
+      this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
       // 
       // MainForm
       // 
@@ -714,6 +737,8 @@ namespace Cyotek.Demo.Windows.Forms
     private Cyotek.Windows.Forms.TabListPage globsTabListPage;
     private System.Windows.Forms.TextBox includesTextBox;
     private System.Windows.Forms.TextBox excludesTextBox;
+    private System.Windows.Forms.Button previewButton;
+    private System.ComponentModel.BackgroundWorker previewBackgroundWorker;
   }
 }
 

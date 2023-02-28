@@ -2,6 +2,17 @@
 
 ## Change Log
 
+### 1.4
+
+#### Added
+
+* Added simple preview
+
+#### Fixed
+
+* Includes and excludes weren't correctly processing, meaning entire commits
+  could be incorrectly excluded
+
 ### 1.3
 
 #### Changed

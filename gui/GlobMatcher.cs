@@ -1,6 +1,6 @@
 ﻿// Cyotek Svn2Git Migration Utility
 
-// Copyright © 2021 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2021-2023 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -19,7 +19,7 @@ namespace Cyotek.SvnMigrate.Client
   {
     #region Private Fields
 
-    private static readonly Dictionary<string, Glob> _globCache = new Dictionary<string, Glob>();
+    private static readonly Dictionary<string, Glob> _globCache;
 
     #endregion Private Fields
 
@@ -141,6 +141,11 @@ namespace Cyotek.SvnMigrate.Client
       }
 
       return results;
+    }
+
+    public static bool ShouldInclude(string fileName, Glob[] includeGlobs, Glob[] excludeGlobs)
+    {
+      return GlobMatcher.IsIncluded(fileName, includeGlobs) && !GlobMatcher.IsExcluded(fileName, excludeGlobs);
     }
 
     #endregion Public Methods
