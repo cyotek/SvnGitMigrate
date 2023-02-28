@@ -37,7 +37,7 @@ namespace Cyotek.SvnMigrate.Client
     {
       foreach (string srcFile in Directory.EnumerateFiles(src))
       {
-        if (GlobMatcher.IsIncluded(srcFile, includes) && !GlobMatcher.IsExcluded(srcFile, excludes))
+        if (GlobMatcher.ShouldInclude(srcFile, includes, excludes))
         {
           string dstFile;
           FileInfo dstInfo;

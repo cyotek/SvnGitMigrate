@@ -60,8 +60,8 @@ For example, if you had a folder named `/src/Scratch` in your
 repository which you didn't want migrated, then you could enter
 the glob `/**/Scratch` to the exclusion list.
 
-Don't use backslashes in globs, the migration tool will
-automatically handle conversion from Windows paths.
+> Don't use backslashes in globs, the migration tool will
+> automatically handle conversion from Windows paths.
 
 ## Selecting the Git Repository
 
@@ -70,24 +70,41 @@ automatically handle conversion from Windows paths.
 Enter the local folder where the Git repository will be located.
 
 If you are creating a new repository, ensure the folder is empty
-the _Use existing repository_ option is unchecked.
+the **Use existing repository** option is unchecked.
 
 If you want to append the commits to an existing repository,
 ensure the folder points to the existing repository and check
-the _Use existing repository_ option. This can be useful if you
+the **Use existing repository option**. This can be useful if you
 are having to build a Git repository from multiple sources, e.g.
 if a root folder was renamed or moved.
 
+## Preview
+
+![Generating an optional preview][step5]
+
+Click the **Preview** button to display a simplified preview.
+This will scan the revisions and test changed files against
+inclusion and exclusion patterns, then print a list of all
+matched files. This can be very useful to make sure you have
+your patterns set right, and also to review file lists in case
+you see something that needs adding to the exclusions.
+
+> Note that this isn't bullet proof, for example in my testing
+> it didn't show a large number of files from an initial
+> migration into SVN from SourceSafe.
+
 ## Migrate
 
-![Selecting the Git Repository][step5]
+![Selecting the Git Repository][step6]
 
-Click the Migrate button to start the process. For each selected
-revision, this tool will check that out, sync the contents with
-the Git repository, then perform a commit.
+Click the **Migrate** button to start the process. For each
+selected revision, this tool will check that out, sync the
+contents with the Git repository (honoring include/exclude
+rules), then perform a commit.
 
 [step1]: res/step1.png
 [step2]: res/step2.png
 [step3]: res/step3.png
 [step4]: res/step4.png
 [step5]: res/step5.png
+[step6]: res/step6.png
