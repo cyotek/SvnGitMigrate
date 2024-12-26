@@ -347,29 +347,32 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void Commit(string gitPath, SvnChangeset set, Uri svnUri, Template messageTemplate)
+    private void Commit(string gitPath, SvnChangeset set, Uri svnUri, Template messageTemplate, CommitOptions commitOptions)
     {
-      CommitOptions commitOptions;
-
-      commitOptions = new CommitOptions
-      {
-        AllowEmptyCommit = Settings.Default.AllowEmptyCommits,
-      };
-
       using (Repository repo = new Repository(gitPath))
       {
-        Signature author;
-        Signature committer;
-        CommitMessageTemplateModel model;
-        Commit commit;
-
         Commands.Stage(repo, "*");
 
-        author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
-        committer = author;
-        model = CreateCommitMessageTemplateModel(set, svnUri);
+        if (commitOptions.AllowEmptyCommit || repo.Index.Count > 0)
+        {
+          Signature author;
+          Signature committer;
+          CommitMessageTemplateModel model;
 
-        commit = repo.Commit(messageTemplate.Render(model), author, committer, commitOptions);
+          author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
+          committer = author;
+          model = CreateCommitMessageTemplateModel(set, svnUri);
+
+          try
+          {
+            _ = repo.Commit(messageTemplate.Render(model), author, committer, commitOptions);
+          }
+          catch (EmptyCommitException)
+          {
+            // ignore, if we get this the user has
+            // disabled the option to allow empty commits
+          }
+        }
       }
     }
 
@@ -716,6 +719,7 @@ namespace Cyotek.Demo.Windows.Forms
       StringCollection includes;
       StringCollection excludes;
       Template template;
+      CommitOptions commitOptions;
 
       options = (MigrationOptions)e.Argument;
       svnUri = options.SvnUri;
@@ -724,6 +728,10 @@ namespace Cyotek.Demo.Windows.Forms
       includes = this.GetGlobs(includesTextBox);
       excludes = this.GetGlobs(excludesTextBox);
       template = CreateCommitMessageTemplate(options);
+      commitOptions = new CommitOptions
+      {
+        AllowEmptyCommit = Settings.Default.AllowEmptyCommits,
+      };
 
       this.CreateGitRepository(gitPath);
 
@@ -732,15 +740,7 @@ namespace Cyotek.Demo.Windows.Forms
         this.Checkout(svnUri, set, workPath);
         SimpleFolderSync.SyncFolders(workPath, gitPath, includes, excludes);
 
-        try
-        {
-          this.Commit(gitPath, set, svnUri, template);
-        }
-        catch (EmptyCommitException)
-        {
-          // ignore, if we get this the user has
-          // disabled the option to allow empty commits
-        }
+        this.Commit(gitPath, set, svnUri, template, commitOptions);
       });
 
       ShellHelpers.DeletePath(workPath);
