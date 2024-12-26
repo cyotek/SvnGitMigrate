@@ -599,19 +599,13 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
-    private void ListPreviewFiles(StringBuilder sb, string basePath, StringCollection fileNames, string operation, Glob[] includes, Glob[] excludes)
+    private void ListPreviewFiles(StringBuilder sb, StringCollection fileNames, string operation, Glob[] includes, Glob[] excludes)
     {
       foreach (string fileName in fileNames)
       {
         if (GlobMatcher.ShouldInclude(fileName, includes, excludes))
         {
-          string shortName;
-
-          shortName = fileName.StartsWith(basePath, StringComparison.OrdinalIgnoreCase)
-            ? fileName.Substring(basePath.Length)
-            : fileName;
-
-          sb.AppendFormat("\t{0}: {1}\r\n", operation, shortName);
+          sb.AppendFormat("\t{0}: {1}\r\n", operation, fileName);
         }
       }
     }
@@ -833,14 +827,12 @@ namespace Cyotek.Demo.Windows.Forms
       Glob[] includes;
       Glob[] excludes;
       StringBuilder sb;
-      string basePath;
       Template template;
 
       options = (MigrationOptions)e.Argument;
       includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
       excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
       sb = new StringBuilder();
-      basePath = options.SvnBasePath;
       template = CreateCommitMessageTemplate(options);
 
       this.EnumerateSvnChangeSets(previewBackgroundWorker, options, set =>
@@ -849,9 +841,9 @@ namespace Cyotek.Demo.Windows.Forms
 
         sb.AppendFormat("{0} [{1}]\r\n{2}\r\n", set.Revision, set.Time, template.Render(model).Replace("\n", " ").Replace("\r", ""));
 
-        this.ListPreviewFiles(sb, basePath, set.RemovedPaths, "DEL", includes, excludes);
-        this.ListPreviewFiles(sb, basePath, set.ModifiedPaths, "MOD", includes, excludes);
-        this.ListPreviewFiles(sb, basePath, set.NewPaths, "ADD", includes, excludes);
+        this.ListPreviewFiles(sb, set.RemovedPaths, "DEL", includes, excludes);
+        this.ListPreviewFiles(sb, set.ModifiedPaths, "MOD", includes, excludes);
+        this.ListPreviewFiles(sb, set.NewPaths, "ADD", includes, excludes);
       });
 
       if (sb.Length == 0)
