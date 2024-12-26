@@ -77,10 +77,22 @@ namespace Cyotek.Demo.Windows.Forms
     {
       string basePath = svnUri.AbsolutePath;
 
-      // TODO: Are there other patterns than svn/{reponame}/? if so, this is broke
-      if (basePath.StartsWith("/svn/", StringComparison.OrdinalIgnoreCase))
+      // TODO: My old HTTP based SVN server had /svn/ in the URL, which needed stripping
+      // My new SVN server uses the SVN protocol, which doesn't have this
+      // I am unaware if there are other patterns in which case this probably should
+      // be some form of setting
+
+      if (svnUri.Scheme == "svn")
       {
-        basePath = basePath.Substring(basePath.IndexOf('/', 5));
+        basePath = basePath.Substring(basePath.IndexOf('/', 1));
+      }
+      else
+      {
+        // TODO: Are there other patterns than svn/{reponame}/? if so, this is broke
+        if (basePath.StartsWith("/svn/", StringComparison.OrdinalIgnoreCase))
+        {
+          basePath = basePath.Substring(basePath.IndexOf('/', 5));
+        }
       }
 
       return basePath;
