@@ -779,9 +779,16 @@ namespace Cyotek.Demo.Windows.Forms
         MessageBox.Show(string.Format("{0} complete.", action), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
 
-      if (e.Result != null)
+      try
       {
-        logTextBox.Text = e.Result.ToString();
+        if (e.Result != null)
+        {
+          logTextBox.Text = e.Result.ToString();
+        }
+      }
+      catch (Exception ex)
+      {
+        logTextBox.Text = ex.Message;
       }
 
       this.ResetProgressUi();
