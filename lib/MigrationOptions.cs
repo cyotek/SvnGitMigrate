@@ -18,6 +18,8 @@ namespace Cyotek.SvnMigrate
 
     public UserCollection Authors { get; set; } = new UserCollection();
 
+    public string CommitMessageTemplate { get; set; }
+
     public string RepositoryPath { get; set; }
 
     public SvnChangesetCollection Revisions { get; set; }

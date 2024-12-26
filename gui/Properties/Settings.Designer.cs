@@ -151,5 +151,17 @@ namespace Cyotek.SvnMigrate.Client.Properties {
                 this["SvnBasePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CommitMessageTemplate {
+            get {
+                return ((string)(this["CommitMessageTemplate"]));
+            }
+            set {
+                this["CommitMessageTemplate"] = value;
+            }
+        }
     }
 }

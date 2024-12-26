@@ -39,6 +39,7 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.SplitContainer globsSplitContainer;
       System.Windows.Forms.GroupBox includesGroupBox;
       System.Windows.Forms.GroupBox excludesGroupBox;
+      System.Windows.Forms.GroupBox templateGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.refreshBasePathButton = new System.Windows.Forms.Button();
       this.basePathTextBox = new System.Windows.Forms.TextBox();
@@ -58,6 +59,9 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
       this.includesTextBox = new System.Windows.Forms.TextBox();
       this.excludesTextBox = new System.Windows.Forms.TextBox();
+      this.templateSplitContainer = new System.Windows.Forms.SplitContainer();
+      this.templateTextBox = new System.Windows.Forms.TextBox();
+      this.templatePreviewTextBox = new System.Windows.Forms.TextBox();
       this.migrateButton = new System.Windows.Forms.Button();
       this.migrateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -99,6 +103,7 @@ namespace Cyotek.Demo.Windows.Forms
       globsSplitContainer = new System.Windows.Forms.SplitContainer();
       includesGroupBox = new System.Windows.Forms.GroupBox();
       excludesGroupBox = new System.Windows.Forms.GroupBox();
+      templateGroupBox = new System.Windows.Forms.GroupBox();
       repositoryGroupBox.SuspendLayout();
       revisionsGroupBox.SuspendLayout();
       logGroupBox.SuspendLayout();
@@ -110,6 +115,11 @@ namespace Cyotek.Demo.Windows.Forms
       globsSplitContainer.SuspendLayout();
       includesGroupBox.SuspendLayout();
       excludesGroupBox.SuspendLayout();
+      templateGroupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.templateSplitContainer)).BeginInit();
+      this.templateSplitContainer.Panel1.SuspendLayout();
+      this.templateSplitContainer.Panel2.SuspendLayout();
+      this.templateSplitContainer.SuspendLayout();
       this.statusStrip.SuspendLayout();
       this.menuStrip.SuspendLayout();
       this.tabList.SuspendLayout();
@@ -418,6 +428,59 @@ namespace Cyotek.Demo.Windows.Forms
       this.excludesTextBox.Size = new System.Drawing.Size(675, 183);
       this.excludesTextBox.TabIndex = 2;
       // 
+      // templateGroupBox
+      // 
+      templateGroupBox.Controls.Add(this.templateSplitContainer);
+      templateGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      templateGroupBox.Location = new System.Drawing.Point(0, 72);
+      templateGroupBox.Name = "templateGroupBox";
+      templateGroupBox.Size = new System.Drawing.Size(687, 347);
+      templateGroupBox.TabIndex = 3;
+      templateGroupBox.TabStop = false;
+      templateGroupBox.Text = "&Commit Message Template:";
+      // 
+      // templateSplitContainer
+      // 
+      this.templateSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templateSplitContainer.Location = new System.Drawing.Point(3, 16);
+      this.templateSplitContainer.Name = "templateSplitContainer";
+      this.templateSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      // 
+      // templateSplitContainer.Panel1
+      // 
+      this.templateSplitContainer.Panel1.Controls.Add(this.templateTextBox);
+      // 
+      // templateSplitContainer.Panel2
+      // 
+      this.templateSplitContainer.Panel2.Controls.Add(this.templatePreviewTextBox);
+      this.templateSplitContainer.Size = new System.Drawing.Size(681, 328);
+      this.templateSplitContainer.SplitterDistance = 157;
+      this.templateSplitContainer.TabIndex = 2;
+      // 
+      // templateTextBox
+      // 
+      this.templateTextBox.AcceptsReturn = true;
+      this.templateTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templateTextBox.Location = new System.Drawing.Point(0, 0);
+      this.templateTextBox.Multiline = true;
+      this.templateTextBox.Name = "templateTextBox";
+      this.templateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.templateTextBox.Size = new System.Drawing.Size(681, 157);
+      this.templateTextBox.TabIndex = 1;
+      this.templateTextBox.TextChanged += new System.EventHandler(this.TemplateTextBox_TextChanged);
+      // 
+      // templatePreviewTextBox
+      // 
+      this.templatePreviewTextBox.AcceptsReturn = true;
+      this.templatePreviewTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templatePreviewTextBox.Location = new System.Drawing.Point(0, 0);
+      this.templatePreviewTextBox.Multiline = true;
+      this.templatePreviewTextBox.Name = "templatePreviewTextBox";
+      this.templatePreviewTextBox.ReadOnly = true;
+      this.templatePreviewTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.templatePreviewTextBox.Size = new System.Drawing.Size(681, 167);
+      this.templatePreviewTextBox.TabIndex = 2;
+      // 
       // migrateButton
       // 
       this.migrateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -596,6 +659,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // gitTabListPage
       // 
+      this.gitTabListPage.Controls.Add(templateGroupBox);
       this.gitTabListPage.Controls.Add(gitRepositoryGroupBox);
       this.gitTabListPage.Name = "gitTabListPage";
       this.gitTabListPage.Size = new System.Drawing.Size(687, 419);
@@ -716,6 +780,13 @@ namespace Cyotek.Demo.Windows.Forms
       includesGroupBox.PerformLayout();
       excludesGroupBox.ResumeLayout(false);
       excludesGroupBox.PerformLayout();
+      templateGroupBox.ResumeLayout(false);
+      this.templateSplitContainer.Panel1.ResumeLayout(false);
+      this.templateSplitContainer.Panel1.PerformLayout();
+      this.templateSplitContainer.Panel2.ResumeLayout(false);
+      this.templateSplitContainer.Panel2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.templateSplitContainer)).EndInit();
+      this.templateSplitContainer.ResumeLayout(false);
       this.statusStrip.ResumeLayout(false);
       this.statusStrip.PerformLayout();
       this.menuStrip.ResumeLayout(false);
@@ -784,6 +855,9 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.Button refreshBasePathButton;
     private System.Windows.Forms.ToolTip toolTip;
     private Cyotek.Windows.Forms.TabListPage logTabListPage;
+    private System.Windows.Forms.SplitContainer templateSplitContainer;
+    private System.Windows.Forms.TextBox templateTextBox;
+    private System.Windows.Forms.TextBox templatePreviewTextBox;
   }
 }
 

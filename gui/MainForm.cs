@@ -3,12 +3,15 @@ using Cyotek.SvnMigrate.Client;
 using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
+using Scriban;
 using SharpSvn;
+using SharpSvn.UI;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -27,6 +30,23 @@ namespace Cyotek.Demo.Windows.Forms
   internal partial class MainForm : BaseForm
   {
     #region Private Fields
+
+    private static readonly string _defaultCommitTemplate = @"{{log}}
+
+(Migrated from SVN branch {{repository_uri.absolute_path}}, revision {{revision}})";
+
+    private static readonly CommitMessageTemplateModel _previewModel = new CommitMessageTemplateModel
+    {
+      Revision = 12345,
+      Timestamp = new DateTime(2024, 12, 16, 20, 9, 0),
+      Log = "This is a test commit message",
+      Author = new User
+      {
+        Name = "Richard Moss",
+        EmailAddress = "richard.moss@cyotek.com",
+      },
+      RepositoryUri = new Uri("https://svn.example.com/svn/repo"),
+    };
 
     private string _lastScannedUrl;
 
@@ -72,6 +92,29 @@ namespace Cyotek.Demo.Windows.Forms
     #endregion Protected Methods
 
     #region Private Methods
+
+    private static Template CreateCommitMessageTemplate(MigrationOptions options)
+    {
+      Template template;
+      template = string.IsNullOrWhiteSpace(options.CommitMessageTemplate)
+        ? Template.Parse(_defaultCommitTemplate)
+        : Template.Parse(options.CommitMessageTemplate);
+      return template;
+    }
+
+    private static CommitMessageTemplateModel CreateCommitMessageTemplateModel(SvnChangeset set, Uri svnUri)
+    {
+      CommitMessageTemplateModel model;
+      model = new CommitMessageTemplateModel
+      {
+        Revision = set.Revision,
+        Timestamp = set.Time,
+        Log = set.Log,
+        Author = set.Author,
+        RepositoryUri = svnUri,
+      };
+      return model;
+    }
 
     private static string DetectSvnBasePath(Uri svnUri)
     {
@@ -306,27 +349,29 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void Commit(string gitPath, SvnChangeset set)
+    private void Commit(string gitPath, SvnChangeset set, Uri svnUri, Template messageTemplate)
     {
       CommitOptions commitOptions;
 
       commitOptions = new CommitOptions
       {
-        AllowEmptyCommit = Settings.Default.AllowEmptyCommits
+        AllowEmptyCommit = Settings.Default.AllowEmptyCommits,
       };
 
       using (Repository repo = new Repository(gitPath))
       {
         Signature author;
         Signature committer;
+        CommitMessageTemplateModel model;
         Commit commit;
 
         Commands.Stage(repo, "*");
 
         author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
         committer = author;
+        model = CreateCommitMessageTemplateModel(set, svnUri);
 
-        commit = repo.Commit(set.Log, author, committer, commitOptions);
+        commit = repo.Commit(messageTemplate.Render(model), author, committer, commitOptions);
       }
     }
 
@@ -351,7 +396,8 @@ namespace Cyotek.Demo.Windows.Forms
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
         Authors = this.GetAuthorMapping(),
         Revisions = this.GetOrderedRevisions(),
-        UseExistingRepository = useExistingRepositoryCheckBox.Checked
+        UseExistingRepository = useExistingRepositoryCheckBox.Checked,
+        CommitMessageTemplate = templateTextBox.Text,
       };
 
       return options;
@@ -650,6 +696,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.LoadMru(settings);
       svnBranchUrlComboBox.Text = settings.SvnBranchUri;
       basePathTextBox.Text = settings.SvnBasePath;
+      templateTextBox.Text = settings.CommitMessageTemplate;
       gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
@@ -657,6 +704,11 @@ namespace Cyotek.Demo.Windows.Forms
       useExistingRepositoryCheckBox.Checked = settings.UseExistingRepository;
       this.LoadGlobs(includesTextBox, settings.IncludeGlobs);
       this.LoadGlobs(excludesTextBox, settings.ExcludeGlobs);
+
+      if (string.IsNullOrWhiteSpace(templateTextBox.Text))
+      {
+        this.UpdateTemplatePreview();
+      }
     }
 
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -667,6 +719,7 @@ namespace Cyotek.Demo.Windows.Forms
       string gitPath;
       StringCollection includes;
       StringCollection excludes;
+      Template template;
 
       options = (MigrationOptions)e.Argument;
       svnUri = options.SvnUri;
@@ -674,6 +727,7 @@ namespace Cyotek.Demo.Windows.Forms
       gitPath = options.RepositoryPath;
       includes = this.GetGlobs(includesTextBox);
       excludes = this.GetGlobs(excludesTextBox);
+      template = CreateCommitMessageTemplate(options);
 
       this.CreateGitRepository(gitPath);
 
@@ -684,7 +738,7 @@ namespace Cyotek.Demo.Windows.Forms
 
         try
         {
-          this.Commit(gitPath, set);
+          this.Commit(gitPath, set, svnUri, template);
         }
         catch (EmptyCommitException)
         {
@@ -778,16 +832,20 @@ namespace Cyotek.Demo.Windows.Forms
       Glob[] excludes;
       StringBuilder sb;
       string basePath;
+      Template template;
 
       options = (MigrationOptions)e.Argument;
       includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
       excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
       sb = new StringBuilder();
       basePath = options.SvnBasePath;
+      template = CreateCommitMessageTemplate(options);
 
       this.EnumerateSvnChangeSets(previewBackgroundWorker, options, set =>
       {
-        sb.AppendFormat("{0} [{1}]\r\n{2}\r\n", set.Revision, set.Time, set.Log.Replace("\n", " ").Replace("\r", ""));
+        CommitMessageTemplateModel model = CreateCommitMessageTemplateModel(set, options.SvnUri);
+
+        sb.AppendFormat("{0} [{1}]\r\n{2}\r\n", set.Revision, set.Time, template.Render(model).Replace("\n", " ").Replace("\r", ""));
 
         this.ListPreviewFiles(sb, basePath, set.RemovedPaths, "DEL", includes, excludes);
         this.ListPreviewFiles(sb, basePath, set.ModifiedPaths, "MOD", includes, excludes);
@@ -875,6 +933,7 @@ namespace Cyotek.Demo.Windows.Forms
       settings.SvnBasePath = basePathTextBox.Text;
       settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
+      settings.CommitMessageTemplate = templateTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
       settings.SvnBranchUriMru = this.GetMru();
@@ -926,6 +985,11 @@ namespace Cyotek.Demo.Windows.Forms
       nextButton.Enabled = tabList.SelectedIndex < tabList.TabListPageCount - 1;
     }
 
+    private void TemplateTextBox_TextChanged(object sender, EventArgs e)
+    {
+      this.UpdateTemplatePreview();
+    }
+
     private void UpdateMru()
     {
       string uri;
@@ -954,6 +1018,23 @@ namespace Cyotek.Demo.Windows.Forms
     private void UpdateSelectionCount()
     {
       revisionCountToolStripStatusLabel.Text = string.Format("{0} Revisions ({1} Selected)", revisionsListView.Items.Count, revisionsListView.CheckedIndices.Count);
+    }
+
+    private void UpdateTemplatePreview()
+    {
+      try
+
+      {
+        string template = !string.IsNullOrWhiteSpace(templateTextBox.Text)
+          ? templateTextBox.Text
+          : _defaultCommitTemplate;
+
+        templatePreviewTextBox.Text = Template.Parse(template).Render(_previewModel);
+      }
+      catch (Exception ex)
+      {
+        templatePreviewTextBox.Text = ex.Message;
+      }
     }
 
     private bool ValidateOptions(MigrationOptions options)
