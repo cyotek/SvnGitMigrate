@@ -776,6 +776,11 @@ namespace Cyotek.Demo.Windows.Forms
         this.ListPreviewFiles(sb, basePath, set.NewPaths, "ADD", includes, excludes);
       });
 
+      if (sb.Length == 0)
+      {
+        sb.AppendLine("Nothing found, is the base path or inclusions/exclusions correct?");
+      }
+
       e.Result = sb.ToString();
     }
 
