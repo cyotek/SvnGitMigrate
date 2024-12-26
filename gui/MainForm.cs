@@ -8,6 +8,7 @@ using SharpSvn;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -137,6 +138,13 @@ namespace Cyotek.Demo.Windows.Forms
       }
 
       return basePath;
+    }
+
+    private static Color GetRevisionColor(SvnChangeset changeset)
+    {
+      return changeset.ChangedPaths.Count > 0
+        ? SystemColors.ControlText
+        : SystemColors.GrayText;
     }
 
     private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -293,7 +301,8 @@ namespace Cyotek.Demo.Windows.Forms
                 changeset.Author.ToString(),
                 changeset.Time.ToString(),
                 changeset.Log
-              }
+              },
+              ForeColor = GetRevisionColor(changeset)
             });
 
           this.AddBlankMapping(changeset.Author.Name);
