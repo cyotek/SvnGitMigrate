@@ -160,8 +160,8 @@ namespace Cyotek.Demo.Windows.Forms
             Author = new User { Name = args.Author },
             Revision = args.Revision,
             Time = args.Time,
-            Log = args.LogMessage,
-            IsSelected = true
+            Log = args.LogMessage.Trim(),
+            IsSelected = true,
           };
 
           foreach (SvnChangeItem change in args.ChangedPaths)
