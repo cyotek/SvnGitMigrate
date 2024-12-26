@@ -2,7 +2,7 @@
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -21,6 +21,8 @@ namespace Cyotek.SvnMigrate
     public string RepositoryPath { get; set; }
 
     public SvnChangesetCollection Revisions { get; set; }
+
+    public string SvnBasePath { get; set; }
 
     public Uri SvnUri { get; set; }
 

@@ -40,6 +40,8 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox includesGroupBox;
       System.Windows.Forms.GroupBox excludesGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+      this.basePathTextBox = new System.Windows.Forms.TextBox();
+      this.label2 = new System.Windows.Forms.Label();
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.svnBranchUrlComboBox = new System.Windows.Forms.ComboBox();
@@ -85,6 +87,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+      this.refreshBasePathButton = new System.Windows.Forms.Button();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -119,15 +122,36 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       repositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      repositoryGroupBox.Controls.Add(this.refreshBasePathButton);
+      repositoryGroupBox.Controls.Add(this.basePathTextBox);
+      repositoryGroupBox.Controls.Add(this.label2);
       repositoryGroupBox.Controls.Add(this.refreshButton);
       repositoryGroupBox.Controls.Add(this.label1);
       repositoryGroupBox.Controls.Add(this.svnBranchUrlComboBox);
       repositoryGroupBox.Location = new System.Drawing.Point(3, 3);
       repositoryGroupBox.Name = "repositoryGroupBox";
-      repositoryGroupBox.Size = new System.Drawing.Size(681, 54);
+      repositoryGroupBox.Size = new System.Drawing.Size(681, 76);
       repositoryGroupBox.TabIndex = 0;
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
+      // 
+      // basePathTextBox
+      // 
+      this.basePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.basePathTextBox.Location = new System.Drawing.Point(81, 46);
+      this.basePathTextBox.Name = "basePathTextBox";
+      this.basePathTextBox.Size = new System.Drawing.Size(565, 20);
+      this.basePathTextBox.TabIndex = 4;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 49);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(59, 13);
+      this.label2.TabIndex = 3;
+      this.label2.Text = "Base &Path:";
       // 
       // refreshButton
       // 
@@ -165,9 +189,9 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       revisionsGroupBox.Controls.Add(this.revisionsListView);
-      revisionsGroupBox.Location = new System.Drawing.Point(3, 63);
+      revisionsGroupBox.Location = new System.Drawing.Point(3, 85);
       revisionsGroupBox.Name = "revisionsGroupBox";
-      revisionsGroupBox.Size = new System.Drawing.Size(681, 353);
+      revisionsGroupBox.Size = new System.Drawing.Size(681, 331);
       revisionsGroupBox.TabIndex = 1;
       revisionsGroupBox.TabStop = false;
       revisionsGroupBox.Text = "Revisions";
@@ -188,7 +212,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.revisionsListView.HideSelection = false;
       this.revisionsListView.Location = new System.Drawing.Point(6, 19);
       this.revisionsListView.Name = "revisionsListView";
-      this.revisionsListView.Size = new System.Drawing.Size(669, 328);
+      this.revisionsListView.Size = new System.Drawing.Size(669, 306);
       this.revisionsListView.TabIndex = 0;
       this.revisionsListView.UseCompatibleStateImageBehavior = false;
       this.revisionsListView.View = System.Windows.Forms.View.Details;
@@ -640,6 +664,17 @@ namespace Cyotek.Demo.Windows.Forms
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
       // 
+      // refreshBasePathButton
+      // 
+      this.refreshBasePathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.refreshBasePathButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
+      this.refreshBasePathButton.Location = new System.Drawing.Point(652, 46);
+      this.refreshBasePathButton.Name = "refreshBasePathButton";
+      this.refreshBasePathButton.Size = new System.Drawing.Size(23, 23);
+      this.refreshBasePathButton.TabIndex = 5;
+      this.refreshBasePathButton.UseVisualStyleBackColor = true;
+      this.refreshBasePathButton.Click += new System.EventHandler(this.RefreshBasePathButton_Click);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -739,6 +774,9 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox excludesTextBox;
     private System.Windows.Forms.Button previewButton;
     private System.ComponentModel.BackgroundWorker previewBackgroundWorker;
+    private System.Windows.Forms.TextBox basePathTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Button refreshBasePathButton;
   }
 }
 

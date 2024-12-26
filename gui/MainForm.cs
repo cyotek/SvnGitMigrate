@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2023 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -73,14 +73,14 @@ namespace Cyotek.Demo.Windows.Forms
 
     #region Private Methods
 
-    private static string GetBasePath(Uri svnUri)
+    private static string DetectSvnBasePath(Uri svnUri)
     {
       string basePath = svnUri.AbsolutePath;
 
       // TODO: My old HTTP based SVN server had /svn/ in the URL, which needed stripping
       // My new SVN server uses the SVN protocol, which doesn't have this
-      // I am unaware if there are other patterns in which case this probably should
-      // be some form of setting
+      // I am unaware if there are other patterns so this is now driven by
+      // a user setting, but hopefully auto detect will work
 
       if (svnUri.Scheme == "svn")
       {
@@ -143,7 +143,7 @@ namespace Cyotek.Demo.Windows.Forms
       Settings.Default.AllowEmptyCommits = allowEmptyCommitsToolStripMenuItem.Checked;
     }
 
-    private SvnChangesetCollection BuildRevisionsList(Uri svnUri)
+    private SvnChangesetCollection BuildRevisionsList(Uri svnUri, string basePath)
     {
       SvnChangesetCollection sets;
 
@@ -151,8 +151,6 @@ namespace Cyotek.Demo.Windows.Forms
 
       using (SvnClient svn = new SvnClient())
       {
-        string basePath;
-
         svn.Log(svnUri, (o, args) =>
         {
           SvnChangeset changeset;
@@ -165,8 +163,6 @@ namespace Cyotek.Demo.Windows.Forms
             Log = args.LogMessage,
             IsSelected = true
           };
-
-          basePath = GetBasePath(svnUri);
 
           foreach (SvnChangeItem change in args.ChangedPaths)
           {
@@ -217,19 +213,14 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void ChangesetBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
     {
-      string url;
+      MigrationOptions options;
       SvnChangesetCollection changesets;
 
-      url = (string)e.Argument;
+      options = (MigrationOptions)e.Argument;
 
-      if (!string.IsNullOrEmpty(url))
-      {
-        changesets = this.BuildRevisionsList(new Uri(url));
-      }
-      else
-      {
-        changesets = new SvnChangesetCollection();
-      }
+      changesets = options.SvnUri != null
+        ? this.BuildRevisionsList(options.SvnUri, options.SvnBasePath)
+        : new SvnChangesetCollection();
 
       e.Result = changesets;
     }
@@ -355,6 +346,7 @@ namespace Cyotek.Demo.Windows.Forms
       options = new MigrationOptions
       {
         SvnUri = svnUri,
+        SvnBasePath = this.GetOrDefineSvnBasePath(svnUri),
         RepositoryPath = gitRepositoryPathTextBox.Text,
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
         Authors = this.GetAuthorMapping(),
@@ -507,6 +499,13 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
+    private string GetOrDefineSvnBasePath(Uri svnUri)
+    {
+      return string.IsNullOrWhiteSpace(basePathTextBox.Text)
+        ? DetectSvnBasePath(svnUri)
+        : basePathTextBox.Text;
+    }
+
     private SvnChangesetCollection GetOrderedRevisions()
     {
       SvnChangesetCollection revisions;
@@ -619,9 +618,27 @@ namespace Cyotek.Demo.Windows.Forms
 
       if (!string.Equals(uri, _lastScannedUrl))
       {
+        Uri svnUri;
+
         this.PrepareProgressUi("Building revision list...");
 
-        changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlComboBox.Text);
+        if (!string.IsNullOrEmpty(uri))
+        {
+          if (!Uri.TryCreate(uri, UriKind.Absolute, out svnUri))
+          {
+            MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          }
+        }
+        else
+        {
+          svnUri = null;
+        }
+
+        changesetBackgroundWorker.RunWorkerAsync(new MigrationOptions
+        {
+          SvnUri = svnUri,
+          SvnBasePath = this.GetOrDefineSvnBasePath(svnUri),
+        });
       }
     }
 
@@ -632,6 +649,7 @@ namespace Cyotek.Demo.Windows.Forms
       settings = Settings.Default;
       this.LoadMru(settings);
       svnBranchUrlComboBox.Text = settings.SvnBranchUri;
+      basePathTextBox.Text = settings.SvnBasePath;
       gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
@@ -765,7 +783,7 @@ namespace Cyotek.Demo.Windows.Forms
       includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
       excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
       sb = new StringBuilder();
-      basePath = GetBasePath(options.SvnUri);
+      basePath = options.SvnBasePath;
 
       this.EnumerateSvnChangeSets(previewBackgroundWorker, options, set =>
       {
@@ -805,6 +823,20 @@ namespace Cyotek.Demo.Windows.Forms
       tabList.SelectedIndex--;
     }
 
+    private void RefreshBasePathButton_Click(object sender, EventArgs e)
+    {
+      string uri = svnBranchUrlComboBox.Text;
+
+      if (!string.IsNullOrEmpty(uri) && Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
+      {
+        basePathTextBox.Text = DetectSvnBasePath(svnUri);
+      }
+      else
+      {
+        MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+    }
+
     private void RefreshButton_Click(object sender, EventArgs e)
     {
       _lastScannedUrl = null;
@@ -840,6 +872,7 @@ namespace Cyotek.Demo.Windows.Forms
       settings = Settings.Default;
 
       settings.SvnBranchUri = svnBranchUrlComboBox.Text;
+      settings.SvnBasePath = basePathTextBox.Text;
       settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
