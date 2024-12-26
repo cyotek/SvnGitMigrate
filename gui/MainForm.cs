@@ -674,6 +674,10 @@ namespace Cyotek.Demo.Windows.Forms
           {
             MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           }
+          else
+          {
+            basePathTextBox.SetCueText(DetectSvnBasePath(svnUri));
+          }
         }
         else
         {

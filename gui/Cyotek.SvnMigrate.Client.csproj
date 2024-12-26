@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="ShellHelpers.cs" />
     <Compile Include="SimpleFolderSync.cs" />
+    <Compile Include="TextBoxExtensions.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
