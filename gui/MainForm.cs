@@ -47,6 +47,8 @@ namespace Cyotek.Demo.Windows.Forms
       RepositoryUri = new Uri("https://svn.example.com/svn/repo"),
     };
 
+    private bool _ignoreEvents;
+
     private string _lastScannedUrl;
 
     private SvnChangesetCollection _svnRevisions;
@@ -283,6 +285,7 @@ namespace Cyotek.Demo.Windows.Forms
         _svnRevisions = (SvnChangesetCollection)e.Result;
 
         revisionsListView.BeginUpdate();
+        _ignoreEvents = true;
 
         for (int i = 0; i < _svnRevisions.Count; i++)
         {
@@ -308,6 +311,7 @@ namespace Cyotek.Demo.Windows.Forms
           this.AddBlankMapping(changeset.Author.Name);
         }
 
+        _ignoreEvents = false;
         revisionsListView.EndUpdate();
 
         _lastScannedUrl = svnBranchUrlComboBox.Text;
@@ -927,10 +931,13 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
+      if (!_ignoreEvents)
+      {
+        _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
 
-      selectionChangeTimer.Stop();
-      selectionChangeTimer.Start();
+        selectionChangeTimer.Stop();
+        selectionChangeTimer.Start();
+      }
     }
 
     private void SaveSettings()
