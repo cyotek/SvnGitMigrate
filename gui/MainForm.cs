@@ -747,7 +747,7 @@ namespace Cyotek.Demo.Windows.Forms
       {
         this.PrepareProgressUi("Migrating...");
 
-        tabList.SelectedPage = gitTabListPage;
+        tabList.SelectedPage = logTabListPage;
 
         migrateBackgroundWorker.RunWorkerAsync(options);
       }
@@ -812,7 +812,7 @@ namespace Cyotek.Demo.Windows.Forms
       {
         this.PrepareProgressUi("Building preview...");
 
-        tabList.SelectedPage = gitTabListPage;
+        tabList.SelectedPage = logTabListPage;
 
         previewBackgroundWorker.RunWorkerAsync(options);
       }

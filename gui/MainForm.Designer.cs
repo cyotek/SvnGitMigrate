@@ -32,7 +32,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.components = new System.ComponentModel.Container();
       System.Windows.Forms.GroupBox repositoryGroupBox;
       System.Windows.Forms.GroupBox revisionsGroupBox;
-      System.Windows.Forms.GroupBox migrateGroupBox;
+      System.Windows.Forms.GroupBox logGroupBox;
       System.Windows.Forms.GroupBox gitRepositoryGroupBox;
       System.Windows.Forms.Label gitRepositoryPathLabel;
       System.Windows.Forms.GroupBox authorsGroupBox;
@@ -80,6 +80,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.globsTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.gitTabListPage = new Cyotek.Windows.Forms.TabListPage();
+      this.logTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
       this.commandPanel = new System.Windows.Forms.Panel();
@@ -91,7 +92,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
-      migrateGroupBox = new System.Windows.Forms.GroupBox();
+      logGroupBox = new System.Windows.Forms.GroupBox();
       gitRepositoryGroupBox = new System.Windows.Forms.GroupBox();
       gitRepositoryPathLabel = new System.Windows.Forms.Label();
       authorsGroupBox = new System.Windows.Forms.GroupBox();
@@ -100,7 +101,7 @@ namespace Cyotek.Demo.Windows.Forms
       excludesGroupBox = new System.Windows.Forms.GroupBox();
       repositoryGroupBox.SuspendLayout();
       revisionsGroupBox.SuspendLayout();
-      migrateGroupBox.SuspendLayout();
+      logGroupBox.SuspendLayout();
       gitRepositoryGroupBox.SuspendLayout();
       authorsGroupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(globsSplitContainer)).BeginInit();
@@ -116,6 +117,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage.SuspendLayout();
       this.globsTabListPage.SuspendLayout();
       this.gitTabListPage.SuspendLayout();
+      this.logTabListPage.SuspendLayout();
       this.commandPanel.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -249,16 +251,16 @@ namespace Cyotek.Demo.Windows.Forms
       this.messageColumnHeader.Text = "Message";
       this.messageColumnHeader.Width = 380;
       // 
-      // migrateGroupBox
+      // logGroupBox
       // 
-      migrateGroupBox.Controls.Add(this.logTextBox);
-      migrateGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      migrateGroupBox.Location = new System.Drawing.Point(0, 72);
-      migrateGroupBox.Name = "migrateGroupBox";
-      migrateGroupBox.Size = new System.Drawing.Size(687, 347);
-      migrateGroupBox.TabIndex = 1;
-      migrateGroupBox.TabStop = false;
-      migrateGroupBox.Text = "&Log";
+      logGroupBox.Controls.Add(this.logTextBox);
+      logGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      logGroupBox.Location = new System.Drawing.Point(0, 0);
+      logGroupBox.Name = "logGroupBox";
+      logGroupBox.Size = new System.Drawing.Size(687, 419);
+      logGroupBox.TabIndex = 1;
+      logGroupBox.TabStop = false;
+      logGroupBox.Text = "&Log";
       // 
       // logTextBox
       // 
@@ -270,7 +272,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
       this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.logTextBox.Size = new System.Drawing.Size(675, 322);
+      this.logTextBox.Size = new System.Drawing.Size(675, 394);
       this.logTextBox.TabIndex = 0;
       // 
       // gitRepositoryGroupBox
@@ -562,6 +564,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.tabList.Controls.Add(this.authorMappingTabListPage);
       this.tabList.Controls.Add(this.globsTabListPage);
       this.tabList.Controls.Add(this.gitTabListPage);
+      this.tabList.Controls.Add(this.logTabListPage);
       this.tabList.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabList.Location = new System.Drawing.Point(0, 24);
       this.tabList.Name = "tabList";
@@ -593,11 +596,17 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // gitTabListPage
       // 
-      this.gitTabListPage.Controls.Add(migrateGroupBox);
       this.gitTabListPage.Controls.Add(gitRepositoryGroupBox);
       this.gitTabListPage.Name = "gitTabListPage";
       this.gitTabListPage.Size = new System.Drawing.Size(687, 419);
       this.gitTabListPage.Text = "Git";
+      // 
+      // logTabListPage
+      // 
+      this.logTabListPage.Controls.Add(logGroupBox);
+      this.logTabListPage.Name = "logTabListPage";
+      this.logTabListPage.Size = new System.Drawing.Size(687, 419);
+      this.logTabListPage.Text = "Log";
       // 
       // changesetBackgroundWorker
       // 
@@ -693,8 +702,8 @@ namespace Cyotek.Demo.Windows.Forms
       repositoryGroupBox.ResumeLayout(false);
       repositoryGroupBox.PerformLayout();
       revisionsGroupBox.ResumeLayout(false);
-      migrateGroupBox.ResumeLayout(false);
-      migrateGroupBox.PerformLayout();
+      logGroupBox.ResumeLayout(false);
+      logGroupBox.PerformLayout();
       gitRepositoryGroupBox.ResumeLayout(false);
       gitRepositoryGroupBox.PerformLayout();
       authorsGroupBox.ResumeLayout(false);
@@ -716,6 +725,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage.ResumeLayout(false);
       this.globsTabListPage.ResumeLayout(false);
       this.gitTabListPage.ResumeLayout(false);
+      this.logTabListPage.ResumeLayout(false);
       this.commandPanel.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -773,6 +783,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button refreshBasePathButton;
     private System.Windows.Forms.ToolTip toolTip;
+    private Cyotek.Windows.Forms.TabListPage logTabListPage;
   }
 }
 
