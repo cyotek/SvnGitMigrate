@@ -278,6 +278,8 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void ChangesetBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
+      HashSet<string> authors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
       revisionsListView.Items.Clear();
 
       if (e.Error == null)
@@ -308,7 +310,7 @@ namespace Cyotek.Demo.Windows.Forms
               ForeColor = GetRevisionColor(changeset)
             });
 
-          this.AddBlankMapping(changeset.Author.Name);
+          authors.Add(changeset.Author.Name);
         }
 
         _ignoreEvents = false;
@@ -323,6 +325,11 @@ namespace Cyotek.Demo.Windows.Forms
         _lastScannedUrl = null;
 
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+
+      foreach (string author in authors)
+      {
+        this.AddBlankMapping(author);
       }
 
       this.UpdateSelectionCount();
