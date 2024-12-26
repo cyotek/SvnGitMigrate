@@ -40,6 +40,7 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox includesGroupBox;
       System.Windows.Forms.GroupBox excludesGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+      this.refreshBasePathButton = new System.Windows.Forms.Button();
       this.basePathTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.refreshButton = new System.Windows.Forms.Button();
@@ -87,7 +88,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-      this.refreshBasePathButton = new System.Windows.Forms.Button();
+      this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       migrateGroupBox = new System.Windows.Forms.GroupBox();
@@ -135,6 +136,18 @@ namespace Cyotek.Demo.Windows.Forms
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
       // 
+      // refreshBasePathButton
+      // 
+      this.refreshBasePathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.refreshBasePathButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
+      this.refreshBasePathButton.Location = new System.Drawing.Point(652, 46);
+      this.refreshBasePathButton.Name = "refreshBasePathButton";
+      this.refreshBasePathButton.Size = new System.Drawing.Size(23, 23);
+      this.refreshBasePathButton.TabIndex = 5;
+      this.toolTip.SetToolTip(this.refreshBasePathButton, "Auto-detect base path");
+      this.refreshBasePathButton.UseVisualStyleBackColor = true;
+      this.refreshBasePathButton.Click += new System.EventHandler(this.RefreshBasePathButton_Click);
+      // 
       // basePathTextBox
       // 
       this.basePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -161,6 +174,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.refreshButton.Name = "refreshButton";
       this.refreshButton.Size = new System.Drawing.Size(23, 23);
       this.refreshButton.TabIndex = 2;
+      this.toolTip.SetToolTip(this.refreshButton, "Reload SVN Revisions");
       this.refreshButton.UseVisualStyleBackColor = true;
       this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
       // 
@@ -664,17 +678,6 @@ namespace Cyotek.Demo.Windows.Forms
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
       // 
-      // refreshBasePathButton
-      // 
-      this.refreshBasePathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.refreshBasePathButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshBasePathButton.Location = new System.Drawing.Point(652, 46);
-      this.refreshBasePathButton.Name = "refreshBasePathButton";
-      this.refreshBasePathButton.Size = new System.Drawing.Size(23, 23);
-      this.refreshBasePathButton.TabIndex = 5;
-      this.refreshBasePathButton.UseVisualStyleBackColor = true;
-      this.refreshBasePathButton.Click += new System.EventHandler(this.RefreshBasePathButton_Click);
-      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -777,6 +780,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox basePathTextBox;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button refreshBasePathButton;
+    private System.Windows.Forms.ToolTip toolTip;
   }
 }
 
