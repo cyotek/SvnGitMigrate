@@ -121,17 +121,16 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // repositoryGroupBox
       // 
-      repositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       repositoryGroupBox.Controls.Add(this.refreshBasePathButton);
       repositoryGroupBox.Controls.Add(this.basePathTextBox);
       repositoryGroupBox.Controls.Add(this.label2);
       repositoryGroupBox.Controls.Add(this.refreshButton);
       repositoryGroupBox.Controls.Add(this.label1);
       repositoryGroupBox.Controls.Add(this.svnBranchUrlComboBox);
-      repositoryGroupBox.Location = new System.Drawing.Point(3, 3);
+      repositoryGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+      repositoryGroupBox.Location = new System.Drawing.Point(0, 0);
       repositoryGroupBox.Name = "repositoryGroupBox";
-      repositoryGroupBox.Size = new System.Drawing.Size(681, 76);
+      repositoryGroupBox.Size = new System.Drawing.Size(687, 76);
       repositoryGroupBox.TabIndex = 0;
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
@@ -140,7 +139,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.refreshBasePathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.refreshBasePathButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshBasePathButton.Location = new System.Drawing.Point(652, 46);
+      this.refreshBasePathButton.Location = new System.Drawing.Point(658, 46);
       this.refreshBasePathButton.Name = "refreshBasePathButton";
       this.refreshBasePathButton.Size = new System.Drawing.Size(23, 23);
       this.refreshBasePathButton.TabIndex = 5;
@@ -154,7 +153,7 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
       this.basePathTextBox.Location = new System.Drawing.Point(81, 46);
       this.basePathTextBox.Name = "basePathTextBox";
-      this.basePathTextBox.Size = new System.Drawing.Size(565, 20);
+      this.basePathTextBox.Size = new System.Drawing.Size(571, 20);
       this.basePathTextBox.TabIndex = 4;
       // 
       // label2
@@ -170,7 +169,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.refreshButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshButton.Location = new System.Drawing.Point(652, 17);
+      this.refreshButton.Location = new System.Drawing.Point(658, 17);
       this.refreshButton.Name = "refreshButton";
       this.refreshButton.Size = new System.Drawing.Size(23, 23);
       this.refreshButton.TabIndex = 2;
@@ -193,19 +192,17 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
       this.svnBranchUrlComboBox.Location = new System.Drawing.Point(81, 19);
       this.svnBranchUrlComboBox.Name = "svnBranchUrlComboBox";
-      this.svnBranchUrlComboBox.Size = new System.Drawing.Size(565, 21);
+      this.svnBranchUrlComboBox.Size = new System.Drawing.Size(571, 21);
       this.svnBranchUrlComboBox.TabIndex = 1;
       this.svnBranchUrlComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
       // revisionsGroupBox
       // 
-      revisionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       revisionsGroupBox.Controls.Add(this.revisionsListView);
-      revisionsGroupBox.Location = new System.Drawing.Point(3, 85);
+      revisionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      revisionsGroupBox.Location = new System.Drawing.Point(0, 76);
       revisionsGroupBox.Name = "revisionsGroupBox";
-      revisionsGroupBox.Size = new System.Drawing.Size(681, 331);
+      revisionsGroupBox.Size = new System.Drawing.Size(687, 343);
       revisionsGroupBox.TabIndex = 1;
       revisionsGroupBox.TabStop = false;
       revisionsGroupBox.Text = "Revisions";
@@ -226,7 +223,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.revisionsListView.HideSelection = false;
       this.revisionsListView.Location = new System.Drawing.Point(6, 19);
       this.revisionsListView.Name = "revisionsListView";
-      this.revisionsListView.Size = new System.Drawing.Size(669, 306);
+      this.revisionsListView.Size = new System.Drawing.Size(675, 318);
       this.revisionsListView.TabIndex = 0;
       this.revisionsListView.UseCompatibleStateImageBehavior = false;
       this.revisionsListView.View = System.Windows.Forms.View.Details;
@@ -254,13 +251,11 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // migrateGroupBox
       // 
-      migrateGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       migrateGroupBox.Controls.Add(this.logTextBox);
-      migrateGroupBox.Location = new System.Drawing.Point(3, 81);
+      migrateGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      migrateGroupBox.Location = new System.Drawing.Point(0, 72);
       migrateGroupBox.Name = "migrateGroupBox";
-      migrateGroupBox.Size = new System.Drawing.Size(681, 335);
+      migrateGroupBox.Size = new System.Drawing.Size(687, 347);
       migrateGroupBox.TabIndex = 1;
       migrateGroupBox.TabStop = false;
       migrateGroupBox.Text = "&Log";
@@ -275,20 +270,19 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
       this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.logTextBox.Size = new System.Drawing.Size(669, 310);
+      this.logTextBox.Size = new System.Drawing.Size(675, 322);
       this.logTextBox.TabIndex = 0;
       // 
       // gitRepositoryGroupBox
       // 
-      gitRepositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       gitRepositoryGroupBox.Controls.Add(this.useExistingRepositoryCheckBox);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathBrowseButton);
       gitRepositoryGroupBox.Controls.Add(gitRepositoryPathLabel);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathTextBox);
-      gitRepositoryGroupBox.Location = new System.Drawing.Point(3, 3);
+      gitRepositoryGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+      gitRepositoryGroupBox.Location = new System.Drawing.Point(0, 0);
       gitRepositoryGroupBox.Name = "gitRepositoryGroupBox";
-      gitRepositoryGroupBox.Size = new System.Drawing.Size(681, 72);
+      gitRepositoryGroupBox.Size = new System.Drawing.Size(687, 72);
       gitRepositoryGroupBox.TabIndex = 0;
       gitRepositoryGroupBox.TabStop = false;
       gitRepositoryGroupBox.Text = "Repository";
@@ -306,7 +300,7 @@ namespace Cyotek.Demo.Windows.Forms
       // gitRepositoryPathBrowseButton
       // 
       this.gitRepositoryPathBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(600, 17);
+      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(606, 17);
       this.gitRepositoryPathBrowseButton.Name = "gitRepositoryPathBrowseButton";
       this.gitRepositoryPathBrowseButton.Size = new System.Drawing.Size(75, 23);
       this.gitRepositoryPathBrowseButton.TabIndex = 2;
@@ -329,18 +323,16 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
       this.gitRepositoryPathTextBox.Location = new System.Drawing.Point(94, 19);
       this.gitRepositoryPathTextBox.Name = "gitRepositoryPathTextBox";
-      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(500, 20);
+      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(506, 20);
       this.gitRepositoryPathTextBox.TabIndex = 1;
       // 
       // authorsGroupBox
       // 
-      authorsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       authorsGroupBox.Controls.Add(this.authorMappingsTextBox);
-      authorsGroupBox.Location = new System.Drawing.Point(3, 3);
+      authorsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      authorsGroupBox.Location = new System.Drawing.Point(0, 0);
       authorsGroupBox.Name = "authorsGroupBox";
-      authorsGroupBox.Size = new System.Drawing.Size(681, 413);
+      authorsGroupBox.Size = new System.Drawing.Size(687, 419);
       authorsGroupBox.TabIndex = 2;
       authorsGroupBox.TabStop = false;
       authorsGroupBox.Text = "&Authors";
@@ -355,7 +347,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingsTextBox.Multiline = true;
       this.authorMappingsTextBox.Name = "authorMappingsTextBox";
       this.authorMappingsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.authorMappingsTextBox.Size = new System.Drawing.Size(669, 388);
+      this.authorMappingsTextBox.Size = new System.Drawing.Size(675, 394);
       this.authorMappingsTextBox.TabIndex = 1;
       // 
       // globsSplitContainer
