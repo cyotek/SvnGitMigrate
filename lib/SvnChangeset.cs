@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2023 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -16,6 +16,8 @@ namespace Cyotek.SvnMigrate
   public class SvnChangeset
   {
     #region Private Fields
+
+    private StringCollection _allPaths;
 
     private User _author;
 
@@ -45,11 +47,18 @@ namespace Cyotek.SvnMigrate
       _newPaths = new StringCollection();
       _removedPaths = new StringCollection();
       _modifiedPaths = new StringCollection();
+      _allPaths = new StringCollection();
     }
 
     #endregion Public Constructors
 
     #region Public Properties
+
+    public StringCollection AllPaths
+    {
+      get => _allPaths;
+      set => _allPaths = value;
+    }
 
     public User Author
     {

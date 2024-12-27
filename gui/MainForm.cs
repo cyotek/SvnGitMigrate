@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Windows.Forms;
 
@@ -220,6 +221,8 @@ namespace Cyotek.SvnMigrate.Client
 
           foreach (SvnChangeItem change in args.ChangedPaths)
           {
+            changeset.AllPaths.Add(change.Path);
+
             if (!string.IsNullOrEmpty(change.Path) && GlobMatcher.IsIncluded(change.Path, globs))
             {
               switch (change.Action)
@@ -906,6 +909,33 @@ namespace Cyotek.SvnMigrate.Client
       {
         selectionChangeTimer.Stop();
         selectionChangeTimer.Start();
+      }
+    }
+
+    private void RevisionViewFileListToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      ListViewItem item = revisionsListView.SelectedItems.Count > 0
+        ? revisionsListView.SelectedItems[0]
+        : null;
+
+      if (item != null)
+      {
+        SortedSet<string> paths = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+        SvnChangeset set = _svnRevisions[(int)item.Tag];
+
+        foreach (string path in set.AllPaths)
+        {
+          paths.Add(path);
+        }
+
+        using (RevisionInformationDialog dialog = new RevisionInformationDialog(set, string.Join(Environment.NewLine, paths)))
+        {
+          dialog.ShowDialog(this);
+        }
+      }
+      else
+      {
+        SystemSounds.Beep.Play();
       }
     }
 

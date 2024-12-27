@@ -98,6 +98,8 @@ namespace Cyotek.SvnMigrate.Client
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.revisionViewFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       logGroupBox = new System.Windows.Forms.GroupBox();
@@ -260,28 +262,30 @@ namespace Cyotek.SvnMigrate.Client
       this.revisionContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.revisionSelectAllToolStripMenuItem,
             this.revisionSelectNoneToolStripMenuItem,
-            this.revisionInvertSelectionToolStripMenuItem});
+            this.revisionInvertSelectionToolStripMenuItem,
+            this.revisionToolStripSeparator,
+            this.revisionViewFileListToolStripMenuItem});
       this.revisionContextMenuStrip.Name = "revisionContextMenuStrip";
-      this.revisionContextMenuStrip.Size = new System.Drawing.Size(156, 70);
+      this.revisionContextMenuStrip.Size = new System.Drawing.Size(181, 120);
       // 
       // revisionSelectAllToolStripMenuItem
       // 
       this.revisionSelectAllToolStripMenuItem.Name = "revisionSelectAllToolStripMenuItem";
-      this.revisionSelectAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionSelectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.revisionSelectAllToolStripMenuItem.Text = "Select &All";
       this.revisionSelectAllToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectAllToolStripMenuItem_Click);
       // 
       // revisionSelectNoneToolStripMenuItem
       // 
       this.revisionSelectNoneToolStripMenuItem.Name = "revisionSelectNoneToolStripMenuItem";
-      this.revisionSelectNoneToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionSelectNoneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.revisionSelectNoneToolStripMenuItem.Text = "Select &None";
       this.revisionSelectNoneToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectNoneToolStripMenuItem_Click);
       // 
       // revisionInvertSelectionToolStripMenuItem
       // 
       this.revisionInvertSelectionToolStripMenuItem.Name = "revisionInvertSelectionToolStripMenuItem";
-      this.revisionInvertSelectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionInvertSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.revisionInvertSelectionToolStripMenuItem.Text = "&Invert Selection";
       this.revisionInvertSelectionToolStripMenuItem.Click += new System.EventHandler(this.RevisionInvertSelectionToolStripMenuItem_Click);
       // 
@@ -777,6 +781,18 @@ namespace Cyotek.SvnMigrate.Client
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
       // 
+      // revisionViewFileListToolStripMenuItem
+      // 
+      this.revisionViewFileListToolStripMenuItem.Name = "revisionViewFileListToolStripMenuItem";
+      this.revisionViewFileListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.revisionViewFileListToolStripMenuItem.Text = "&File List...";
+      this.revisionViewFileListToolStripMenuItem.Click += new System.EventHandler(this.RevisionViewFileListToolStripMenuItem_Click);
+      // 
+      // revisionToolStripSeparator
+      // 
+      this.revisionToolStripSeparator.Name = "revisionToolStripSeparator";
+      this.revisionToolStripSeparator.Size = new System.Drawing.Size(177, 6);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -897,6 +913,8 @@ namespace Cyotek.SvnMigrate.Client
     private System.Windows.Forms.ToolStripMenuItem revisionSelectAllToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem revisionSelectNoneToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem revisionInvertSelectionToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator revisionToolStripSeparator;
+    private System.Windows.Forms.ToolStripMenuItem revisionViewFileListToolStripMenuItem;
   }
 }
 
