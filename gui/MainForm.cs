@@ -885,10 +885,10 @@ namespace Cyotek.SvnMigrate.Client
 
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
+      _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
+
       if (!_ignoreEvents)
       {
-        _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
-
         selectionChangeTimer.Stop();
         selectionChangeTimer.Start();
       }
