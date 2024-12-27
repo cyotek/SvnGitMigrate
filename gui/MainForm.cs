@@ -764,7 +764,7 @@ namespace Cyotek.SvnMigrate.Client
       }
       catch (Exception ex)
       {
-        logTextBox.Text = ex.Message;
+        logTextBox.AppendText(ex.Message);
       }
 
       this.ResetProgressUi();
