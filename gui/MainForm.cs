@@ -430,6 +430,13 @@ namespace Cyotek.SvnMigrate.Client
       return options;
     }
 
+    private void CyotekHomePageToolStripStatusLabel_Click(object sender, EventArgs e)
+    {
+      cyotekHomePageToolStripStatusLabel.LinkVisited = true;
+
+      AboutDialog.OpenCyotekHomePage();
+    }
+
     private void EnumerateSvnChangeSets(BackgroundWorker worker, MigrationOptions options, Action<SvnChangeset> operation)
     {
       SvnChangesetCollection sets;
@@ -535,10 +542,6 @@ namespace Cyotek.SvnMigrate.Client
       return results;
     }
 
-
-
-
-
     private string GetOrDefineSvnBasePath(Uri svnUri)
     {
       return string.IsNullOrWhiteSpace(svnBasePathComboBox.Text)
@@ -629,8 +632,6 @@ namespace Cyotek.SvnMigrate.Client
         control.Text = string.Empty;
       }
     }
-
-    
 
     private void LoadRevisions()
     {
@@ -961,8 +962,6 @@ namespace Cyotek.SvnMigrate.Client
     {
       this.UpdateTemplatePreview();
     }
-
-    
 
     private void UpdateSelectionCount()
     {

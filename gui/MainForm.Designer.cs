@@ -46,7 +46,7 @@ namespace Cyotek.SvnMigrate.Client
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.svnBranchUrlComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
-      this.revisionsListView = new ListView();
+      this.revisionsListView = new Cyotek.SvnMigrate.Client.ListView();
       this.revisionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -93,6 +93,7 @@ namespace Cyotek.SvnMigrate.Client
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.cyotekHomePageToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       logGroupBox = new System.Windows.Forms.GroupBox();
@@ -145,13 +146,13 @@ namespace Cyotek.SvnMigrate.Client
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
       // 
-      // basePathTextBox
+      // svnBasePathComboBox
       // 
       this.svnBasePathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.svnBasePathComboBox.Location = new System.Drawing.Point(81, 46);
       this.svnBasePathComboBox.Name = "svnBasePathComboBox";
-      this.svnBasePathComboBox.Size = new System.Drawing.Size(571, 20);
+      this.svnBasePathComboBox.Size = new System.Drawing.Size(571, 21);
       this.svnBasePathComboBox.TabIndex = 4;
       this.svnBasePathComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
@@ -316,13 +317,13 @@ namespace Cyotek.SvnMigrate.Client
       gitRepositoryPathLabel.TabIndex = 0;
       gitRepositoryPathLabel.Text = "&Repository Path:";
       // 
-      // gitRepositoryPathTextBox
+      // gitRepositoryPathComboBox
       // 
       this.gitRepositoryPathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.gitRepositoryPathComboBox.Location = new System.Drawing.Point(94, 19);
       this.gitRepositoryPathComboBox.Name = "gitRepositoryPathComboBox";
-      this.gitRepositoryPathComboBox.Size = new System.Drawing.Size(506, 20);
+      this.gitRepositoryPathComboBox.Size = new System.Drawing.Size(506, 21);
       this.gitRepositoryPathComboBox.TabIndex = 1;
       // 
       // authorsGroupBox
@@ -493,7 +494,8 @@ namespace Cyotek.SvnMigrate.Client
             this.statusToolStripStatusLabel,
             this.revisionCountToolStripStatusLabel,
             this.toolStripProgressBar,
-            this.cancelToolStripStatusLabel});
+            this.cancelToolStripStatusLabel,
+            this.cyotekHomePageToolStripStatusLabel});
       this.statusStrip.Location = new System.Drawing.Point(0, 492);
       this.statusStrip.Name = "statusStrip";
       this.statusStrip.Size = new System.Drawing.Size(845, 22);
@@ -502,7 +504,7 @@ namespace Cyotek.SvnMigrate.Client
       // statusToolStripStatusLabel
       // 
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(701, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(456, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -730,6 +732,14 @@ namespace Cyotek.SvnMigrate.Client
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
       // 
+      // cyotekHomePageToolStripStatusLabel
+      // 
+      this.cyotekHomePageToolStripStatusLabel.IsLink = true;
+      this.cyotekHomePageToolStripStatusLabel.Name = "cyotekHomePageToolStripStatusLabel";
+      this.cyotekHomePageToolStripStatusLabel.Size = new System.Drawing.Size(69, 17);
+      this.cyotekHomePageToolStripStatusLabel.Text = "www.cyotek.com";
+      this.cyotekHomePageToolStripStatusLabel.Click += new System.EventHandler(this.CyotekHomePageToolStripStatusLabel_Click);
+      // 
       // MainForm
       // 
       this.AcceptButton = this.migrateButton;
@@ -844,6 +854,7 @@ namespace Cyotek.SvnMigrate.Client
     private System.Windows.Forms.SplitContainer templateSplitContainer;
     private System.Windows.Forms.TextBox templateTextBox;
     private System.Windows.Forms.TextBox templatePreviewTextBox;
+    private System.Windows.Forms.ToolStripStatusLabel cyotekHomePageToolStripStatusLabel;
   }
 }
 
