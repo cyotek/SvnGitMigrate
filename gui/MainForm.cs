@@ -820,7 +820,7 @@ namespace Cyotek.Demo.Windows.Forms
 
       options = this.CreateMigrationOptions();
 
-      if (this.ValidateOptions(options))
+      if (this.ValidateOptions(options, skipFolderChecks: false))
       {
         this.PrepareProgressUi("Migrating...");
 
@@ -887,7 +887,7 @@ namespace Cyotek.Demo.Windows.Forms
 
       options = this.CreateMigrationOptions();
 
-      if (this.ValidateOptions(options))
+      if (this.ValidateOptions(options, skipFolderChecks: true))
       {
         this.PrepareProgressUi("Building preview...");
 
@@ -1061,7 +1061,7 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private bool ValidateOptions(MigrationOptions options)
+    private bool ValidateOptions(MigrationOptions options, bool skipFolderChecks)
     {
       bool result;
 
@@ -1071,15 +1071,15 @@ namespace Cyotek.Demo.Windows.Forms
       {
         MessageBox.Show("SVN branch URI required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (string.IsNullOrWhiteSpace(options.RepositoryPath))
+      else if (!skipFolderChecks && string.IsNullOrWhiteSpace(options.RepositoryPath))
       {
         MessageBox.Show("Git repository path required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (!options.UseExistingRepository && !this.IsEmptyFolder(options.RepositoryPath))
+      else if (!skipFolderChecks && !options.UseExistingRepository && !this.IsEmptyFolder(options.RepositoryPath))
       {
         MessageBox.Show("Git repository location is not empty.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (options.UseExistingRepository && !Repository.IsValid(options.RepositoryPath))
+      else if (!skipFolderChecks && options.UseExistingRepository && !Repository.IsValid(options.RepositoryPath))
       {
         MessageBox.Show("Git repository location does not point to a valid Git repository.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
