@@ -8,7 +8,6 @@
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-using Cyotek.Windows.Forms;
 using System.Windows.Forms;
 
 namespace Cyotek.SvnMigrate.Client

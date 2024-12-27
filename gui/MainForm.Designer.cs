@@ -51,6 +51,10 @@ namespace Cyotek.SvnMigrate.Client
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.revisionContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.revisionSelectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionSelectNoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionInvertSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.logTextBox = new System.Windows.Forms.TextBox();
       this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
@@ -68,6 +72,7 @@ namespace Cyotek.SvnMigrate.Client
       this.revisionCountToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
       this.cancelToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.cyotekHomePageToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -93,7 +98,6 @@ namespace Cyotek.SvnMigrate.Client
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.cyotekHomePageToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
       logGroupBox = new System.Windows.Forms.GroupBox();
@@ -106,6 +110,7 @@ namespace Cyotek.SvnMigrate.Client
       templateGroupBox = new System.Windows.Forms.GroupBox();
       repositoryGroupBox.SuspendLayout();
       revisionsGroupBox.SuspendLayout();
+      this.revisionContextMenuStrip.SuspendLayout();
       logGroupBox.SuspendLayout();
       gitRepositoryGroupBox.SuspendLayout();
       authorsGroupBox.SuspendLayout();
@@ -218,6 +223,7 @@ namespace Cyotek.SvnMigrate.Client
             this.authorColumnHeader,
             this.dateColumnHeader,
             this.messageColumnHeader});
+      this.revisionsListView.ContextMenuStrip = this.revisionContextMenuStrip;
       this.revisionsListView.FullRowSelect = true;
       this.revisionsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.revisionsListView.HideSelection = false;
@@ -248,6 +254,36 @@ namespace Cyotek.SvnMigrate.Client
       // 
       this.messageColumnHeader.Text = "Message";
       this.messageColumnHeader.Width = 380;
+      // 
+      // revisionContextMenuStrip
+      // 
+      this.revisionContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.revisionSelectAllToolStripMenuItem,
+            this.revisionSelectNoneToolStripMenuItem,
+            this.revisionInvertSelectionToolStripMenuItem});
+      this.revisionContextMenuStrip.Name = "revisionContextMenuStrip";
+      this.revisionContextMenuStrip.Size = new System.Drawing.Size(156, 70);
+      // 
+      // revisionSelectAllToolStripMenuItem
+      // 
+      this.revisionSelectAllToolStripMenuItem.Name = "revisionSelectAllToolStripMenuItem";
+      this.revisionSelectAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionSelectAllToolStripMenuItem.Text = "Select &All";
+      this.revisionSelectAllToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectAllToolStripMenuItem_Click);
+      // 
+      // revisionSelectNoneToolStripMenuItem
+      // 
+      this.revisionSelectNoneToolStripMenuItem.Name = "revisionSelectNoneToolStripMenuItem";
+      this.revisionSelectNoneToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionSelectNoneToolStripMenuItem.Text = "Select &None";
+      this.revisionSelectNoneToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectNoneToolStripMenuItem_Click);
+      // 
+      // revisionInvertSelectionToolStripMenuItem
+      // 
+      this.revisionInvertSelectionToolStripMenuItem.Name = "revisionInvertSelectionToolStripMenuItem";
+      this.revisionInvertSelectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+      this.revisionInvertSelectionToolStripMenuItem.Text = "&Invert Selection";
+      this.revisionInvertSelectionToolStripMenuItem.Click += new System.EventHandler(this.RevisionInvertSelectionToolStripMenuItem_Click);
       // 
       // logGroupBox
       // 
@@ -504,7 +540,7 @@ namespace Cyotek.SvnMigrate.Client
       // statusToolStripStatusLabel
       // 
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(456, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(602, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -528,6 +564,14 @@ namespace Cyotek.SvnMigrate.Client
       this.cancelToolStripStatusLabel.Text = "Cancel";
       this.cancelToolStripStatusLabel.Visible = false;
       this.cancelToolStripStatusLabel.Click += new System.EventHandler(this.CancelToolStripStatusLabel_Click);
+      // 
+      // cyotekHomePageToolStripStatusLabel
+      // 
+      this.cyotekHomePageToolStripStatusLabel.IsLink = true;
+      this.cyotekHomePageToolStripStatusLabel.Name = "cyotekHomePageToolStripStatusLabel";
+      this.cyotekHomePageToolStripStatusLabel.Size = new System.Drawing.Size(99, 17);
+      this.cyotekHomePageToolStripStatusLabel.Text = "www.cyotek.com";
+      this.cyotekHomePageToolStripStatusLabel.Click += new System.EventHandler(this.CyotekHomePageToolStripStatusLabel_Click);
       // 
       // menuStrip
       // 
@@ -722,6 +766,7 @@ namespace Cyotek.SvnMigrate.Client
       // 
       // selectionChangeTimer
       // 
+      this.selectionChangeTimer.Interval = 250;
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
       // 
       // previewBackgroundWorker
@@ -731,14 +776,6 @@ namespace Cyotek.SvnMigrate.Client
       this.previewBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreviewBackgroundWorker_DoWork);
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
-      // 
-      // cyotekHomePageToolStripStatusLabel
-      // 
-      this.cyotekHomePageToolStripStatusLabel.IsLink = true;
-      this.cyotekHomePageToolStripStatusLabel.Name = "cyotekHomePageToolStripStatusLabel";
-      this.cyotekHomePageToolStripStatusLabel.Size = new System.Drawing.Size(69, 17);
-      this.cyotekHomePageToolStripStatusLabel.Text = "www.cyotek.com";
-      this.cyotekHomePageToolStripStatusLabel.Click += new System.EventHandler(this.CyotekHomePageToolStripStatusLabel_Click);
       // 
       // MainForm
       // 
@@ -763,6 +800,7 @@ namespace Cyotek.SvnMigrate.Client
       repositoryGroupBox.ResumeLayout(false);
       repositoryGroupBox.PerformLayout();
       revisionsGroupBox.ResumeLayout(false);
+      this.revisionContextMenuStrip.ResumeLayout(false);
       logGroupBox.ResumeLayout(false);
       logGroupBox.PerformLayout();
       gitRepositoryGroupBox.ResumeLayout(false);
@@ -855,6 +893,10 @@ namespace Cyotek.SvnMigrate.Client
     private System.Windows.Forms.TextBox templateTextBox;
     private System.Windows.Forms.TextBox templatePreviewTextBox;
     private System.Windows.Forms.ToolStripStatusLabel cyotekHomePageToolStripStatusLabel;
+    private System.Windows.Forms.ContextMenuStrip revisionContextMenuStrip;
+    private System.Windows.Forms.ToolStripMenuItem revisionSelectAllToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem revisionSelectNoneToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem revisionInvertSelectionToolStripMenuItem;
   }
 }
 

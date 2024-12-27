@@ -883,6 +883,21 @@ namespace Cyotek.SvnMigrate.Client
       commandPanel.Enabled = true;
     }
 
+    private void RevisionInvertSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.InvertChecked());
+    }
+
+    private void RevisionSelectAllToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.CheckAll());
+    }
+
+    private void RevisionSelectNoneToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.UncheckAll());
+    }
+
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
@@ -961,6 +976,17 @@ namespace Cyotek.SvnMigrate.Client
     private void TemplateTextBox_TextChanged(object sender, EventArgs e)
     {
       this.UpdateTemplatePreview();
+    }
+
+    private void UpdateRevisionListChecks(Action<ListView> action)
+    {
+      _ignoreEvents = true;
+
+      action(revisionsListView);
+
+      _ignoreEvents = false;
+
+      this.UpdateSelectionCount();
     }
 
     private void UpdateSelectionCount()
