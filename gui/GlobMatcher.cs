@@ -1,6 +1,6 @@
 ﻿// Cyotek Svn2Git Migration Utility
 
-// Copyright © 2021-2023 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2021-2024 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -9,6 +9,7 @@
 // https://www.cyotek.com/contribute
 
 using DotNet.Globbing;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -20,6 +21,10 @@ namespace Cyotek.SvnMigrate.Client
     #region Private Fields
 
     private static readonly Dictionary<string, Glob> _globCache;
+
+    private static readonly char[] _globCharacters = { '*', '?', '[', ']', '!' };
+
+    private static readonly char[] _globSeparators = { '|' };
 
     #endregion Private Fields
 
@@ -33,6 +38,42 @@ namespace Cyotek.SvnMigrate.Client
     #endregion Public Constructors
 
     #region Public Methods
+
+    public static StringCollection GetGlobStrings(string patterns)
+    {
+      return GetGlobStrings(patterns.Split(_globSeparators));
+    }
+
+    public static StringCollection GetGlobStrings(string[] patterns)
+    {
+      StringCollection result;
+
+      result = new StringCollection();
+
+      for (int i = 0; i < patterns.Length; i++)
+      {
+        string line;
+
+        line = patterns[i].Trim();
+
+        if (!string.IsNullOrWhiteSpace(line))
+        {
+          if (line.IndexOfAny(_globCharacters) == -1)
+          {
+            line += line[line.Length - 1] == '/' || line[line.Length - 1] == '\\'
+              ? "**/*"
+              : "/**/*";
+          }
+
+          if (!result.Contains(line))
+          {
+            result.Add(line);
+          }
+        }
+      }
+
+      return result;
+    }
 
     public static bool IsExcluded(StringCollection files, StringCollection excludeGlobs)
     {
@@ -118,7 +159,7 @@ namespace Cyotek.SvnMigrate.Client
 
       if (patterns == null || patterns.Count == 0)
       {
-        results = new Glob[0];
+        results = Array.Empty<Glob>();
       }
       else
       {

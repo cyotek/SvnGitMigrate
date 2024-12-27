@@ -41,7 +41,6 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox excludesGroupBox;
       System.Windows.Forms.GroupBox templateGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-      this.refreshBasePathButton = new System.Windows.Forms.Button();
       this.basePathTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.refreshButton = new System.Windows.Forms.Button();
@@ -133,7 +132,6 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // repositoryGroupBox
       // 
-      repositoryGroupBox.Controls.Add(this.refreshBasePathButton);
       repositoryGroupBox.Controls.Add(this.basePathTextBox);
       repositoryGroupBox.Controls.Add(this.label2);
       repositoryGroupBox.Controls.Add(this.refreshButton);
@@ -147,18 +145,6 @@ namespace Cyotek.Demo.Windows.Forms
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
       // 
-      // refreshBasePathButton
-      // 
-      this.refreshBasePathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.refreshBasePathButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshBasePathButton.Location = new System.Drawing.Point(658, 46);
-      this.refreshBasePathButton.Name = "refreshBasePathButton";
-      this.refreshBasePathButton.Size = new System.Drawing.Size(23, 23);
-      this.refreshBasePathButton.TabIndex = 5;
-      this.toolTip.SetToolTip(this.refreshBasePathButton, "Auto-detect base path");
-      this.refreshBasePathButton.UseVisualStyleBackColor = true;
-      this.refreshBasePathButton.Click += new System.EventHandler(this.RefreshBasePathButton_Click);
-      // 
       // basePathTextBox
       // 
       this.basePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -167,6 +153,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.basePathTextBox.Name = "basePathTextBox";
       this.basePathTextBox.Size = new System.Drawing.Size(571, 20);
       this.basePathTextBox.TabIndex = 4;
+      this.basePathTextBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
       // label2
       // 
@@ -852,7 +839,6 @@ namespace Cyotek.Demo.Windows.Forms
     private System.ComponentModel.BackgroundWorker previewBackgroundWorker;
     private System.Windows.Forms.TextBox basePathTextBox;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Button refreshBasePathButton;
     private System.Windows.Forms.ToolTip toolTip;
     private Cyotek.Windows.Forms.TabListPage logTabListPage;
     private System.Windows.Forms.SplitContainer templateSplitContainer;

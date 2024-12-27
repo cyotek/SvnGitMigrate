@@ -6,6 +6,7 @@ using LibGit2Sharp;
 using Scriban;
 using SharpSvn;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
@@ -48,6 +49,8 @@ namespace Cyotek.Demo.Windows.Forms
     };
 
     private bool _ignoreEvents;
+
+    private string _lastScannedBasePath;
 
     private string _lastScannedUrl;
 
@@ -197,8 +200,10 @@ namespace Cyotek.Demo.Windows.Forms
     private SvnChangesetCollection BuildRevisionsList(Uri svnUri, string basePath)
     {
       SvnChangesetCollection sets;
+      Glob[] globs;
 
       sets = new SvnChangesetCollection();
+      globs = GlobMatcher.PrepareGlobs(GlobMatcher.GetGlobStrings(basePath));
 
       using (SvnClient svn = new SvnClient())
       {
@@ -217,7 +222,7 @@ namespace Cyotek.Demo.Windows.Forms
 
           foreach (SvnChangeItem change in args.ChangedPaths)
           {
-            if (!string.IsNullOrEmpty(change.Path) && change.Path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(change.Path) && GlobMatcher.IsIncluded(change.Path, globs))
             {
               switch (change.Action)
               {
@@ -317,12 +322,15 @@ namespace Cyotek.Demo.Windows.Forms
         revisionsListView.EndUpdate();
 
         _lastScannedUrl = svnBranchUrlComboBox.Text;
+        _lastScannedBasePath = basePathTextBox.Text;
+
         this.UpdateMru();
       }
       else
       {
         _svnRevisions = new SvnChangesetCollection();
         _lastScannedUrl = null;
+        _lastScannedBasePath = null;
 
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
@@ -419,6 +427,8 @@ namespace Cyotek.Demo.Windows.Forms
         Revisions = this.GetOrderedRevisions(),
         UseExistingRepository = useExistingRepositoryCheckBox.Checked,
         CommitMessageTemplate = templateTextBox.Text,
+        IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines),
+        ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines),
       };
 
       return options;
@@ -430,8 +440,8 @@ namespace Cyotek.Demo.Windows.Forms
       Glob[] includes;
       Glob[] excludes;
 
-      includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
-      excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
+      includes = GlobMatcher.PrepareGlobs(options.IncludeGlobs);
+      excludes = GlobMatcher.PrepareGlobs(options.ExcludeGlobs);
 
       sets = options.Revisions;
 
@@ -529,28 +539,7 @@ namespace Cyotek.Demo.Windows.Forms
       return results;
     }
 
-    private StringCollection GetGlobs(TextBox control)
-    {
-      StringCollection result;
-      string[] lines;
 
-      result = new StringCollection();
-      lines = control.Lines;
-
-      for (int i = 0; i < lines.Length; i++)
-      {
-        string line;
-
-        line = lines[i].Trim();
-
-        if (!string.IsNullOrWhiteSpace(line) && !result.Contains(line))
-        {
-          result.Add(line);
-        }
-      }
-
-      return result;
-    }
 
     private StringCollection GetMru()
     {
@@ -579,11 +568,14 @@ namespace Cyotek.Demo.Windows.Forms
 
       revisions = new SvnChangesetCollection();
 
-      foreach (SvnChangeset revision in _svnRevisions)
+      if (_svnRevisions != null)
       {
-        if (revision.IsSelected)
+        foreach (SvnChangeset revision in _svnRevisions)
         {
-          revisions.Add(revision);
+          if (revision.IsSelected)
+          {
+            revisions.Add(revision);
+          }
         }
       }
 
@@ -677,15 +669,13 @@ namespace Cyotek.Demo.Windows.Forms
 
       uri = svnBranchUrlComboBox.Text;
 
-      if (!string.Equals(uri, _lastScannedUrl))
+      if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(basePathTextBox.Text, _lastScannedBasePath))
       {
-        Uri svnUri;
-
         this.PrepareProgressUi("Building revision list...");
 
         if (!string.IsNullOrEmpty(uri))
         {
-          if (!Uri.TryCreate(uri, UriKind.Absolute, out svnUri))
+          if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
           {
             MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           }
@@ -694,16 +684,8 @@ namespace Cyotek.Demo.Windows.Forms
             basePathTextBox.SetCueText(DetectSvnBasePath(svnUri));
           }
         }
-        else
-        {
-          svnUri = null;
-        }
 
-        changesetBackgroundWorker.RunWorkerAsync(new MigrationOptions
-        {
-          SvnUri = svnUri,
-          SvnBasePath = this.GetOrDefineSvnBasePath(svnUri),
-        });
+        changesetBackgroundWorker.RunWorkerAsync(this.CreateMigrationOptions());
       }
     }
 
@@ -745,8 +727,8 @@ namespace Cyotek.Demo.Windows.Forms
       svnUri = options.SvnUri;
       workPath = options.WorkingPath;
       gitPath = options.RepositoryPath;
-      includes = this.GetGlobs(includesTextBox);
-      excludes = this.GetGlobs(excludesTextBox);
+      includes = options.IncludeGlobs;
+      excludes = options.ExcludeGlobs;
       template = CreateCommitMessageTemplate(options);
       commitOptions = new CommitOptions
       {
@@ -857,8 +839,8 @@ namespace Cyotek.Demo.Windows.Forms
       Template template;
 
       options = (MigrationOptions)e.Argument;
-      includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
-      excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
+      includes = GlobMatcher.PrepareGlobs(options.IncludeGlobs);
+      excludes = GlobMatcher.PrepareGlobs(options.ExcludeGlobs);
       sb = new StringBuilder();
       template = CreateCommitMessageTemplate(options);
 
@@ -902,23 +884,10 @@ namespace Cyotek.Demo.Windows.Forms
       tabList.SelectedIndex--;
     }
 
-    private void RefreshBasePathButton_Click(object sender, EventArgs e)
-    {
-      string uri = svnBranchUrlComboBox.Text;
-
-      if (!string.IsNullOrEmpty(uri) && Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
-      {
-        basePathTextBox.Text = DetectSvnBasePath(svnUri);
-      }
-      else
-      {
-        MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-      }
-    }
-
     private void RefreshButton_Click(object sender, EventArgs e)
     {
       _lastScannedUrl = null;
+      _lastScannedBasePath = null;
 
       this.LoadRevisions();
     }
@@ -961,8 +930,8 @@ namespace Cyotek.Demo.Windows.Forms
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
       settings.SvnBranchUriMru = this.GetMru();
-      settings.IncludeGlobs = this.GetGlobs(includesTextBox);
-      settings.ExcludeGlobs = this.GetGlobs(excludesTextBox);
+      settings.IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines);
+      settings.ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines);
 
       settings.Save();
     }
