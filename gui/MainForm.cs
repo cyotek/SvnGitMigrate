@@ -638,29 +638,30 @@ namespace Cyotek.SvnMigrate.Client
 
     private void LoadRevisions()
     {
-      string uri;
-
       changesetTimer.Stop();
 
-      uri = svnBranchUrlComboBox.Text;
-
-      if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(svnBasePathComboBox.Text, _lastScannedBasePath))
+      if (!changesetBackgroundWorker.IsBusy)
       {
-        this.PrepareProgressUi("Building revision list...");
+        string uri = svnBranchUrlComboBox.Text;
 
-        if (!string.IsNullOrEmpty(uri))
+        if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(svnBasePathComboBox.Text, _lastScannedBasePath))
         {
-          if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
-          {
-            MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          }
-          else
-          {
-            svnBasePathComboBox.SetCueText(DetectSvnBasePath(svnUri));
-          }
-        }
+          this.PrepareProgressUi("Building revision list...");
 
-        changesetBackgroundWorker.RunWorkerAsync(this.CreateMigrationOptions());
+          if (!string.IsNullOrEmpty(uri))
+          {
+            if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
+            {
+              MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+              svnBasePathComboBox.SetCueText(DetectSvnBasePath(svnUri));
+            }
+          }
+
+          changesetBackgroundWorker.RunWorkerAsync(this.CreateMigrationOptions());
+        }
       }
     }
 
