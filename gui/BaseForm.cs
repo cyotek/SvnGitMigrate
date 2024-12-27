@@ -17,7 +17,7 @@ using System.Windows.Forms;
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal class BaseForm : System.Windows.Forms.Form
   {

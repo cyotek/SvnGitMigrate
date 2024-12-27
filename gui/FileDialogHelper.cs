@@ -15,7 +15,7 @@ using System.Windows.Forms;
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-namespace Cyotek.Demo
+namespace Cyotek.SvnMigrate.Client
 {
   internal static class FileDialogHelper
   {

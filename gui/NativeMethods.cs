@@ -16,7 +16,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Cyotek.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal static class NativeMethods
   {

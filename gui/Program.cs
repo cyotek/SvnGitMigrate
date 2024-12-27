@@ -1,5 +1,4 @@
-﻿using Cyotek.Demo.Windows.Forms;
-using Cyotek.SvnMigrate.Client.Properties;
+﻿using Cyotek.SvnMigrate.Client.Properties;
 using System;
 using System.Windows.Forms;
 

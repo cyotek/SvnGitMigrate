@@ -1,5 +1,5 @@
 ﻿
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   partial class MainForm
   {
@@ -46,7 +46,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.svnBranchUrlComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
-      this.revisionsListView = new Cyotek.Windows.Forms.ListView();
+      this.revisionsListView = new ListView();
       this.revisionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -807,7 +807,7 @@ namespace Cyotek.Demo.Windows.Forms
     private Cyotek.Windows.Forms.TabList tabList;
     private Cyotek.Windows.Forms.TabListPage svnTabListPage;
     private Cyotek.Windows.Forms.TabListPage gitTabListPage;
-    private Cyotek.Windows.Forms.ListView revisionsListView;
+    private ListView revisionsListView;
     private System.Windows.Forms.ColumnHeader revisionColumnHeader;
     private System.Windows.Forms.ColumnHeader authorColumnHeader;
     private System.Windows.Forms.ColumnHeader dateColumnHeader;

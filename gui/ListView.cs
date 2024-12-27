@@ -11,7 +11,7 @@
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-namespace Cyotek.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal class ListView : System.Windows.Forms.ListView
   {

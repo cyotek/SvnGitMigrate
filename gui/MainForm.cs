@@ -1,6 +1,4 @@
-﻿using Cyotek.SvnMigrate;
-using Cyotek.SvnMigrate.Client;
-using Cyotek.SvnMigrate.Client.Properties;
+﻿using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
 using Scriban;
@@ -25,7 +23,7 @@ using System.Windows.Forms;
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal partial class MainForm : BaseForm
   {
