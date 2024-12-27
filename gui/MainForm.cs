@@ -322,9 +322,7 @@ namespace Cyotek.Demo.Windows.Forms
         revisionsListView.EndUpdate();
 
         _lastScannedUrl = svnBranchUrlComboBox.Text;
-        _lastScannedBasePath = basePathTextBox.Text;
-
-        this.UpdateMru();
+        _lastScannedBasePath = svnBasePathComboBox.Text;
       }
       else
       {
@@ -421,7 +419,7 @@ namespace Cyotek.Demo.Windows.Forms
       {
         SvnUri = svnUri,
         SvnBasePath = this.GetOrDefineSvnBasePath(svnUri),
-        RepositoryPath = gitRepositoryPathTextBox.Text,
+        RepositoryPath = gitRepositoryPathComboBox.Text,
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
         Authors = this.GetAuthorMapping(),
         Revisions = this.GetOrderedRevisions(),
@@ -541,25 +539,13 @@ namespace Cyotek.Demo.Windows.Forms
 
 
 
-    private StringCollection GetMru()
-    {
-      StringCollection result;
 
-      result = new StringCollection();
-
-      for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
-      {
-        result.Add((string)svnBranchUrlComboBox.Items[i]);
-      }
-
-      return result;
-    }
 
     private string GetOrDefineSvnBasePath(Uri svnUri)
     {
-      return string.IsNullOrWhiteSpace(basePathTextBox.Text)
+      return string.IsNullOrWhiteSpace(svnBasePathComboBox.Text)
         ? DetectSvnBasePath(svnUri)
-        : basePathTextBox.Text;
+        : svnBasePathComboBox.Text;
     }
 
     private SvnChangesetCollection GetOrderedRevisions()
@@ -588,11 +574,11 @@ namespace Cyotek.Demo.Windows.Forms
     {
       string path;
 
-      path = FileDialogHelper.GetFolderName("Select git repository &path:", gitRepositoryPathTextBox.Text);
+      path = FileDialogHelper.GetFolderName("Select git repository &path:", gitRepositoryPathComboBox.Text);
 
       if (!string.IsNullOrEmpty(path))
       {
-        gitRepositoryPathTextBox.Text = path;
+        gitRepositoryPathComboBox.Text = path;
       }
     }
 
@@ -646,20 +632,7 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void LoadMru(Settings settings)
-    {
-      svnBranchUrlComboBox.Items.Clear();
-
-      if (settings.SvnBranchUriMru != null)
-      {
-        svnBranchUrlComboBox.BeginUpdate();
-        foreach (string uri in settings.SvnBranchUriMru)
-        {
-          svnBranchUrlComboBox.Items.Add(uri);
-        }
-        svnBranchUrlComboBox.EndUpdate();
-      }
-    }
+    
 
     private void LoadRevisions()
     {
@@ -669,7 +642,7 @@ namespace Cyotek.Demo.Windows.Forms
 
       uri = svnBranchUrlComboBox.Text;
 
-      if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(basePathTextBox.Text, _lastScannedBasePath))
+      if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(svnBasePathComboBox.Text, _lastScannedBasePath))
       {
         this.PrepareProgressUi("Building revision list...");
 
@@ -681,7 +654,7 @@ namespace Cyotek.Demo.Windows.Forms
           }
           else
           {
-            basePathTextBox.SetCueText(DetectSvnBasePath(svnUri));
+            svnBasePathComboBox.SetCueText(DetectSvnBasePath(svnUri));
           }
         }
 
@@ -694,11 +667,13 @@ namespace Cyotek.Demo.Windows.Forms
       Settings settings;
 
       settings = Settings.Default;
-      this.LoadMru(settings);
+      svnBranchUrlComboBox.LoadMru(settings.SvnBranchUriMru);
       svnBranchUrlComboBox.Text = settings.SvnBranchUri;
-      basePathTextBox.Text = settings.SvnBasePath;
+      svnBasePathComboBox.LoadMru(settings.SvnBasePathMru);
+      svnBasePathComboBox.Text = settings.SvnBasePath;
       templateTextBox.Text = settings.CommitMessageTemplate;
-      gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
+      gitRepositoryPathComboBox.LoadMru(settings.GitRepositoryPathMru);
+      gitRepositoryPathComboBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
       allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
@@ -807,6 +782,10 @@ namespace Cyotek.Demo.Windows.Forms
         this.PrepareProgressUi("Migrating...");
 
         tabList.SelectedPage = logTabListPage;
+
+        svnBranchUrlComboBox.UpdateMru();
+        svnBasePathComboBox.UpdateMru();
+        gitRepositoryPathComboBox.UpdateMru();
 
         migrateBackgroundWorker.RunWorkerAsync(options);
       }
@@ -922,14 +901,16 @@ namespace Cyotek.Demo.Windows.Forms
 
       settings = Settings.Default;
 
+      settings.SvnBranchUriMru = svnBranchUrlComboBox.GetMru();
       settings.SvnBranchUri = svnBranchUrlComboBox.Text;
-      settings.SvnBasePath = basePathTextBox.Text;
-      settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
+      settings.SvnBasePathMru = svnBasePathComboBox.GetMru();
+      settings.SvnBasePath = svnBasePathComboBox.Text;
+      settings.GitRepositoryPathMru = gitRepositoryPathComboBox.GetMru();
+      settings.GitRepositoryPath = gitRepositoryPathComboBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
       settings.CommitMessageTemplate = templateTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
-      settings.SvnBranchUriMru = this.GetMru();
       settings.IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines);
       settings.ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines);
 
@@ -983,30 +964,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.UpdateTemplatePreview();
     }
 
-    private void UpdateMru()
-    {
-      string uri;
-      int index;
-
-      uri = svnBranchUrlComboBox.Text;
-      index = svnBranchUrlComboBox.FindStringExact(uri);
-
-      if (index != -1 && index != 0)
-      {
-        svnBranchUrlComboBox.Items.RemoveAt(index);
-      }
-
-      if (index != 0)
-      {
-        svnBranchUrlComboBox.Items.Insert(0, uri);
-        svnBranchUrlComboBox.SelectedIndex = 0;
-      }
-
-      while (svnBranchUrlComboBox.Items.Count > 256)
-      {
-        svnBranchUrlComboBox.Items.RemoveAt(svnBranchUrlComboBox.Items.Count - 1);
-      }
-    }
+    
 
     private void UpdateSelectionCount()
     {

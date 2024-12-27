@@ -41,11 +41,11 @@ namespace Cyotek.Demo.Windows.Forms
       System.Windows.Forms.GroupBox excludesGroupBox;
       System.Windows.Forms.GroupBox templateGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-      this.basePathTextBox = new System.Windows.Forms.TextBox();
+      this.svnBasePathComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
-      this.svnBranchUrlComboBox = new System.Windows.Forms.ComboBox();
+      this.svnBranchUrlComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
       this.revisionsListView = new Cyotek.Windows.Forms.ListView();
       this.revisionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -54,7 +54,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox = new System.Windows.Forms.TextBox();
       this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
-      this.gitRepositoryPathTextBox = new System.Windows.Forms.TextBox();
+      this.gitRepositoryPathComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
       this.includesTextBox = new System.Windows.Forms.TextBox();
       this.excludesTextBox = new System.Windows.Forms.TextBox();
@@ -132,7 +132,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // repositoryGroupBox
       // 
-      repositoryGroupBox.Controls.Add(this.basePathTextBox);
+      repositoryGroupBox.Controls.Add(this.svnBasePathComboBox);
       repositoryGroupBox.Controls.Add(this.label2);
       repositoryGroupBox.Controls.Add(this.refreshButton);
       repositoryGroupBox.Controls.Add(this.label1);
@@ -147,13 +147,13 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // basePathTextBox
       // 
-      this.basePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.svnBasePathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.basePathTextBox.Location = new System.Drawing.Point(81, 46);
-      this.basePathTextBox.Name = "basePathTextBox";
-      this.basePathTextBox.Size = new System.Drawing.Size(571, 20);
-      this.basePathTextBox.TabIndex = 4;
-      this.basePathTextBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
+      this.svnBasePathComboBox.Location = new System.Drawing.Point(81, 46);
+      this.svnBasePathComboBox.Name = "svnBasePathComboBox";
+      this.svnBasePathComboBox.Size = new System.Drawing.Size(571, 20);
+      this.svnBasePathComboBox.TabIndex = 4;
+      this.svnBasePathComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
       // label2
       // 
@@ -277,7 +277,7 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryGroupBox.Controls.Add(this.useExistingRepositoryCheckBox);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathBrowseButton);
       gitRepositoryGroupBox.Controls.Add(gitRepositoryPathLabel);
-      gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathTextBox);
+      gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathComboBox);
       gitRepositoryGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
       gitRepositoryGroupBox.Location = new System.Drawing.Point(0, 0);
       gitRepositoryGroupBox.Name = "gitRepositoryGroupBox";
@@ -318,12 +318,12 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // gitRepositoryPathTextBox
       // 
-      this.gitRepositoryPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.gitRepositoryPathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathTextBox.Location = new System.Drawing.Point(94, 19);
-      this.gitRepositoryPathTextBox.Name = "gitRepositoryPathTextBox";
-      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(506, 20);
-      this.gitRepositoryPathTextBox.TabIndex = 1;
+      this.gitRepositoryPathComboBox.Location = new System.Drawing.Point(94, 19);
+      this.gitRepositoryPathComboBox.Name = "gitRepositoryPathComboBox";
+      this.gitRepositoryPathComboBox.Size = new System.Drawing.Size(506, 20);
+      this.gitRepositoryPathComboBox.TabIndex = 1;
       // 
       // authorsGroupBox
       // 
@@ -793,7 +793,7 @@ namespace Cyotek.Demo.Windows.Forms
     #endregion
 
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox svnBranchUrlComboBox;
+    private Cyotek.SvnMigrate.Client.MruComboBox svnBranchUrlComboBox;
     private System.Windows.Forms.Button migrateButton;
     private System.ComponentModel.BackgroundWorker migrateBackgroundWorker;
     private System.Windows.Forms.StatusStrip statusStrip;
@@ -817,7 +817,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     private Cyotek.Windows.Forms.TabListPage authorMappingTabListPage;
-    private System.Windows.Forms.TextBox gitRepositoryPathTextBox;
+    private Cyotek.SvnMigrate.Client.MruComboBox gitRepositoryPathComboBox;
     private System.Windows.Forms.TextBox authorMappingsTextBox;
     private System.Windows.Forms.Button gitRepositoryPathBrowseButton;
     private System.Windows.Forms.Panel commandPanel;
@@ -837,7 +837,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox excludesTextBox;
     private System.Windows.Forms.Button previewButton;
     private System.ComponentModel.BackgroundWorker previewBackgroundWorker;
-    private System.Windows.Forms.TextBox basePathTextBox;
+    private Cyotek.SvnMigrate.Client.MruComboBox svnBasePathComboBox;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.ToolTip toolTip;
     private Cyotek.Windows.Forms.TabListPage logTabListPage;

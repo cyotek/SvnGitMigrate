@@ -22,6 +22,8 @@ namespace Cyotek.Windows.Forms
   {
     #region Public Fields
 
+    public const int CB_SETCUEBANNER = 0x1703;
+
     public const int EM_SETCUEBANNER = 5377;
 
     #endregion Public Fields

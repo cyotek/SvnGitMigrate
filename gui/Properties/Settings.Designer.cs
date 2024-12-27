@@ -25,42 +25,6 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SvnBranchUri {
-            get {
-                return ((string)(this["SvnBranchUri"]));
-            }
-            set {
-                this["SvnBranchUri"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GitRepositoryPath {
-            get {
-                return ((string)(this["GitRepositoryPath"]));
-            }
-            set {
-                this["GitRepositoryPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AuthorMapping {
-            get {
-                return ((string)(this["AuthorMapping"]));
-            }
-            set {
-                this["AuthorMapping"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool NeedSettingsUpgrade {
             get {
@@ -85,13 +49,13 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AllowEmptyCommits {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SvnBranchUri {
             get {
-                return ((bool)(this["AllowEmptyCommits"]));
+                return ((string)(this["SvnBranchUri"]));
             }
             set {
-                this["AllowEmptyCommits"] = value;
+                this["SvnBranchUri"] = value;
             }
         }
         
@@ -108,13 +72,36 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseExistingRepository {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SvnBasePath {
             get {
-                return ((bool)(this["UseExistingRepository"]));
+                return ((string)(this["SvnBasePath"]));
             }
             set {
-                this["UseExistingRepository"] = value;
+                this["SvnBasePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SvnBasePathMru {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SvnBasePathMru"]));
+            }
+            set {
+                this["SvnBasePathMru"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AuthorMapping {
+            get {
+                return ((string)(this["AuthorMapping"]));
+            }
+            set {
+                this["AuthorMapping"] = value;
             }
         }
         
@@ -143,12 +130,47 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SvnBasePath {
+        public string GitRepositoryPath {
             get {
-                return ((string)(this["SvnBasePath"]));
+                return ((string)(this["GitRepositoryPath"]));
             }
             set {
-                this["SvnBasePath"] = value;
+                this["GitRepositoryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection GitRepositoryPathMru {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["GitRepositoryPathMru"]));
+            }
+            set {
+                this["GitRepositoryPathMru"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExistingRepository {
+            get {
+                return ((bool)(this["UseExistingRepository"]));
+            }
+            set {
+                this["UseExistingRepository"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllowEmptyCommits {
+            get {
+                return ((bool)(this["AllowEmptyCommits"]));
+            }
+            set {
+                this["AllowEmptyCommits"] = value;
             }
         }
         
