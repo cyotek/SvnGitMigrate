@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Cyotek Svn2Git Migration Utility
+
+// Copyright © 2024 Cyotek Ltd. All Rights Reserved.
 
 // Enabling shell styles for the ListView and TreeView controls in C#
 // https://devblog.cyotek.com/post/enabling-shell-styles-for-the-listview-and-treeview-controls-in-csharp
@@ -9,12 +11,34 @@
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
-// https://www.paypal.me/cyotek
+// https://www.cyotek.com/contribute
 
-namespace Cyotek.Windows.Forms
+using System;
+using System.Windows.Forms;
+
+namespace Cyotek.SvnMigrate.Client
 {
   internal class ListView : System.Windows.Forms.ListView
   {
+    #region Public Methods
+
+    public void CheckAll()
+    {
+      this.ProcessListItems(li => li.Checked = true);
+    }
+
+    public void InvertChecked()
+    {
+      this.ProcessListItems(li => li.Checked = !li.Checked);
+    }
+
+    public void UncheckAll()
+    {
+      this.ProcessListItems(li => li.Checked = false);
+    }
+
+    #endregion Public Methods
+
     #region Protected Methods
 
     protected override void OnHandleCreated(EventArgs e)
@@ -28,5 +52,21 @@ namespace Cyotek.Windows.Forms
     }
 
     #endregion Protected Methods
+
+    #region Private Methods
+
+    private void ProcessListItems(Action<ListViewItem> action)
+    {
+      this.BeginUpdate();
+
+      foreach (ListViewItem item in this.Items)
+      {
+        action(item);
+      }
+
+      this.EndUpdate();
+    }
+
+    #endregion Private Methods
   }
 }

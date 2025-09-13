@@ -1,5 +1,5 @@
 ﻿
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   partial class MainForm
   {
@@ -32,29 +32,39 @@ namespace Cyotek.Demo.Windows.Forms
       this.components = new System.ComponentModel.Container();
       System.Windows.Forms.GroupBox repositoryGroupBox;
       System.Windows.Forms.GroupBox revisionsGroupBox;
-      System.Windows.Forms.GroupBox migrateGroupBox;
+      System.Windows.Forms.GroupBox logGroupBox;
       System.Windows.Forms.GroupBox gitRepositoryGroupBox;
       System.Windows.Forms.Label gitRepositoryPathLabel;
       System.Windows.Forms.GroupBox authorsGroupBox;
       System.Windows.Forms.SplitContainer globsSplitContainer;
       System.Windows.Forms.GroupBox includesGroupBox;
       System.Windows.Forms.GroupBox excludesGroupBox;
+      System.Windows.Forms.GroupBox templateGroupBox;
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+      this.svnBasePathComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
+      this.label2 = new System.Windows.Forms.Label();
       this.refreshButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
-      this.svnBranchUrlComboBox = new System.Windows.Forms.ComboBox();
-      this.revisionsListView = new Cyotek.Windows.Forms.ListView();
+      this.svnBranchUrlComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
+      this.revisionsListView = new Cyotek.SvnMigrate.Client.ListView();
       this.revisionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.messageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.revisionContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.revisionSelectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionSelectNoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionInvertSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.logTextBox = new System.Windows.Forms.TextBox();
       this.useExistingRepositoryCheckBox = new System.Windows.Forms.CheckBox();
       this.gitRepositoryPathBrowseButton = new System.Windows.Forms.Button();
-      this.gitRepositoryPathTextBox = new System.Windows.Forms.TextBox();
+      this.gitRepositoryPathComboBox = new Cyotek.SvnMigrate.Client.MruComboBox();
       this.authorMappingsTextBox = new System.Windows.Forms.TextBox();
       this.includesTextBox = new System.Windows.Forms.TextBox();
       this.excludesTextBox = new System.Windows.Forms.TextBox();
+      this.templateSplitContainer = new System.Windows.Forms.SplitContainer();
+      this.templateTextBox = new System.Windows.Forms.TextBox();
+      this.templatePreviewTextBox = new System.Windows.Forms.TextBox();
       this.migrateButton = new System.Windows.Forms.Button();
       this.migrateBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -62,6 +72,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.revisionCountToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
       this.cancelToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.cyotekHomePageToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +88,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.globsTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.gitTabListPage = new Cyotek.Windows.Forms.TabListPage();
+      this.logTabListPage = new Cyotek.Windows.Forms.TabListPage();
       this.changesetBackgroundWorker = new System.ComponentModel.BackgroundWorker();
       this.changesetTimer = new System.Windows.Forms.Timer(this.components);
       this.commandPanel = new System.Windows.Forms.Panel();
@@ -85,18 +97,23 @@ namespace Cyotek.Demo.Windows.Forms
       this.nextButton = new System.Windows.Forms.Button();
       this.selectionChangeTimer = new System.Windows.Forms.Timer(this.components);
       this.previewBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+      this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.revisionViewFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.revisionToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
       repositoryGroupBox = new System.Windows.Forms.GroupBox();
       revisionsGroupBox = new System.Windows.Forms.GroupBox();
-      migrateGroupBox = new System.Windows.Forms.GroupBox();
+      logGroupBox = new System.Windows.Forms.GroupBox();
       gitRepositoryGroupBox = new System.Windows.Forms.GroupBox();
       gitRepositoryPathLabel = new System.Windows.Forms.Label();
       authorsGroupBox = new System.Windows.Forms.GroupBox();
       globsSplitContainer = new System.Windows.Forms.SplitContainer();
       includesGroupBox = new System.Windows.Forms.GroupBox();
       excludesGroupBox = new System.Windows.Forms.GroupBox();
+      templateGroupBox = new System.Windows.Forms.GroupBox();
       repositoryGroupBox.SuspendLayout();
       revisionsGroupBox.SuspendLayout();
-      migrateGroupBox.SuspendLayout();
+      this.revisionContextMenuStrip.SuspendLayout();
+      logGroupBox.SuspendLayout();
       gitRepositoryGroupBox.SuspendLayout();
       authorsGroupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(globsSplitContainer)).BeginInit();
@@ -105,6 +122,11 @@ namespace Cyotek.Demo.Windows.Forms
       globsSplitContainer.SuspendLayout();
       includesGroupBox.SuspendLayout();
       excludesGroupBox.SuspendLayout();
+      templateGroupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.templateSplitContainer)).BeginInit();
+      this.templateSplitContainer.Panel1.SuspendLayout();
+      this.templateSplitContainer.Panel2.SuspendLayout();
+      this.templateSplitContainer.SuspendLayout();
       this.statusStrip.SuspendLayout();
       this.menuStrip.SuspendLayout();
       this.tabList.SuspendLayout();
@@ -112,31 +134,53 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage.SuspendLayout();
       this.globsTabListPage.SuspendLayout();
       this.gitTabListPage.SuspendLayout();
+      this.logTabListPage.SuspendLayout();
       this.commandPanel.SuspendLayout();
       this.SuspendLayout();
       // 
       // repositoryGroupBox
       // 
-      repositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      repositoryGroupBox.Controls.Add(this.svnBasePathComboBox);
+      repositoryGroupBox.Controls.Add(this.label2);
       repositoryGroupBox.Controls.Add(this.refreshButton);
       repositoryGroupBox.Controls.Add(this.label1);
       repositoryGroupBox.Controls.Add(this.svnBranchUrlComboBox);
-      repositoryGroupBox.Location = new System.Drawing.Point(3, 3);
+      repositoryGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+      repositoryGroupBox.Location = new System.Drawing.Point(0, 0);
       repositoryGroupBox.Name = "repositoryGroupBox";
-      repositoryGroupBox.Size = new System.Drawing.Size(681, 54);
+      repositoryGroupBox.Size = new System.Drawing.Size(687, 76);
       repositoryGroupBox.TabIndex = 0;
       repositoryGroupBox.TabStop = false;
       repositoryGroupBox.Text = "Repository";
+      // 
+      // svnBasePathComboBox
+      // 
+      this.svnBasePathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.svnBasePathComboBox.Location = new System.Drawing.Point(81, 46);
+      this.svnBasePathComboBox.Name = "svnBasePathComboBox";
+      this.svnBasePathComboBox.Size = new System.Drawing.Size(571, 21);
+      this.svnBasePathComboBox.TabIndex = 4;
+      this.svnBasePathComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 49);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(59, 13);
+      this.label2.TabIndex = 3;
+      this.label2.Text = "Base &Path:";
       // 
       // refreshButton
       // 
       this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.refreshButton.Image = global::Cyotek.SvnMigrate.Client.Properties.Resources.Refresh;
-      this.refreshButton.Location = new System.Drawing.Point(652, 17);
+      this.refreshButton.Location = new System.Drawing.Point(658, 17);
       this.refreshButton.Name = "refreshButton";
       this.refreshButton.Size = new System.Drawing.Size(23, 23);
       this.refreshButton.TabIndex = 2;
+      this.toolTip.SetToolTip(this.refreshButton, "Reload SVN Revisions");
       this.refreshButton.UseVisualStyleBackColor = true;
       this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
       // 
@@ -155,19 +199,17 @@ namespace Cyotek.Demo.Windows.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
       this.svnBranchUrlComboBox.Location = new System.Drawing.Point(81, 19);
       this.svnBranchUrlComboBox.Name = "svnBranchUrlComboBox";
-      this.svnBranchUrlComboBox.Size = new System.Drawing.Size(565, 21);
+      this.svnBranchUrlComboBox.Size = new System.Drawing.Size(571, 21);
       this.svnBranchUrlComboBox.TabIndex = 1;
       this.svnBranchUrlComboBox.TextChanged += new System.EventHandler(this.SvnBranchUrlTextBox_TextChanged);
       // 
       // revisionsGroupBox
       // 
-      revisionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       revisionsGroupBox.Controls.Add(this.revisionsListView);
-      revisionsGroupBox.Location = new System.Drawing.Point(3, 63);
+      revisionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      revisionsGroupBox.Location = new System.Drawing.Point(0, 76);
       revisionsGroupBox.Name = "revisionsGroupBox";
-      revisionsGroupBox.Size = new System.Drawing.Size(681, 353);
+      revisionsGroupBox.Size = new System.Drawing.Size(687, 343);
       revisionsGroupBox.TabIndex = 1;
       revisionsGroupBox.TabStop = false;
       revisionsGroupBox.Text = "Revisions";
@@ -183,12 +225,13 @@ namespace Cyotek.Demo.Windows.Forms
             this.authorColumnHeader,
             this.dateColumnHeader,
             this.messageColumnHeader});
+      this.revisionsListView.ContextMenuStrip = this.revisionContextMenuStrip;
       this.revisionsListView.FullRowSelect = true;
       this.revisionsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.revisionsListView.HideSelection = false;
       this.revisionsListView.Location = new System.Drawing.Point(6, 19);
       this.revisionsListView.Name = "revisionsListView";
-      this.revisionsListView.Size = new System.Drawing.Size(669, 328);
+      this.revisionsListView.Size = new System.Drawing.Size(675, 318);
       this.revisionsListView.TabIndex = 0;
       this.revisionsListView.UseCompatibleStateImageBehavior = false;
       this.revisionsListView.View = System.Windows.Forms.View.Details;
@@ -214,18 +257,48 @@ namespace Cyotek.Demo.Windows.Forms
       this.messageColumnHeader.Text = "Message";
       this.messageColumnHeader.Width = 380;
       // 
-      // migrateGroupBox
+      // revisionContextMenuStrip
       // 
-      migrateGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      migrateGroupBox.Controls.Add(this.logTextBox);
-      migrateGroupBox.Location = new System.Drawing.Point(3, 81);
-      migrateGroupBox.Name = "migrateGroupBox";
-      migrateGroupBox.Size = new System.Drawing.Size(681, 335);
-      migrateGroupBox.TabIndex = 1;
-      migrateGroupBox.TabStop = false;
-      migrateGroupBox.Text = "&Log";
+      this.revisionContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.revisionSelectAllToolStripMenuItem,
+            this.revisionSelectNoneToolStripMenuItem,
+            this.revisionInvertSelectionToolStripMenuItem,
+            this.revisionToolStripSeparator,
+            this.revisionViewFileListToolStripMenuItem});
+      this.revisionContextMenuStrip.Name = "revisionContextMenuStrip";
+      this.revisionContextMenuStrip.Size = new System.Drawing.Size(181, 120);
+      // 
+      // revisionSelectAllToolStripMenuItem
+      // 
+      this.revisionSelectAllToolStripMenuItem.Name = "revisionSelectAllToolStripMenuItem";
+      this.revisionSelectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.revisionSelectAllToolStripMenuItem.Text = "Select &All";
+      this.revisionSelectAllToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectAllToolStripMenuItem_Click);
+      // 
+      // revisionSelectNoneToolStripMenuItem
+      // 
+      this.revisionSelectNoneToolStripMenuItem.Name = "revisionSelectNoneToolStripMenuItem";
+      this.revisionSelectNoneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.revisionSelectNoneToolStripMenuItem.Text = "Select &None";
+      this.revisionSelectNoneToolStripMenuItem.Click += new System.EventHandler(this.RevisionSelectNoneToolStripMenuItem_Click);
+      // 
+      // revisionInvertSelectionToolStripMenuItem
+      // 
+      this.revisionInvertSelectionToolStripMenuItem.Name = "revisionInvertSelectionToolStripMenuItem";
+      this.revisionInvertSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.revisionInvertSelectionToolStripMenuItem.Text = "&Invert Selection";
+      this.revisionInvertSelectionToolStripMenuItem.Click += new System.EventHandler(this.RevisionInvertSelectionToolStripMenuItem_Click);
+      // 
+      // logGroupBox
+      // 
+      logGroupBox.Controls.Add(this.logTextBox);
+      logGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      logGroupBox.Location = new System.Drawing.Point(0, 0);
+      logGroupBox.Name = "logGroupBox";
+      logGroupBox.Size = new System.Drawing.Size(687, 419);
+      logGroupBox.TabIndex = 1;
+      logGroupBox.TabStop = false;
+      logGroupBox.Text = "&Log";
       // 
       // logTextBox
       // 
@@ -237,20 +310,19 @@ namespace Cyotek.Demo.Windows.Forms
       this.logTextBox.Name = "logTextBox";
       this.logTextBox.ReadOnly = true;
       this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.logTextBox.Size = new System.Drawing.Size(669, 310);
+      this.logTextBox.Size = new System.Drawing.Size(675, 394);
       this.logTextBox.TabIndex = 0;
       // 
       // gitRepositoryGroupBox
       // 
-      gitRepositoryGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       gitRepositoryGroupBox.Controls.Add(this.useExistingRepositoryCheckBox);
       gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathBrowseButton);
       gitRepositoryGroupBox.Controls.Add(gitRepositoryPathLabel);
-      gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathTextBox);
-      gitRepositoryGroupBox.Location = new System.Drawing.Point(3, 3);
+      gitRepositoryGroupBox.Controls.Add(this.gitRepositoryPathComboBox);
+      gitRepositoryGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+      gitRepositoryGroupBox.Location = new System.Drawing.Point(0, 0);
       gitRepositoryGroupBox.Name = "gitRepositoryGroupBox";
-      gitRepositoryGroupBox.Size = new System.Drawing.Size(681, 72);
+      gitRepositoryGroupBox.Size = new System.Drawing.Size(687, 72);
       gitRepositoryGroupBox.TabIndex = 0;
       gitRepositoryGroupBox.TabStop = false;
       gitRepositoryGroupBox.Text = "Repository";
@@ -268,7 +340,7 @@ namespace Cyotek.Demo.Windows.Forms
       // gitRepositoryPathBrowseButton
       // 
       this.gitRepositoryPathBrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(600, 17);
+      this.gitRepositoryPathBrowseButton.Location = new System.Drawing.Point(606, 17);
       this.gitRepositoryPathBrowseButton.Name = "gitRepositoryPathBrowseButton";
       this.gitRepositoryPathBrowseButton.Size = new System.Drawing.Size(75, 23);
       this.gitRepositoryPathBrowseButton.TabIndex = 2;
@@ -285,24 +357,22 @@ namespace Cyotek.Demo.Windows.Forms
       gitRepositoryPathLabel.TabIndex = 0;
       gitRepositoryPathLabel.Text = "&Repository Path:";
       // 
-      // gitRepositoryPathTextBox
+      // gitRepositoryPathComboBox
       // 
-      this.gitRepositoryPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.gitRepositoryPathComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.gitRepositoryPathTextBox.Location = new System.Drawing.Point(94, 19);
-      this.gitRepositoryPathTextBox.Name = "gitRepositoryPathTextBox";
-      this.gitRepositoryPathTextBox.Size = new System.Drawing.Size(500, 20);
-      this.gitRepositoryPathTextBox.TabIndex = 1;
+      this.gitRepositoryPathComboBox.Location = new System.Drawing.Point(94, 19);
+      this.gitRepositoryPathComboBox.Name = "gitRepositoryPathComboBox";
+      this.gitRepositoryPathComboBox.Size = new System.Drawing.Size(506, 21);
+      this.gitRepositoryPathComboBox.TabIndex = 1;
       // 
       // authorsGroupBox
       // 
-      authorsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       authorsGroupBox.Controls.Add(this.authorMappingsTextBox);
-      authorsGroupBox.Location = new System.Drawing.Point(3, 3);
+      authorsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      authorsGroupBox.Location = new System.Drawing.Point(0, 0);
       authorsGroupBox.Name = "authorsGroupBox";
-      authorsGroupBox.Size = new System.Drawing.Size(681, 413);
+      authorsGroupBox.Size = new System.Drawing.Size(687, 419);
       authorsGroupBox.TabIndex = 2;
       authorsGroupBox.TabStop = false;
       authorsGroupBox.Text = "&Authors";
@@ -317,7 +387,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingsTextBox.Multiline = true;
       this.authorMappingsTextBox.Name = "authorMappingsTextBox";
       this.authorMappingsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.authorMappingsTextBox.Size = new System.Drawing.Size(669, 388);
+      this.authorMappingsTextBox.Size = new System.Drawing.Size(675, 394);
       this.authorMappingsTextBox.TabIndex = 1;
       // 
       // globsSplitContainer
@@ -386,6 +456,59 @@ namespace Cyotek.Demo.Windows.Forms
       this.excludesTextBox.Size = new System.Drawing.Size(675, 183);
       this.excludesTextBox.TabIndex = 2;
       // 
+      // templateGroupBox
+      // 
+      templateGroupBox.Controls.Add(this.templateSplitContainer);
+      templateGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      templateGroupBox.Location = new System.Drawing.Point(0, 72);
+      templateGroupBox.Name = "templateGroupBox";
+      templateGroupBox.Size = new System.Drawing.Size(687, 347);
+      templateGroupBox.TabIndex = 3;
+      templateGroupBox.TabStop = false;
+      templateGroupBox.Text = "&Commit Message Template:";
+      // 
+      // templateSplitContainer
+      // 
+      this.templateSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templateSplitContainer.Location = new System.Drawing.Point(3, 16);
+      this.templateSplitContainer.Name = "templateSplitContainer";
+      this.templateSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      // 
+      // templateSplitContainer.Panel1
+      // 
+      this.templateSplitContainer.Panel1.Controls.Add(this.templateTextBox);
+      // 
+      // templateSplitContainer.Panel2
+      // 
+      this.templateSplitContainer.Panel2.Controls.Add(this.templatePreviewTextBox);
+      this.templateSplitContainer.Size = new System.Drawing.Size(681, 328);
+      this.templateSplitContainer.SplitterDistance = 157;
+      this.templateSplitContainer.TabIndex = 2;
+      // 
+      // templateTextBox
+      // 
+      this.templateTextBox.AcceptsReturn = true;
+      this.templateTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templateTextBox.Location = new System.Drawing.Point(0, 0);
+      this.templateTextBox.Multiline = true;
+      this.templateTextBox.Name = "templateTextBox";
+      this.templateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.templateTextBox.Size = new System.Drawing.Size(681, 157);
+      this.templateTextBox.TabIndex = 1;
+      this.templateTextBox.TextChanged += new System.EventHandler(this.TemplateTextBox_TextChanged);
+      // 
+      // templatePreviewTextBox
+      // 
+      this.templatePreviewTextBox.AcceptsReturn = true;
+      this.templatePreviewTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.templatePreviewTextBox.Location = new System.Drawing.Point(0, 0);
+      this.templatePreviewTextBox.Multiline = true;
+      this.templatePreviewTextBox.Name = "templatePreviewTextBox";
+      this.templatePreviewTextBox.ReadOnly = true;
+      this.templatePreviewTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.templatePreviewTextBox.Size = new System.Drawing.Size(681, 167);
+      this.templatePreviewTextBox.TabIndex = 2;
+      // 
       // migrateButton
       // 
       this.migrateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -411,7 +534,8 @@ namespace Cyotek.Demo.Windows.Forms
             this.statusToolStripStatusLabel,
             this.revisionCountToolStripStatusLabel,
             this.toolStripProgressBar,
-            this.cancelToolStripStatusLabel});
+            this.cancelToolStripStatusLabel,
+            this.cyotekHomePageToolStripStatusLabel});
       this.statusStrip.Location = new System.Drawing.Point(0, 492);
       this.statusStrip.Name = "statusStrip";
       this.statusStrip.Size = new System.Drawing.Size(845, 22);
@@ -420,7 +544,7 @@ namespace Cyotek.Demo.Windows.Forms
       // statusToolStripStatusLabel
       // 
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(701, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(602, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -444,6 +568,14 @@ namespace Cyotek.Demo.Windows.Forms
       this.cancelToolStripStatusLabel.Text = "Cancel";
       this.cancelToolStripStatusLabel.Visible = false;
       this.cancelToolStripStatusLabel.Click += new System.EventHandler(this.CancelToolStripStatusLabel_Click);
+      // 
+      // cyotekHomePageToolStripStatusLabel
+      // 
+      this.cyotekHomePageToolStripStatusLabel.IsLink = true;
+      this.cyotekHomePageToolStripStatusLabel.Name = "cyotekHomePageToolStripStatusLabel";
+      this.cyotekHomePageToolStripStatusLabel.Size = new System.Drawing.Size(99, 17);
+      this.cyotekHomePageToolStripStatusLabel.Text = "www.cyotek.com";
+      this.cyotekHomePageToolStripStatusLabel.Click += new System.EventHandler(this.CyotekHomePageToolStripStatusLabel_Click);
       // 
       // menuStrip
       // 
@@ -532,6 +664,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.tabList.Controls.Add(this.authorMappingTabListPage);
       this.tabList.Controls.Add(this.globsTabListPage);
       this.tabList.Controls.Add(this.gitTabListPage);
+      this.tabList.Controls.Add(this.logTabListPage);
       this.tabList.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabList.Location = new System.Drawing.Point(0, 24);
       this.tabList.Name = "tabList";
@@ -563,11 +696,18 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // gitTabListPage
       // 
-      this.gitTabListPage.Controls.Add(migrateGroupBox);
+      this.gitTabListPage.Controls.Add(templateGroupBox);
       this.gitTabListPage.Controls.Add(gitRepositoryGroupBox);
       this.gitTabListPage.Name = "gitTabListPage";
       this.gitTabListPage.Size = new System.Drawing.Size(687, 419);
       this.gitTabListPage.Text = "Git";
+      // 
+      // logTabListPage
+      // 
+      this.logTabListPage.Controls.Add(logGroupBox);
+      this.logTabListPage.Name = "logTabListPage";
+      this.logTabListPage.Size = new System.Drawing.Size(687, 419);
+      this.logTabListPage.Text = "Log";
       // 
       // changesetBackgroundWorker
       // 
@@ -630,6 +770,7 @@ namespace Cyotek.Demo.Windows.Forms
       // 
       // selectionChangeTimer
       // 
+      this.selectionChangeTimer.Interval = 250;
       this.selectionChangeTimer.Tick += new System.EventHandler(this.SelectionChangeTimer_Tick);
       // 
       // previewBackgroundWorker
@@ -639,6 +780,18 @@ namespace Cyotek.Demo.Windows.Forms
       this.previewBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.PreviewBackgroundWorker_DoWork);
       this.previewBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.MigrateBackgroundWorker_ProgressChanged);
       this.previewBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.MigrateBackgroundWorker_RunWorkerCompleted);
+      // 
+      // revisionViewFileListToolStripMenuItem
+      // 
+      this.revisionViewFileListToolStripMenuItem.Name = "revisionViewFileListToolStripMenuItem";
+      this.revisionViewFileListToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.revisionViewFileListToolStripMenuItem.Text = "&File List...";
+      this.revisionViewFileListToolStripMenuItem.Click += new System.EventHandler(this.RevisionViewFileListToolStripMenuItem_Click);
+      // 
+      // revisionToolStripSeparator
+      // 
+      this.revisionToolStripSeparator.Name = "revisionToolStripSeparator";
+      this.revisionToolStripSeparator.Size = new System.Drawing.Size(177, 6);
       // 
       // MainForm
       // 
@@ -663,8 +816,9 @@ namespace Cyotek.Demo.Windows.Forms
       repositoryGroupBox.ResumeLayout(false);
       repositoryGroupBox.PerformLayout();
       revisionsGroupBox.ResumeLayout(false);
-      migrateGroupBox.ResumeLayout(false);
-      migrateGroupBox.PerformLayout();
+      this.revisionContextMenuStrip.ResumeLayout(false);
+      logGroupBox.ResumeLayout(false);
+      logGroupBox.PerformLayout();
       gitRepositoryGroupBox.ResumeLayout(false);
       gitRepositoryGroupBox.PerformLayout();
       authorsGroupBox.ResumeLayout(false);
@@ -677,6 +831,13 @@ namespace Cyotek.Demo.Windows.Forms
       includesGroupBox.PerformLayout();
       excludesGroupBox.ResumeLayout(false);
       excludesGroupBox.PerformLayout();
+      templateGroupBox.ResumeLayout(false);
+      this.templateSplitContainer.Panel1.ResumeLayout(false);
+      this.templateSplitContainer.Panel1.PerformLayout();
+      this.templateSplitContainer.Panel2.ResumeLayout(false);
+      this.templateSplitContainer.Panel2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.templateSplitContainer)).EndInit();
+      this.templateSplitContainer.ResumeLayout(false);
       this.statusStrip.ResumeLayout(false);
       this.statusStrip.PerformLayout();
       this.menuStrip.ResumeLayout(false);
@@ -686,6 +847,7 @@ namespace Cyotek.Demo.Windows.Forms
       this.authorMappingTabListPage.ResumeLayout(false);
       this.globsTabListPage.ResumeLayout(false);
       this.gitTabListPage.ResumeLayout(false);
+      this.logTabListPage.ResumeLayout(false);
       this.commandPanel.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -695,7 +857,7 @@ namespace Cyotek.Demo.Windows.Forms
     #endregion
 
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox svnBranchUrlComboBox;
+    private Cyotek.SvnMigrate.Client.MruComboBox svnBranchUrlComboBox;
     private System.Windows.Forms.Button migrateButton;
     private System.ComponentModel.BackgroundWorker migrateBackgroundWorker;
     private System.Windows.Forms.StatusStrip statusStrip;
@@ -709,7 +871,7 @@ namespace Cyotek.Demo.Windows.Forms
     private Cyotek.Windows.Forms.TabList tabList;
     private Cyotek.Windows.Forms.TabListPage svnTabListPage;
     private Cyotek.Windows.Forms.TabListPage gitTabListPage;
-    private Cyotek.Windows.Forms.ListView revisionsListView;
+    private ListView revisionsListView;
     private System.Windows.Forms.ColumnHeader revisionColumnHeader;
     private System.Windows.Forms.ColumnHeader authorColumnHeader;
     private System.Windows.Forms.ColumnHeader dateColumnHeader;
@@ -719,7 +881,7 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     private Cyotek.Windows.Forms.TabListPage authorMappingTabListPage;
-    private System.Windows.Forms.TextBox gitRepositoryPathTextBox;
+    private Cyotek.SvnMigrate.Client.MruComboBox gitRepositoryPathComboBox;
     private System.Windows.Forms.TextBox authorMappingsTextBox;
     private System.Windows.Forms.Button gitRepositoryPathBrowseButton;
     private System.Windows.Forms.Panel commandPanel;
@@ -739,6 +901,20 @@ namespace Cyotek.Demo.Windows.Forms
     private System.Windows.Forms.TextBox excludesTextBox;
     private System.Windows.Forms.Button previewButton;
     private System.ComponentModel.BackgroundWorker previewBackgroundWorker;
+    private Cyotek.SvnMigrate.Client.MruComboBox svnBasePathComboBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ToolTip toolTip;
+    private Cyotek.Windows.Forms.TabListPage logTabListPage;
+    private System.Windows.Forms.SplitContainer templateSplitContainer;
+    private System.Windows.Forms.TextBox templateTextBox;
+    private System.Windows.Forms.TextBox templatePreviewTextBox;
+    private System.Windows.Forms.ToolStripStatusLabel cyotekHomePageToolStripStatusLabel;
+    private System.Windows.Forms.ContextMenuStrip revisionContextMenuStrip;
+    private System.Windows.Forms.ToolStripMenuItem revisionSelectAllToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem revisionSelectNoneToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem revisionInvertSelectionToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator revisionToolStripSeparator;
+    private System.Windows.Forms.ToolStripMenuItem revisionViewFileListToolStripMenuItem;
   }
 }
 

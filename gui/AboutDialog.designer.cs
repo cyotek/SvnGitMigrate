@@ -1,4 +1,4 @@
-﻿namespace Cyotek.Demo.Windows.Forms
+﻿namespace Cyotek.SvnMigrate.Client
 {
   partial class AboutDialog
   {

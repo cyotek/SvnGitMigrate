@@ -15,9 +15,9 @@ using System.Windows.Forms;
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
-// https://www.paypal.me/cyotek
+// https://www.cyotek.com/contribute
 
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal class BaseForm : System.Windows.Forms.Form
   {

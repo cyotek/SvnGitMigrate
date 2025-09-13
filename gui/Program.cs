@@ -1,5 +1,4 @@
-﻿using Cyotek.Demo.Windows.Forms;
-using Cyotek.SvnMigrate.Client.Properties;
+﻿using Cyotek.SvnMigrate.Client.Properties;
 using System;
 using System.Windows.Forms;
 
@@ -11,7 +10,7 @@ using System.Windows.Forms;
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
-// https://www.paypal.me/cyotek
+// https://www.cyotek.com/contribute
 
 namespace Cyotek.SvnMigrate.Client
 {

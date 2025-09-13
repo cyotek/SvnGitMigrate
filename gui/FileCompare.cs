@@ -8,7 +8,7 @@
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
-// https://www.paypal.me/cyotek
+// https://www.cyotek.com/contribute
 
 namespace Cyotek.SvnMigrate.Client
 {

@@ -12,7 +12,7 @@ namespace Cyotek.SvnMigrate.Client.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,42 +20,6 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SvnBranchUri {
-            get {
-                return ((string)(this["SvnBranchUri"]));
-            }
-            set {
-                this["SvnBranchUri"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GitRepositoryPath {
-            get {
-                return ((string)(this["GitRepositoryPath"]));
-            }
-            set {
-                this["GitRepositoryPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AuthorMapping {
-            get {
-                return ((string)(this["AuthorMapping"]));
-            }
-            set {
-                this["AuthorMapping"] = value;
             }
         }
         
@@ -85,13 +49,13 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AllowEmptyCommits {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SvnBranchUri {
             get {
-                return ((bool)(this["AllowEmptyCommits"]));
+                return ((string)(this["SvnBranchUri"]));
             }
             set {
-                this["AllowEmptyCommits"] = value;
+                this["SvnBranchUri"] = value;
             }
         }
         
@@ -108,13 +72,36 @@ namespace Cyotek.SvnMigrate.Client.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseExistingRepository {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SvnBasePath {
             get {
-                return ((bool)(this["UseExistingRepository"]));
+                return ((string)(this["SvnBasePath"]));
             }
             set {
-                this["UseExistingRepository"] = value;
+                this["SvnBasePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SvnBasePathMru {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SvnBasePathMru"]));
+            }
+            set {
+                this["SvnBasePathMru"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AuthorMapping {
+            get {
+                return ((string)(this["AuthorMapping"]));
+            }
+            set {
+                this["AuthorMapping"] = value;
             }
         }
         
@@ -137,6 +124,65 @@ namespace Cyotek.SvnMigrate.Client.Properties {
             }
             set {
                 this["ExcludeGlobs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitRepositoryPath {
+            get {
+                return ((string)(this["GitRepositoryPath"]));
+            }
+            set {
+                this["GitRepositoryPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection GitRepositoryPathMru {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["GitRepositoryPathMru"]));
+            }
+            set {
+                this["GitRepositoryPathMru"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseExistingRepository {
+            get {
+                return ((bool)(this["UseExistingRepository"]));
+            }
+            set {
+                this["UseExistingRepository"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllowEmptyCommits {
+            get {
+                return ((bool)(this["AllowEmptyCommits"]));
+            }
+            set {
+                this["AllowEmptyCommits"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CommitMessageTemplate {
+            get {
+                return ((string)(this["CommitMessageTemplate"]));
+            }
+            set {
+                this["CommitMessageTemplate"] = value;
             }
         }
     }

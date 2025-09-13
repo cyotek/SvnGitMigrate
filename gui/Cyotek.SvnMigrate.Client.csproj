@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.2.0.306\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.306\build\net46\LibGit2Sharp.NativeBinaries.props')" />
+  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,8 +45,12 @@
     <Reference Include="DotNet.Glob, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b68cc888b4f632d1, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNet.Glob.3.1.3\lib\net46\DotNet.Glob.dll</HintPath>
     </Reference>
-    <Reference Include="LibGit2Sharp, Version=0.26.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
-      <HintPath>..\packages\LibGit2Sharp.0.26.2\lib\net46\LibGit2Sharp.dll</HintPath>
+    <Reference Include="LibGit2Sharp, Version=0.31.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibGit2Sharp.0.31.0\lib\net472\LibGit2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Scriban.Signed, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
+      <HintPath>..\packages\Scriban.Signed.5.12.1\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
     </Reference>
     <Reference Include="SharpSvn, Version=1.9007.3987.251, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
       <HintPath>..\packages\SharpSvn.1.9-x86.1.9007.3987.251\lib\net40\SharpSvn.dll</HintPath>
@@ -55,9 +59,17 @@
       <HintPath>..\packages\SharpSvn.1.9-x86.1.9007.3987.251\lib\net40\SharpSvn.UI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutDialog.cs">
@@ -69,6 +81,7 @@
     <Compile Include="BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CommitMessageTemplateModel.cs" />
     <Compile Include="FileCompare.cs" />
     <Compile Include="FileDialogHelper.cs" />
     <Compile Include="GlobMatcher.cs" />
@@ -81,6 +94,9 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MruComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,8 +106,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RevisionInformationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RevisionInformationDialog.Designer.cs">
+      <DependentUpon>RevisionInformationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShellHelpers.cs" />
     <Compile Include="SimpleFolderSync.cs" />
+    <Compile Include="ComboBoxExtensions.cs" />
+    <Compile Include="TextBoxExtensions.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,6 +132,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RevisionInformationDialog.resx">
+      <DependentUpon>RevisionInformationDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="..\CHANGELOG.md">
       <Link>CHANGELOG.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -148,6 +175,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.306\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.306\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
+    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
   </Target>
 </Project>

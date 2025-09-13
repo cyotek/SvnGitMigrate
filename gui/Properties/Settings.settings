@@ -2,34 +2,46 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Cyotek.SvnMigrate.Client.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="SvnBranchUri" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="GitRepositoryPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="AuthorMapping" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="NeedSettingsUpgrade" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SaveSettingsOnExit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="AllowEmptyCommits" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="SvnBranchUri" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SvnBranchUriMru" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UseExistingRepository" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="SvnBasePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SvnBasePathMru" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AuthorMapping" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="IncludeGlobs" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ExcludeGlobs" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GitRepositoryPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GitRepositoryPathMru" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseExistingRepository" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AllowEmptyCommits" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CommitMessageTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

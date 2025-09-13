@@ -1,20 +1,22 @@
-﻿using Cyotek.SvnMigrate;
-using Cyotek.SvnMigrate.Client;
-using Cyotek.SvnMigrate.Client.Properties;
+﻿using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
+using Scriban;
 using SharpSvn;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2023 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -22,11 +24,32 @@ using System.Windows.Forms;
 // Found this example useful?
 // https://www.cyotek.com/contribute
 
-namespace Cyotek.Demo.Windows.Forms
+namespace Cyotek.SvnMigrate.Client
 {
   internal partial class MainForm : BaseForm
   {
     #region Private Fields
+
+    private static readonly string _defaultCommitTemplate = @"{{log}}
+
+(Migrated from SVN branch {{repository_uri.absolute_path}}, revision {{revision}})";
+
+    private static readonly CommitMessageTemplateModel _previewModel = new CommitMessageTemplateModel
+    {
+      Revision = 12345,
+      Timestamp = new DateTime(2024, 12, 16, 20, 9, 0),
+      Log = "This is a test commit message",
+      Author = new User
+      {
+        Name = "Richard Moss",
+        EmailAddress = "richard.moss@cyotek.com",
+      },
+      RepositoryUri = new Uri("https://svn.example.com/svn/repo"),
+    };
+
+    private bool _ignoreEvents;
+
+    private string _lastScannedBasePath;
 
     private string _lastScannedUrl;
 
@@ -73,17 +96,59 @@ namespace Cyotek.Demo.Windows.Forms
 
     #region Private Methods
 
-    private static string GetBasePath(Uri svnUri)
+    private static Template CreateCommitMessageTemplate(MigrationOptions options)
+    {
+      Template template;
+      template = string.IsNullOrWhiteSpace(options.CommitMessageTemplate)
+        ? Template.Parse(_defaultCommitTemplate)
+        : Template.Parse(options.CommitMessageTemplate);
+      return template;
+    }
+
+    private static CommitMessageTemplateModel CreateCommitMessageTemplateModel(SvnChangeset set, Uri svnUri)
+    {
+      CommitMessageTemplateModel model;
+      model = new CommitMessageTemplateModel
+      {
+        Revision = set.Revision,
+        Timestamp = set.Time,
+        Log = set.Log,
+        Author = set.Author,
+        RepositoryUri = svnUri,
+      };
+      return model;
+    }
+
+    private static string DetectSvnBasePath(Uri svnUri)
     {
       string basePath = svnUri.AbsolutePath;
 
-      // TODO: Are there other patterns than svn/{reponame}/? if so, this is broke
-      if (basePath.StartsWith("/svn/", StringComparison.OrdinalIgnoreCase))
+      // TODO: My old HTTP based SVN server had /svn/ in the URL, which needed stripping
+      // My new SVN server uses the SVN protocol, which doesn't have this
+      // I am unaware if there are other patterns so this is now driven by
+      // a user setting, but hopefully auto detect will work
+
+      if (svnUri.Scheme == "svn")
       {
-        basePath = basePath.Substring(basePath.IndexOf('/', 5));
+        basePath = basePath.Substring(basePath.IndexOf('/', 1));
+      }
+      else
+      {
+        // TODO: Are there other patterns than svn/{reponame}/? if so, this is broke
+        if (basePath.StartsWith("/svn/", StringComparison.OrdinalIgnoreCase))
+        {
+          basePath = basePath.Substring(basePath.IndexOf('/', 5));
+        }
       }
 
       return basePath;
+    }
+
+    private static Color GetRevisionColor(SvnChangeset changeset)
+    {
+      return changeset.ChangedPaths.Count > 0
+        ? SystemColors.ControlText
+        : SystemColors.GrayText;
     }
 
     private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -131,16 +196,16 @@ namespace Cyotek.Demo.Windows.Forms
       Settings.Default.AllowEmptyCommits = allowEmptyCommitsToolStripMenuItem.Checked;
     }
 
-    private SvnChangesetCollection BuildRevisionsList(Uri svnUri)
+    private SvnChangesetCollection BuildRevisionsList(Uri svnUri, string basePath)
     {
       SvnChangesetCollection sets;
+      Glob[] globs;
 
       sets = new SvnChangesetCollection();
+      globs = GlobMatcher.PrepareGlobs(GlobMatcher.GetGlobStrings(basePath));
 
       using (SvnClient svn = new SvnClient())
       {
-        string basePath;
-
         svn.Log(svnUri, (o, args) =>
         {
           SvnChangeset changeset;
@@ -150,15 +215,15 @@ namespace Cyotek.Demo.Windows.Forms
             Author = new User { Name = args.Author },
             Revision = args.Revision,
             Time = args.Time,
-            Log = args.LogMessage,
-            IsSelected = true
+            Log = args.LogMessage.Trim(),
+            IsSelected = true,
           };
-
-          basePath = GetBasePath(svnUri);
 
           foreach (SvnChangeItem change in args.ChangedPaths)
           {
-            if (!string.IsNullOrEmpty(change.Path) && change.Path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
+            changeset.AllPaths.Add(change.Path);
+
+            if (!string.IsNullOrEmpty(change.Path) && GlobMatcher.IsIncluded(change.Path, globs))
             {
               switch (change.Action)
               {
@@ -205,25 +270,22 @@ namespace Cyotek.Demo.Windows.Forms
 
     private void ChangesetBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
     {
-      string url;
+      MigrationOptions options;
       SvnChangesetCollection changesets;
 
-      url = (string)e.Argument;
+      options = (MigrationOptions)e.Argument;
 
-      if (!string.IsNullOrEmpty(url))
-      {
-        changesets = this.BuildRevisionsList(new Uri(url));
-      }
-      else
-      {
-        changesets = new SvnChangesetCollection();
-      }
+      changesets = options.SvnUri != null
+        ? this.BuildRevisionsList(options.SvnUri, options.SvnBasePath)
+        : new SvnChangesetCollection();
 
       e.Result = changesets;
     }
 
     private void ChangesetBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
+      HashSet<string> authors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
       revisionsListView.Items.Clear();
 
       if (e.Error == null)
@@ -231,6 +293,7 @@ namespace Cyotek.Demo.Windows.Forms
         _svnRevisions = (SvnChangesetCollection)e.Result;
 
         revisionsListView.BeginUpdate();
+        _ignoreEvents = true;
 
         for (int i = 0; i < _svnRevisions.Count; i++)
         {
@@ -249,23 +312,31 @@ namespace Cyotek.Demo.Windows.Forms
                 changeset.Author.ToString(),
                 changeset.Time.ToString(),
                 changeset.Log
-              }
+              },
+              ForeColor = GetRevisionColor(changeset)
             });
 
-          this.AddBlankMapping(changeset.Author.Name);
+          authors.Add(changeset.Author.Name);
         }
 
+        _ignoreEvents = false;
         revisionsListView.EndUpdate();
 
         _lastScannedUrl = svnBranchUrlComboBox.Text;
-        this.UpdateMru();
+        _lastScannedBasePath = svnBasePathComboBox.Text;
       }
       else
       {
         _svnRevisions = new SvnChangesetCollection();
         _lastScannedUrl = null;
+        _lastScannedBasePath = null;
 
         MessageBox.Show(string.Format("Failed to load revisions. {0}", e.Error.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+
+      foreach (string author in authors)
+      {
+        this.AddBlankMapping(author);
       }
 
       this.UpdateSelectionCount();
@@ -303,27 +374,32 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void Commit(string gitPath, SvnChangeset set)
+    private void Commit(string gitPath, SvnChangeset set, Uri svnUri, Template messageTemplate, CommitOptions commitOptions)
     {
-      CommitOptions commitOptions;
-
-      commitOptions = new CommitOptions
-      {
-        AllowEmptyCommit = Settings.Default.AllowEmptyCommits
-      };
-
       using (Repository repo = new Repository(gitPath))
       {
-        Signature author;
-        Signature committer;
-        Commit commit;
-
         Commands.Stage(repo, "*");
 
-        author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
-        committer = author;
+        if (commitOptions.AllowEmptyCommit || repo.Index.Count > 0)
+        {
+          Signature author;
+          Signature committer;
+          CommitMessageTemplateModel model;
 
-        commit = repo.Commit(set.Log, author, committer, commitOptions);
+          author = new Signature(set.Author.Name, set.Author.EmailAddress, set.Time);
+          committer = author;
+          model = CreateCommitMessageTemplateModel(set, svnUri);
+
+          try
+          {
+            _ = repo.Commit(messageTemplate.Render(model), author, committer, commitOptions);
+          }
+          catch (EmptyCommitException)
+          {
+            // ignore, if we get this the user has
+            // disabled the option to allow empty commits
+          }
+        }
       }
     }
 
@@ -343,14 +419,25 @@ namespace Cyotek.Demo.Windows.Forms
       options = new MigrationOptions
       {
         SvnUri = svnUri,
-        RepositoryPath = gitRepositoryPathTextBox.Text,
+        SvnBasePath = this.GetOrDefineSvnBasePath(svnUri),
+        RepositoryPath = gitRepositoryPathComboBox.Text,
         WorkingPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()),
         Authors = this.GetAuthorMapping(),
         Revisions = this.GetOrderedRevisions(),
-        UseExistingRepository = useExistingRepositoryCheckBox.Checked
+        UseExistingRepository = useExistingRepositoryCheckBox.Checked,
+        CommitMessageTemplate = templateTextBox.Text,
+        IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines),
+        ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines),
       };
 
       return options;
+    }
+
+    private void CyotekHomePageToolStripStatusLabel_Click(object sender, EventArgs e)
+    {
+      cyotekHomePageToolStripStatusLabel.LinkVisited = true;
+
+      AboutDialog.OpenCyotekHomePage();
     }
 
     private void EnumerateSvnChangeSets(BackgroundWorker worker, MigrationOptions options, Action<SvnChangeset> operation)
@@ -359,8 +446,8 @@ namespace Cyotek.Demo.Windows.Forms
       Glob[] includes;
       Glob[] excludes;
 
-      includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
-      excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
+      includes = GlobMatcher.PrepareGlobs(options.IncludeGlobs);
+      excludes = GlobMatcher.PrepareGlobs(options.ExcludeGlobs);
 
       sets = options.Revisions;
 
@@ -458,41 +545,11 @@ namespace Cyotek.Demo.Windows.Forms
       return results;
     }
 
-    private StringCollection GetGlobs(TextBox control)
+    private string GetOrDefineSvnBasePath(Uri svnUri)
     {
-      StringCollection result;
-      string[] lines;
-
-      result = new StringCollection();
-      lines = control.Lines;
-
-      for (int i = 0; i < lines.Length; i++)
-      {
-        string line;
-
-        line = lines[i].Trim();
-
-        if (!string.IsNullOrWhiteSpace(line) && !result.Contains(line))
-        {
-          result.Add(line);
-        }
-      }
-
-      return result;
-    }
-
-    private StringCollection GetMru()
-    {
-      StringCollection result;
-
-      result = new StringCollection();
-
-      for (int i = 0; i < svnBranchUrlComboBox.Items.Count; i++)
-      {
-        result.Add((string)svnBranchUrlComboBox.Items[i]);
-      }
-
-      return result;
+      return string.IsNullOrWhiteSpace(svnBasePathComboBox.Text)
+        ? DetectSvnBasePath(svnUri)
+        : svnBasePathComboBox.Text;
     }
 
     private SvnChangesetCollection GetOrderedRevisions()
@@ -501,11 +558,14 @@ namespace Cyotek.Demo.Windows.Forms
 
       revisions = new SvnChangesetCollection();
 
-      foreach (SvnChangeset revision in _svnRevisions)
+      if (_svnRevisions != null)
       {
-        if (revision.IsSelected)
+        foreach (SvnChangeset revision in _svnRevisions)
         {
-          revisions.Add(revision);
+          if (revision.IsSelected)
+          {
+            revisions.Add(revision);
+          }
         }
       }
 
@@ -518,11 +578,11 @@ namespace Cyotek.Demo.Windows.Forms
     {
       string path;
 
-      path = FileDialogHelper.GetFolderName("Select git repository &path:", gitRepositoryPathTextBox.Text);
+      path = FileDialogHelper.GetFolderName("Select git repository &path:", gitRepositoryPathComboBox.Text);
 
       if (!string.IsNullOrEmpty(path))
       {
-        gitRepositoryPathTextBox.Text = path;
+        gitRepositoryPathComboBox.Text = path;
       }
     }
 
@@ -544,19 +604,13 @@ namespace Cyotek.Demo.Windows.Forms
       return result;
     }
 
-    private void ListPreviewFiles(StringBuilder sb, string basePath, StringCollection fileNames, string operation, Glob[] includes, Glob[] excludes)
+    private void ListPreviewFiles(StringBuilder sb, StringCollection fileNames, string operation, Glob[] includes, Glob[] excludes)
     {
       foreach (string fileName in fileNames)
       {
         if (GlobMatcher.ShouldInclude(fileName, includes, excludes))
         {
-          string shortName;
-
-          shortName = fileName.StartsWith(basePath, StringComparison.OrdinalIgnoreCase)
-            ? fileName.Substring(basePath.Length)
-            : fileName;
-
-          sb.AppendFormat("\t{0}: {1}\r\n", operation, shortName);
+          sb.AppendFormat("\t{0}: {1}\r\n", operation, fileName);
         }
       }
     }
@@ -582,34 +636,32 @@ namespace Cyotek.Demo.Windows.Forms
       }
     }
 
-    private void LoadMru(Settings settings)
-    {
-      svnBranchUrlComboBox.Items.Clear();
-
-      if (settings.SvnBranchUriMru != null)
-      {
-        svnBranchUrlComboBox.BeginUpdate();
-        foreach (string uri in settings.SvnBranchUriMru)
-        {
-          svnBranchUrlComboBox.Items.Add(uri);
-        }
-        svnBranchUrlComboBox.EndUpdate();
-      }
-    }
-
     private void LoadRevisions()
     {
-      string uri;
-
       changesetTimer.Stop();
 
-      uri = svnBranchUrlComboBox.Text;
-
-      if (!string.Equals(uri, _lastScannedUrl))
+      if (!changesetBackgroundWorker.IsBusy)
       {
-        this.PrepareProgressUi("Building revision list...");
+        string uri = svnBranchUrlComboBox.Text;
 
-        changesetBackgroundWorker.RunWorkerAsync(svnBranchUrlComboBox.Text);
+        if (!string.Equals(uri, _lastScannedUrl) || !string.Equals(svnBasePathComboBox.Text, _lastScannedBasePath))
+        {
+          this.PrepareProgressUi("Building revision list...");
+
+          if (!string.IsNullOrEmpty(uri))
+          {
+            if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri svnUri))
+            {
+              MessageBox.Show("Invalid URI.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+              svnBasePathComboBox.SetCueText(DetectSvnBasePath(svnUri));
+            }
+          }
+
+          changesetBackgroundWorker.RunWorkerAsync(this.CreateMigrationOptions());
+        }
       }
     }
 
@@ -618,15 +670,24 @@ namespace Cyotek.Demo.Windows.Forms
       Settings settings;
 
       settings = Settings.Default;
-      this.LoadMru(settings);
+      svnBranchUrlComboBox.LoadMru(settings.SvnBranchUriMru);
       svnBranchUrlComboBox.Text = settings.SvnBranchUri;
-      gitRepositoryPathTextBox.Text = settings.GitRepositoryPath;
+      svnBasePathComboBox.LoadMru(settings.SvnBasePathMru);
+      svnBasePathComboBox.Text = settings.SvnBasePath;
+      templateTextBox.Text = settings.CommitMessageTemplate;
+      gitRepositoryPathComboBox.LoadMru(settings.GitRepositoryPathMru);
+      gitRepositoryPathComboBox.Text = settings.GitRepositoryPath;
       authorMappingsTextBox.Text = settings.AuthorMapping;
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
       allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
       useExistingRepositoryCheckBox.Checked = settings.UseExistingRepository;
       this.LoadGlobs(includesTextBox, settings.IncludeGlobs);
       this.LoadGlobs(excludesTextBox, settings.ExcludeGlobs);
+
+      if (string.IsNullOrWhiteSpace(templateTextBox.Text))
+      {
+        this.UpdateTemplatePreview();
+      }
     }
 
     private void MigrateBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -637,13 +698,20 @@ namespace Cyotek.Demo.Windows.Forms
       string gitPath;
       StringCollection includes;
       StringCollection excludes;
+      Template template;
+      CommitOptions commitOptions;
 
       options = (MigrationOptions)e.Argument;
       svnUri = options.SvnUri;
       workPath = options.WorkingPath;
       gitPath = options.RepositoryPath;
-      includes = this.GetGlobs(includesTextBox);
-      excludes = this.GetGlobs(excludesTextBox);
+      includes = options.IncludeGlobs;
+      excludes = options.ExcludeGlobs;
+      template = CreateCommitMessageTemplate(options);
+      commitOptions = new CommitOptions
+      {
+        AllowEmptyCommit = Settings.Default.AllowEmptyCommits,
+      };
 
       this.CreateGitRepository(gitPath);
 
@@ -652,15 +720,7 @@ namespace Cyotek.Demo.Windows.Forms
         this.Checkout(svnUri, set, workPath);
         SimpleFolderSync.SyncFolders(workPath, gitPath, includes, excludes);
 
-        try
-        {
-          this.Commit(gitPath, set);
-        }
-        catch (EmptyCommitException)
-        {
-          // ignore, if we get this the user has
-          // disabled the option to allow empty commits
-        }
+        this.Commit(gitPath, set, svnUri, template, commitOptions);
       });
 
       ShellHelpers.DeletePath(workPath);
@@ -699,9 +759,16 @@ namespace Cyotek.Demo.Windows.Forms
         MessageBox.Show(string.Format("{0} complete.", action), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
 
-      if (e.Result != null)
+      try
       {
-        logTextBox.Text = e.Result.ToString();
+        if (e.Result != null)
+        {
+          logTextBox.Text = e.Result.ToString();
+        }
+      }
+      catch (Exception ex)
+      {
+        logTextBox.AppendText(ex.Message);
       }
 
       this.ResetProgressUi();
@@ -713,11 +780,15 @@ namespace Cyotek.Demo.Windows.Forms
 
       options = this.CreateMigrationOptions();
 
-      if (this.ValidateOptions(options))
+      if (this.ValidateOptions(options, skipFolderChecks: false))
       {
         this.PrepareProgressUi("Migrating...");
 
-        tabList.SelectedPage = gitTabListPage;
+        tabList.SelectedPage = logTabListPage;
+
+        svnBranchUrlComboBox.UpdateMru();
+        svnBasePathComboBox.UpdateMru();
+        gitRepositoryPathComboBox.UpdateMru();
 
         migrateBackgroundWorker.RunWorkerAsync(options);
       }
@@ -747,22 +818,29 @@ namespace Cyotek.Demo.Windows.Forms
       Glob[] includes;
       Glob[] excludes;
       StringBuilder sb;
-      string basePath;
+      Template template;
 
       options = (MigrationOptions)e.Argument;
-      includes = GlobMatcher.PrepareGlobs(this.GetGlobs(includesTextBox));
-      excludes = GlobMatcher.PrepareGlobs(this.GetGlobs(excludesTextBox));
+      includes = GlobMatcher.PrepareGlobs(options.IncludeGlobs);
+      excludes = GlobMatcher.PrepareGlobs(options.ExcludeGlobs);
       sb = new StringBuilder();
-      basePath = GetBasePath(options.SvnUri);
+      template = CreateCommitMessageTemplate(options);
 
       this.EnumerateSvnChangeSets(previewBackgroundWorker, options, set =>
       {
-        sb.AppendFormat("{0} [{1}]\r\n{2}\r\n", set.Revision, set.Time, set.Log.Replace("\n", " ").Replace("\r", ""));
+        CommitMessageTemplateModel model = CreateCommitMessageTemplateModel(set, options.SvnUri);
 
-        this.ListPreviewFiles(sb, basePath, set.RemovedPaths, "DEL", includes, excludes);
-        this.ListPreviewFiles(sb, basePath, set.ModifiedPaths, "MOD", includes, excludes);
-        this.ListPreviewFiles(sb, basePath, set.NewPaths, "ADD", includes, excludes);
+        sb.AppendFormat("{0} [{1}]\r\n{2}\r\n", set.Revision, set.Time, template.Render(model).Replace("\n", " ").Replace("\r", ""));
+
+        this.ListPreviewFiles(sb, set.RemovedPaths, "DEL", includes, excludes);
+        this.ListPreviewFiles(sb, set.ModifiedPaths, "MOD", includes, excludes);
+        this.ListPreviewFiles(sb, set.NewPaths, "ADD", includes, excludes);
       });
+
+      if (sb.Length == 0)
+      {
+        sb.AppendLine("Nothing found, is the base path or inclusions/exclusions correct?");
+      }
 
       e.Result = sb.ToString();
     }
@@ -773,11 +851,11 @@ namespace Cyotek.Demo.Windows.Forms
 
       options = this.CreateMigrationOptions();
 
-      if (this.ValidateOptions(options))
+      if (this.ValidateOptions(options, skipFolderChecks: true))
       {
         this.PrepareProgressUi("Building preview...");
 
-        tabList.SelectedPage = gitTabListPage;
+        tabList.SelectedPage = logTabListPage;
 
         previewBackgroundWorker.RunWorkerAsync(options);
       }
@@ -791,6 +869,7 @@ namespace Cyotek.Demo.Windows.Forms
     private void RefreshButton_Click(object sender, EventArgs e)
     {
       _lastScannedUrl = null;
+      _lastScannedBasePath = null;
 
       this.LoadRevisions();
     }
@@ -808,12 +887,57 @@ namespace Cyotek.Demo.Windows.Forms
       commandPanel.Enabled = true;
     }
 
+    private void RevisionInvertSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.InvertChecked());
+    }
+
+    private void RevisionSelectAllToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.CheckAll());
+    }
+
+    private void RevisionSelectNoneToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.UpdateRevisionListChecks(lv => lv.UncheckAll());
+    }
+
     private void RevisionsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       _svnRevisions[(int)e.Item.Tag].IsSelected = e.Item.Checked;
 
-      selectionChangeTimer.Stop();
-      selectionChangeTimer.Start();
+      if (!_ignoreEvents)
+      {
+        selectionChangeTimer.Stop();
+        selectionChangeTimer.Start();
+      }
+    }
+
+    private void RevisionViewFileListToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      ListViewItem item = revisionsListView.SelectedItems.Count > 0
+        ? revisionsListView.SelectedItems[0]
+        : null;
+
+      if (item != null)
+      {
+        SortedSet<string> paths = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+        SvnChangeset set = _svnRevisions[(int)item.Tag];
+
+        foreach (string path in set.AllPaths)
+        {
+          paths.Add(path);
+        }
+
+        using (RevisionInformationDialog dialog = new RevisionInformationDialog(set, string.Join(Environment.NewLine, paths)))
+        {
+          dialog.ShowDialog(this);
+        }
+      }
+      else
+      {
+        SystemSounds.Beep.Play();
+      }
     }
 
     private void SaveSettings()
@@ -822,14 +946,18 @@ namespace Cyotek.Demo.Windows.Forms
 
       settings = Settings.Default;
 
+      settings.SvnBranchUriMru = svnBranchUrlComboBox.GetMru();
       settings.SvnBranchUri = svnBranchUrlComboBox.Text;
-      settings.GitRepositoryPath = gitRepositoryPathTextBox.Text;
+      settings.SvnBasePathMru = svnBasePathComboBox.GetMru();
+      settings.SvnBasePath = svnBasePathComboBox.Text;
+      settings.GitRepositoryPathMru = gitRepositoryPathComboBox.GetMru();
+      settings.GitRepositoryPath = gitRepositoryPathComboBox.Text;
       settings.AuthorMapping = authorMappingsTextBox.Text;
+      settings.CommitMessageTemplate = templateTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
-      settings.SvnBranchUriMru = this.GetMru();
-      settings.IncludeGlobs = this.GetGlobs(includesTextBox);
-      settings.ExcludeGlobs = this.GetGlobs(excludesTextBox);
+      settings.IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines);
+      settings.ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines);
 
       settings.Save();
     }
@@ -876,29 +1004,20 @@ namespace Cyotek.Demo.Windows.Forms
       nextButton.Enabled = tabList.SelectedIndex < tabList.TabListPageCount - 1;
     }
 
-    private void UpdateMru()
+    private void TemplateTextBox_TextChanged(object sender, EventArgs e)
     {
-      string uri;
-      int index;
+      this.UpdateTemplatePreview();
+    }
 
-      uri = svnBranchUrlComboBox.Text;
-      index = svnBranchUrlComboBox.FindStringExact(uri);
+    private void UpdateRevisionListChecks(Action<ListView> action)
+    {
+      _ignoreEvents = true;
 
-      if (index != -1 && index != 0)
-      {
-        svnBranchUrlComboBox.Items.RemoveAt(index);
-      }
+      action(revisionsListView);
 
-      if (index != 0)
-      {
-        svnBranchUrlComboBox.Items.Insert(0, uri);
-        svnBranchUrlComboBox.SelectedIndex = 0;
-      }
+      _ignoreEvents = false;
 
-      while (svnBranchUrlComboBox.Items.Count > 256)
-      {
-        svnBranchUrlComboBox.Items.RemoveAt(svnBranchUrlComboBox.Items.Count - 1);
-      }
+      this.UpdateSelectionCount();
     }
 
     private void UpdateSelectionCount()
@@ -906,7 +1025,24 @@ namespace Cyotek.Demo.Windows.Forms
       revisionCountToolStripStatusLabel.Text = string.Format("{0} Revisions ({1} Selected)", revisionsListView.Items.Count, revisionsListView.CheckedIndices.Count);
     }
 
-    private bool ValidateOptions(MigrationOptions options)
+    private void UpdateTemplatePreview()
+    {
+      try
+
+      {
+        string template = !string.IsNullOrWhiteSpace(templateTextBox.Text)
+          ? templateTextBox.Text
+          : _defaultCommitTemplate;
+
+        templatePreviewTextBox.Text = Template.Parse(template).Render(_previewModel);
+      }
+      catch (Exception ex)
+      {
+        templatePreviewTextBox.Text = ex.Message;
+      }
+    }
+
+    private bool ValidateOptions(MigrationOptions options, bool skipFolderChecks)
     {
       bool result;
 
@@ -916,15 +1052,15 @@ namespace Cyotek.Demo.Windows.Forms
       {
         MessageBox.Show("SVN branch URI required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (string.IsNullOrWhiteSpace(options.RepositoryPath))
+      else if (!skipFolderChecks && string.IsNullOrWhiteSpace(options.RepositoryPath))
       {
         MessageBox.Show("Git repository path required.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (!options.UseExistingRepository && !this.IsEmptyFolder(options.RepositoryPath))
+      else if (!skipFolderChecks && !options.UseExistingRepository && !this.IsEmptyFolder(options.RepositoryPath))
       {
         MessageBox.Show("Git repository location is not empty.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
-      else if (options.UseExistingRepository && !Repository.IsValid(options.RepositoryPath))
+      else if (!skipFolderChecks && options.UseExistingRepository && !Repository.IsValid(options.RepositoryPath))
       {
         MessageBox.Show("Git repository location does not point to a valid Git repository.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
