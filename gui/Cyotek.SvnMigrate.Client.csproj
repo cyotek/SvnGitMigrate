@@ -49,6 +49,9 @@
       <HintPath>..\packages\LibGit2Sharp.0.31.0\lib\net472\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Scriban.Signed, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
       <HintPath>..\packages\Scriban.Signed.6.3.0\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
     </Reference>
@@ -85,6 +88,7 @@
     <Compile Include="FileCompare.cs" />
     <Compile Include="FileDialogHelper.cs" />
     <Compile Include="GlobMatcher.cs" />
+    <Compile Include="IgnorePropertiesResolver.cs" />
     <Compile Include="ListView.cs">
       <SubType>Component</SubType>
     </Compile>

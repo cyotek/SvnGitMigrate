@@ -36,6 +36,7 @@ COPY /y %RELDIR%CHANGELOG.md                                .\dist
 COPY /y %RELDIR%LICENSE.txt                                 .\dist
 COPY /y %RELDIR%System.Runtime.CompilerServices.Unsafe.dll  .\dist
 COPY /y %RELDIR%System.Threading.Tasks.Extensions.dll       .\dist
+COPY /y %RELDIR%Newtonsoft.Json.dll                         .\dist
 
 XCOPY %RELDIR%lib\win32 .\dist\lib\win32 /E /V /I /Q /H /K
 
