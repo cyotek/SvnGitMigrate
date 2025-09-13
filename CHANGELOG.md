@@ -2,6 +2,13 @@
 
 ## Change Log
 
+### 1.6
+
+#### Added
+
+* Added Open Profile and Save Profile As commands, for quickly
+  switching between migration settings.
+
 ### 1.5
 
 #### Added

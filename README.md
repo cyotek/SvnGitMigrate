@@ -157,6 +157,15 @@ rules), then perform a commit.
 
 This may take some time to perform.
 
+## Profiles
+
+To save the current migration settings (with the exception of
+revision selections) to a JSON file, open the **File** menu and
+choose **Save Profile As**.
+
+To load previously saved settings, open the **File** menu and
+choose **Open Profile**.
+
 [step1]: res/step1.png
 [step2]: res/step2.png
 [step3]: res/step3.png

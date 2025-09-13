@@ -1,6 +1,7 @@
 ﻿using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
+using Newtonsoft.Json;
 using Scriban;
 using SharpSvn;
 using System;
@@ -16,7 +17,7 @@ using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
+// Copyright © 2020-2025 Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -29,6 +30,10 @@ namespace Cyotek.SvnMigrate.Client
   internal partial class MainForm : BaseForm
   {
     #region Private Fields
+
+    private const string _profileExtension = "json";
+
+    private const string _profileFilter = "Svn2Git Migration Profile (*." + _profileExtension + ")|*." + _profileExtension;
 
     private static readonly string _defaultCommitTemplate = @"{{log}}
 
@@ -799,6 +804,83 @@ namespace Cyotek.SvnMigrate.Client
       tabList.SelectedIndex++;
     }
 
+    private void OpenProfile(string fileName)
+    {
+      MigrationOptions options;
+      JsonSerializer serializer;
+
+      serializer = new JsonSerializer
+      {
+        NullValueHandling = NullValueHandling.Ignore,
+      };
+
+      using (StreamReader sr = new StreamReader(fileName))
+      using (JsonReader reader = new JsonTextReader(sr))
+      {
+        options = serializer.Deserialize<MigrationOptions>(reader);
+      }
+
+      if (options != null)
+      {
+        svnBranchUrlComboBox.Text = options.SvnUri?.ToString() ?? string.Empty;
+        svnBasePathComboBox.Text = options.SvnBasePath ?? string.Empty;
+        gitRepositoryPathComboBox.Text = options.RepositoryPath ?? string.Empty;
+        templateTextBox.Text = options.CommitMessageTemplate ?? string.Empty;
+        useExistingRepositoryCheckBox.Checked = options.UseExistingRepository;
+
+        if (options.Authors != null && options.Authors.Count > 0)
+        {
+          StringBuilder sb = new StringBuilder();
+
+          foreach (User user in options.Authors)
+          {
+            if (!string.IsNullOrEmpty(user.AlternateName))
+            {
+              sb.AppendFormat("{0} = {1} <{2}>\r\n", user.AlternateName, user.Name, user.EmailAddress);
+            }
+            else
+            {
+              sb.AppendFormat("{0} = {0} <{1}>\r\n", user.Name, user.EmailAddress);
+            }
+          }
+
+          authorMappingsTextBox.Text = sb.ToString().TrimEnd('\r', '\n');
+        }
+        else
+        {
+          authorMappingsTextBox.Text = string.Empty;
+        }
+
+        this.LoadGlobs(includesTextBox, options.IncludeGlobs);
+        this.LoadGlobs(excludesTextBox, options.ExcludeGlobs);
+
+        this.UpdateTemplatePreview();
+
+        _svnRevisions = null;
+        _lastScannedUrl = null;
+        _lastScannedBasePath = null;
+        revisionsListView.Items.Clear();
+        this.UpdateSelectionCount();
+      }
+    }
+
+    private void OpenProfileToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      string fileName = FileDialogHelper.GetOpenFileName("Open Profile", _profileFilter, _profileExtension);
+
+      if (!string.IsNullOrEmpty(fileName))
+      {
+        try
+        {
+          this.OpenProfile(fileName);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(string.Format("Failed to open profile. {0}", ex.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+      }
+    }
+
     private void PrepareProgressUi(string message)
     {
       Cursor.Current = Cursors.WaitCursor;
@@ -937,6 +1019,43 @@ namespace Cyotek.SvnMigrate.Client
       else
       {
         SystemSounds.Beep.Play();
+      }
+    }
+
+    private void SaveProfileAs(string fileName)
+    {
+      JsonSerializer serializer;
+      MigrationOptions options;
+
+      options = this.CreateMigrationOptions();
+      serializer = new JsonSerializer
+      {
+        Formatting = Formatting.Indented,
+        NullValueHandling = NullValueHandling.Ignore,
+        ContractResolver = new IgnorePropertiesResolver(nameof(MigrationOptions.WorkingPath), nameof(MigrationOptions.Revisions)),
+      };
+
+      using (StreamWriter sw = new StreamWriter(fileName))
+      using (JsonWriter writer = new JsonTextWriter(sw))
+      {
+        serializer.Serialize(writer, options);
+      }
+    }
+
+    private void SaveProfileAsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      string fileName = FileDialogHelper.GetSaveFileName("Save Profile As", _profileFilter, _profileExtension);
+
+      if (!string.IsNullOrEmpty(fileName))
+      {
+        try
+        {
+          this.SaveProfileAs(fileName);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(string.Format("Failed to save profile. {0}", ex.Message), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
       }
     }
 
