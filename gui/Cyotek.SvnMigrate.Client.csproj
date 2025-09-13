@@ -49,8 +49,8 @@
       <HintPath>..\packages\LibGit2Sharp.0.31.0\lib\net472\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Scriban.Signed, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
-      <HintPath>..\packages\Scriban.Signed.5.12.1\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
+    <Reference Include="Scriban.Signed, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
+      <HintPath>..\packages\Scriban.Signed.6.3.0\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
     </Reference>
     <Reference Include="SharpSvn, Version=1.9007.3987.251, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
       <HintPath>..\packages\SharpSvn.1.9-x86.1.9007.3987.251\lib\net40\SharpSvn.dll</HintPath>
@@ -62,11 +62,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
