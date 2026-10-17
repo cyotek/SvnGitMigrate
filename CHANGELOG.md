@@ -2,6 +2,14 @@
 
 ## Change Log
 
+### WIP
+
+### Added
+
+* Changed package from SharpSvn.1.9-x86 to the latest version of
+  SharpSvn, avoiding needing an older version of the Visual C++
+  runtime
+
 ### 1.6
 
 #### Added

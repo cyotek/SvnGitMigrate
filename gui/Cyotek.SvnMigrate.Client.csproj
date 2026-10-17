@@ -55,11 +55,8 @@
     <Reference Include="Scriban.Signed, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
       <HintPath>..\packages\Scriban.Signed.6.3.0\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
     </Reference>
-    <Reference Include="SharpSvn, Version=1.9007.3987.251, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
-      <HintPath>..\packages\SharpSvn.1.9-x86.1.9007.3987.251\lib\net40\SharpSvn.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpSvn.UI, Version=1.9007.3987.251, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpSvn.1.9-x86.1.9007.3987.251\lib\net40\SharpSvn.UI.dll</HintPath>
+    <Reference Include="SharpSvn, Version=1.14005.390.0, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
+      <HintPath>..\packages\SharpSvn.1.14005.390\lib\net46\SharpSvn.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -180,5 +177,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.323\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
+    <Error Condition="!Exists('..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets'))" />
   </Target>
+  <Import Project="..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets" Condition="Exists('..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets')" />
 </Project>
