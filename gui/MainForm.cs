@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -52,6 +53,12 @@ namespace Cyotek.SvnMigrate.Client
       },
       RepositoryUri = new Uri("https://svn.example.com/svn/repo"),
     };
+
+    private readonly object _credentialCacheLock = new object();
+
+    private NetworkCredential _cachedCredential;
+
+    private string _cachedCredentialRealm;
 
     private bool _ignoreEvents;
 
@@ -449,16 +456,44 @@ namespace Cyotek.SvnMigrate.Client
     private SvnClient CreateSvnClient()
     {
       SvnClient svn;
+      bool attempted;
 
       svn = new SvnClient();
+      attempted = false;
 
-      svn.Authentication.UserNamePasswordHandlers += this.SvnUserNamePasswordHandler;
+      svn.Authentication.UserNamePasswordHandlers += (sender, e) =>
+      {
+        bool firstAttempt;
+
+        firstAttempt = !attempted;
+        attempted = true;
+
+        this.SvnUserNamePasswordHandler(e, firstAttempt);
+      };
 
       return svn;
     }
 
-    private void SvnUserNamePasswordHandler(object sender, SvnUserNamePasswordEventArgs e)
+    private void SvnUserNamePasswordHandler(SvnUserNamePasswordEventArgs e, bool firstAttempt)
     {
+      lock (_credentialCacheLock)
+      {
+        if (_cachedCredential != null && string.Equals(e.Realm, _cachedCredentialRealm, StringComparison.Ordinal))
+        {
+          if (firstAttempt)
+          {
+            e.UserName = _cachedCredential.UserName;
+            e.Password = _cachedCredential.Password;
+            e.Save = false;
+            return;
+          }
+
+          // cached credentials didn't work last time so probably incorrect, remove
+          _cachedCredential = null;
+          _cachedCredentialRealm = null;
+        }
+      }
+
       this.Invoke((MethodInvoker)(() =>
       {
         using (CredentialsDialog dialog = new CredentialsDialog(e.Realm, e.InitialUserName, e.MaySave))
@@ -475,6 +510,15 @@ namespace Cyotek.SvnMigrate.Client
           }
         }
       }));
+
+      if (!e.Break && !e.Save)
+      {
+        lock (_credentialCacheLock)
+        {
+          _cachedCredential = new NetworkCredential(e.UserName, e.Password);
+          _cachedCredentialRealm = e.Realm;
+        }
+      }
     }
 
     private void EnumerateSvnChangeSets(BackgroundWorker worker, MigrationOptions options, Action<SvnChangeset> operation)
