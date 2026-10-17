@@ -1,9 +1,10 @@
-﻿using Cyotek.SvnMigrate.Client.Properties;
+using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
 using Newtonsoft.Json;
 using Scriban;
 using SharpSvn;
+using SharpSvn.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -209,7 +210,7 @@ namespace Cyotek.SvnMigrate.Client
       sets = new SvnChangesetCollection();
       globs = GlobMatcher.PrepareGlobs(GlobMatcher.GetGlobStrings(basePath));
 
-      using (SvnClient svn = new SvnClient())
+      using (SvnClient svn = this.CreateSvnClient())
       {
         svn.Log(svnUri, (o, args) =>
         {
@@ -355,7 +356,7 @@ namespace Cyotek.SvnMigrate.Client
 
     private void Checkout(Uri svnUri, SvnChangeset set, string workPath)
     {
-      using (SvnClient svn = new SvnClient())
+      using (SvnClient svn = this.CreateSvnClient())
       {
         if (Directory.Exists(workPath))
         {
@@ -443,6 +444,37 @@ namespace Cyotek.SvnMigrate.Client
       cyotekHomePageToolStripStatusLabel.LinkVisited = true;
 
       AboutDialog.OpenCyotekHomePage();
+    }
+
+    private SvnClient CreateSvnClient()
+    {
+      SvnClient svn;
+
+      svn = new SvnClient();
+
+      svn.Authentication.UserNamePasswordHandlers += this.SvnUserNamePasswordHandler;
+
+      return svn;
+    }
+
+    private void SvnUserNamePasswordHandler(object sender, SvnUserNamePasswordEventArgs e)
+    {
+      this.Invoke((MethodInvoker)(() =>
+      {
+        using (CredentialsDialog dialog = new CredentialsDialog(e.Realm, e.InitialUserName, e.MaySave))
+        {
+          if (dialog.ShowDialog(this) == DialogResult.OK)
+          {
+            e.UserName = dialog.UserName;
+            e.Password = dialog.Password;
+            e.Save = dialog.SaveCredentials;
+          }
+          else
+          {
+            e.Break = true;
+          }
+        }
+      }));
     }
 
     private void EnumerateSvnChangeSets(BackgroundWorker worker, MigrationOptions options, Action<SvnChangeset> operation)
