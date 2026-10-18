@@ -1,6 +1,6 @@
 ﻿// Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text

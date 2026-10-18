@@ -2,7 +2,7 @@
 
 ## Change Log
 
-### WIP
+### 1.7
 
 ### Added
 

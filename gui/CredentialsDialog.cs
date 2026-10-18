@@ -1,6 +1,16 @@
 using System;
 using System.Windows.Forms;
 
+// Cyotek Svn2Git Migration Utility
+
+// Copyright © Cyotek Ltd. All Rights Reserved.
+
+// This work is licensed under the MIT License.
+// See LICENSE.TXT for the full text
+
+// Found this example useful?
+// https://www.cyotek.com/contribute
+
 namespace Cyotek.SvnMigrate.Client
 {
   internal sealed partial class CredentialsDialog : BaseForm

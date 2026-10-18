@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-// Reading DOOM WAD files
-// https://www.cyotek.com/blog/reading-doom-wad-files
-
-// Writing DOOM WAD files
-// https://www.cyotek.com/blog/writing-doom-wad-files
-
-// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
 // https://www.cyotek.com/contribute
+
+// Base on "Reading DOOM WAD files"
+// https://devblog.cyotek.com/post/reading-doom-wad-files
+
+// Based on "Writing DOOM WAD files"
+// https://devblog.cyotek.com/post/writing-doom-wad-files
 
 namespace Cyotek.SvnMigrate.Client
 {
