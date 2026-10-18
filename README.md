@@ -1,4 +1,4 @@
-# Cyotek Svn2Git Migration Utility
+# ![icon] Cyotek Svn2Git Migration Utility
 
 This repository hosts a naive utility for creating a Git
 repository from an existing SVN tree, making it useful for
@@ -166,6 +166,7 @@ choose **Save Profile As**.
 To load previously saved settings, open the **File** menu and
 choose **Open Profile**.
 
+[icon]: res/icon-32.png
 [step1]: res/step1.png
 [step2]: res/step2.png
 [step3]: res/step3.png

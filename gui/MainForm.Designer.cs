@@ -1,4 +1,4 @@
-﻿
+
 namespace Cyotek.SvnMigrate.Client
 {
   partial class MainForm
@@ -559,7 +559,7 @@ namespace Cyotek.SvnMigrate.Client
       // statusToolStripStatusLabel
       // 
       this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
-      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(602, 17);
+      this.statusToolStripStatusLabel.Size = new System.Drawing.Size(457, 17);
       this.statusToolStripStatusLabel.Spring = true;
       this.statusToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -617,27 +617,27 @@ namespace Cyotek.SvnMigrate.Client
       // openProfileToolStripMenuItem
       // 
       this.openProfileToolStripMenuItem.Name = "openProfileToolStripMenuItem";
-      this.openProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.openProfileToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.openProfileToolStripMenuItem.Text = "&Open Profile...";
       this.openProfileToolStripMenuItem.Click += new System.EventHandler(this.OpenProfileToolStripMenuItem_Click);
       // 
       // saveProfileAsToolStripMenuItem
       // 
       this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-      this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.saveProfileAsToolStripMenuItem.Text = "Save Profile &As...";
       this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.SaveProfileAsToolStripMenuItem_Click);
       // 
       // toolStripMenuItem2
       // 
       this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-      this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+      this.toolStripMenuItem2.Size = new System.Drawing.Size(157, 6);
       // 
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
       this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.exitToolStripMenuItem.Text = "E&xit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
       // 
