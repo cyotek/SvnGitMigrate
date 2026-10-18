@@ -1,7 +1,6 @@
 using Cyotek.SvnMigrate.Client.Properties;
 using DotNet.Globbing;
 using LibGit2Sharp;
-using Newtonsoft.Json;
 using Scriban;
 using SharpSvn;
 using SharpSvn.Security;
@@ -15,6 +14,10 @@ using System.Linq;
 using System.Media;
 using System.Net;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
@@ -53,6 +56,8 @@ namespace Cyotek.SvnMigrate.Client
       },
       RepositoryUri = new Uri("https://svn.example.com/svn/repo"),
     };
+
+    private static readonly JsonSerializerOptions _profileSerializerOptions = CreateProfileSerializerOptions();
 
     private readonly object _credentialCacheLock = new object();
 
@@ -130,6 +135,47 @@ namespace Cyotek.SvnMigrate.Client
         RepositoryUri = svnUri,
       };
       return model;
+    }
+
+    private static JsonSerializerOptions CreateProfileSerializerOptions()
+    {
+      return new JsonSerializerOptions
+      {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        TypeInfoResolver = CreateMigrationOptionsTypeResolver(),
+      };
+    }
+
+    private static DefaultJsonTypeInfoResolver CreateMigrationOptionsTypeResolver()
+    {
+      // TODO: Haven't yet decided if this is yet another hack or a good
+      // idea. Normally I would just slap [JsonIgnore] on the properties
+      // in question, but then that's a global decision. And it isn't
+      // like the library is going to be used by anything other than
+      // this tool. Well, I wasted time writing this now so will keep
+      // it for now.
+
+      DefaultJsonTypeInfoResolver resolver;
+
+      resolver = new DefaultJsonTypeInfoResolver();
+      resolver.Modifiers.Add(typeInfo =>
+      {
+        if (typeInfo.Type == typeof(MigrationOptions))
+        {
+          foreach (JsonPropertyInfo property in typeInfo.Properties)
+          {
+            if (property.Name == nameof(MigrationOptions.WorkingPath) || property.Name == nameof(MigrationOptions.Revisions))
+            {
+              property.ShouldSerialize = (obj, value) => false;
+            }
+          }
+        }
+      });
+
+      return resolver;
     }
 
     private static string DetectSvnBasePath(Uri svnUri)
@@ -696,25 +742,21 @@ namespace Cyotek.SvnMigrate.Client
       }
     }
 
-    private void LoadGlobs(TextBox control, StringCollection globs)
+    private void LoadGlobs(TextBox control, List<string> globs)
     {
-      if (globs != null && globs.Count > 0)
+      StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      if (globs != null)
       {
-        StringBuilder sb;
-
-        sb = new StringBuilder();
-
-        for (int i = 0; i < globs.Count; i++)
+        foreach (string glob in globs)
         {
-          sb.AppendLine(globs[i]);
+          sb.AppendLine(glob);
         }
+      }
 
-        control.Text = sb.ToString();
-      }
-      else
-      {
-        control.Text = string.Empty;
-      }
+      control.Text = sb.ToString();
     }
 
     private void LoadRevisions()
@@ -762,8 +804,8 @@ namespace Cyotek.SvnMigrate.Client
       saveSettingsOnExitToolStripMenuItem.Checked = settings.SaveSettingsOnExit;
       allowEmptyCommitsToolStripMenuItem.Checked = settings.AllowEmptyCommits;
       useExistingRepositoryCheckBox.Checked = settings.UseExistingRepository;
-      this.LoadGlobs(includesTextBox, settings.IncludeGlobs);
-      this.LoadGlobs(excludesTextBox, settings.ExcludeGlobs);
+      this.LoadGlobs(includesTextBox, settings.IncludeGlobPatterns);
+      this.LoadGlobs(excludesTextBox, settings.ExcludeGlobPatterns);
 
       if (string.IsNullOrWhiteSpace(templateTextBox.Text))
       {
@@ -777,8 +819,8 @@ namespace Cyotek.SvnMigrate.Client
       Uri svnUri;
       string workPath;
       string gitPath;
-      StringCollection includes;
-      StringCollection excludes;
+      List<string> includes;
+      List<string> excludes;
       Template template;
       CommitOptions commitOptions;
 
@@ -883,17 +925,10 @@ namespace Cyotek.SvnMigrate.Client
     private void OpenProfile(string fileName)
     {
       MigrationOptions options;
-      JsonSerializer serializer;
 
-      serializer = new JsonSerializer
+      using (Stream stream = File.OpenRead(fileName))
       {
-        NullValueHandling = NullValueHandling.Ignore,
-      };
-
-      using (StreamReader sr = new StreamReader(fileName))
-      using (JsonReader reader = new JsonTextReader(sr))
-      {
-        options = serializer.Deserialize<MigrationOptions>(reader);
+        options = JsonSerializer.Deserialize<MigrationOptions>(stream, _profileSerializerOptions);
       }
 
       if (options != null)
@@ -1100,21 +1135,13 @@ namespace Cyotek.SvnMigrate.Client
 
     private void SaveProfileAs(string fileName)
     {
-      JsonSerializer serializer;
       MigrationOptions options;
 
       options = this.CreateMigrationOptions();
-      serializer = new JsonSerializer
-      {
-        Formatting = Formatting.Indented,
-        NullValueHandling = NullValueHandling.Ignore,
-        ContractResolver = new IgnorePropertiesResolver(nameof(MigrationOptions.WorkingPath), nameof(MigrationOptions.Revisions)),
-      };
 
-      using (StreamWriter sw = new StreamWriter(fileName))
-      using (JsonWriter writer = new JsonTextWriter(sw))
+      using (Stream stream = File.Create(fileName))
       {
-        serializer.Serialize(writer, options);
+        JsonSerializer.Serialize(stream, options, _profileSerializerOptions);
       }
     }
 
@@ -1151,8 +1178,8 @@ namespace Cyotek.SvnMigrate.Client
       settings.CommitMessageTemplate = templateTextBox.Text;
       settings.SaveSettingsOnExit = saveSettingsOnExitToolStripMenuItem.Checked;
       settings.UseExistingRepository = useExistingRepositoryCheckBox.Checked;
-      settings.IncludeGlobs = GlobMatcher.GetGlobStrings(includesTextBox.Lines);
-      settings.ExcludeGlobs = GlobMatcher.GetGlobStrings(excludesTextBox.Lines);
+      settings.IncludeGlobPatterns = GlobMatcher.GetGlobStrings(includesTextBox.Lines);
+      settings.ExcludeGlobPatterns = GlobMatcher.GetGlobStrings(excludesTextBox.Lines);
 
       settings.Save();
     }

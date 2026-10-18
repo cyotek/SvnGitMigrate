@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Specialized;
+using System;
+using System.Collections.Generic;
 
 // Cyotek Svn2Git Migration Utility
 
@@ -21,9 +21,9 @@ namespace Cyotek.SvnMigrate
 
     public string CommitMessageTemplate { get; set; }
 
-    public StringCollection ExcludeGlobs { get; set; }
+    public List<string> ExcludeGlobs { get; set; }
 
-    public StringCollection IncludeGlobs { get; set; }
+    public List<string> IncludeGlobs { get; set; }
 
     public string RepositoryPath { get; set; }
 

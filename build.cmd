@@ -30,7 +30,6 @@ COPY /y %RELDIR%LibGit2Sharp.dll                            .\dist
 COPY /y %RELDIR%LibGit2Sharp.dll.config                     .\dist
 COPY /y %RELDIR%LICENSE.txt                                 .\dist
 COPY /y %RELDIR%Microsoft.Bcl.AsyncInterfaces.dll           .\dist
-COPY /y %RELDIR%Newtonsoft.Json.dll                         .\dist
 COPY /y %RELDIR%README.md                                   .\dist
 COPY /y %RELDIR%Scriban.Signed.dll                          .\dist
 COPY /y %RELDIR%SharpPlink-Win32.svnExe                     .\dist

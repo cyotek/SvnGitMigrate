@@ -13,7 +13,9 @@
 
 * Changed package from `SharpSvn.1.9-x86` to the latest version
   of `SharpSvn`, avoiding needing an older version of the Visual
-  C++ runtime.
+  C++ runtime (and a package that never updates).
+* Replaced `Newtonsoft.Json` with `System.Text.Json` for
+  reading and writing profiles
 * Dependency updates
 
 ### 1.6

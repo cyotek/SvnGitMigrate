@@ -52,9 +52,6 @@
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.10.0.13\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Scriban.Signed, Version=7.0.0.0, Culture=neutral, PublicKeyToken=5675fb69b15f2433, processorArchitecture=MSIL">
       <HintPath>..\packages\Scriban.Signed.7.5.1\lib\netstandard2.0\Scriban.Signed.dll</HintPath>
     </Reference>
@@ -114,7 +111,6 @@
     <Compile Include="FileCompare.cs" />
     <Compile Include="FileDialogHelper.cs" />
     <Compile Include="GlobMatcher.cs" />
-    <Compile Include="IgnorePropertiesResolver.cs" />
     <Compile Include="ListView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -214,4 +210,4 @@
   </Target>
   <Import Project="..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets" Condition="Exists('..\packages\SharpSvn.1.14005.390\build\SharpSvn.targets')" />
   <Import Project="..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
-</Project>
+</Project>

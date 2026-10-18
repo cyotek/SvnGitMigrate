@@ -1,5 +1,5 @@
-﻿using DotNet.Globbing;
-using System.Collections.Specialized;
+using DotNet.Globbing;
+using System.Collections.Generic;
 using System.IO;
 
 // Cyotek Svn2Git Migration Utility
@@ -18,7 +18,7 @@ namespace Cyotek.SvnMigrate.Client
   {
     #region Public Methods
 
-    public static void SyncFolders(string src, string dst, StringCollection includeGlobs, StringCollection excludeGlobs)
+    public static void SyncFolders(string src, string dst, List<string> includeGlobs, List<string> excludeGlobs)
     {
       Glob[] includes;
       Glob[] excludes;
