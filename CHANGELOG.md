@@ -6,11 +6,15 @@
 
 ### Added
 
-* Changed package from SharpSvn.1.9-x86 to the latest version of
-  SharpSvn, avoiding needing an older version of the Visual C++
-  runtime.
 * Credentials will now automatically be requested if required
   instead of just displaying an error message.
+
+### Changed
+
+* Changed package from `SharpSvn.1.9-x86` to the latest version
+  of `SharpSvn`, avoiding needing an older version of the Visual
+  C++ runtime.
+* Dependency updates
 
 ### 1.6
 
