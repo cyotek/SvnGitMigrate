@@ -1,17 +1,15 @@
-﻿// Cyotek Svn2Git Migration Utility
+// Cyotek Svn2Git Migration Utility
 
-// Copyright © 2024 Cyotek Ltd. All Rights Reserved.
-
-// Enabling shell styles for the ListView and TreeView controls in C#
-// https://devblog.cyotek.com/post/enabling-shell-styles-for-the-listview-and-treeview-controls-in-csharp
-
-// Copyright © 2011 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
 
 // Found this example useful?
 // https://www.cyotek.com/contribute
+
+// Based on "Enabling shell styles for the ListView and TreeView controls in C#"
+// https://devblog.cyotek.com/post/enabling-shell-styles-for-the-listview-and-treeview-controls-in-csharp
 
 using System;
 using System.Windows.Forms;

@@ -1,10 +1,10 @@
-﻿using DotNet.Globbing;
-using System.Collections.Specialized;
+using DotNet.Globbing;
+using System.Collections.Generic;
 using System.IO;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2021 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -18,7 +18,7 @@ namespace Cyotek.SvnMigrate.Client
   {
     #region Public Methods
 
-    public static void SyncFolders(string src, string dst, StringCollection includeGlobs, StringCollection excludeGlobs)
+    public static void SyncFolders(string src, string dst, List<string> includeGlobs, List<string> excludeGlobs)
     {
       Glob[] includes;
       Glob[] excludes;

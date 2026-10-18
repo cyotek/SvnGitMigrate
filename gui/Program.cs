@@ -1,10 +1,12 @@
-﻿using Cyotek.SvnMigrate.Client.Properties;
+using Cyotek.SvnMigrate.Client.Properties;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Windows.Forms;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -16,7 +18,7 @@ namespace Cyotek.SvnMigrate.Client
 {
   internal static class Program
   {
-    #region Private Methods
+    #region Private Static Methods
 
     /// <summary>
     /// The main entry point for the application.
@@ -24,11 +26,28 @@ namespace Cyotek.SvnMigrate.Client
     [STAThread]
     private static void Main()
     {
-      Program.UpgradeProgramSettingsIfNecessary();
+      UpgradeProgramSettingsIfNecessary();
 
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Application.Run(new MainForm());
+    }
+
+    private static List<string> ToList(StringCollection values)
+    {
+      List<string> result;
+
+      result = new List<string>();
+
+      if (values != null)
+      {
+        foreach (string value in values)
+        {
+          result.Add(value);
+        }
+      }
+
+      return result;
     }
 
     /// <summary>Upgrades the application settings, if required.</summary>
@@ -51,13 +70,33 @@ namespace Cyotek.SvnMigrate.Client
       // This will cause the code below to call "Upgrade()" which copies the old settings to the new.
       // It then sets "NeedSettingsUpgrade" to false so the upgrade won't be done the next time.
 
-      if (Settings.Default.NeedSettingsUpgrade)
+      Settings settings = Settings.Default;
+
+      if (settings.NeedSettingsUpgrade)
       {
-        Settings.Default.Upgrade();
-        Settings.Default.NeedSettingsUpgrade = false;
+        settings.Upgrade();
+        settings.NeedSettingsUpgrade = false;
+        settings.Save();
+      }
+
+      // the swap from Newtonsoft to System.Text.Json broke existing
+      // files as it doesn't seem to support StringCollection and I
+      // didn't want to either add a custom convertor OR have to faff
+      // around converting StringCollection to List<string> on the fly.
+      // It is a bit of a hack, but I added new IncludeGlobPatterns and
+      // ExcludeGlobPatterns settings typed as List<string> and the code
+      // uses these instead - so here we have a one time migration to
+      // copy values from the old settings to the new
+      if (settings.IncludeGlobs != null || settings.ExcludeGlobs != null)
+      {
+        settings.IncludeGlobPatterns = ToList(settings.IncludeGlobs);
+        settings.ExcludeGlobPatterns = ToList(settings.ExcludeGlobs);
+        settings.IncludeGlobs = null;
+        settings.ExcludeGlobs = null;
+        settings.Save();
       }
     }
 
-    #endregion Private Methods
+    #endregion
   }
 }

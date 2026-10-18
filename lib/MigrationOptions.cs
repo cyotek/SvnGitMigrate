@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Specialized;
+using System;
+using System.Collections.Generic;
 
 // Cyotek Svn2Git Migration Utility
 
-// Copyright © 2020-2024 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -21,9 +21,9 @@ namespace Cyotek.SvnMigrate
 
     public string CommitMessageTemplate { get; set; }
 
-    public StringCollection ExcludeGlobs { get; set; }
+    public List<string> ExcludeGlobs { get; set; }
 
-    public StringCollection IncludeGlobs { get; set; }
+    public List<string> IncludeGlobs { get; set; }
 
     public string RepositoryPath { get; set; }
 

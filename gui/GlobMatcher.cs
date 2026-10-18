@@ -1,6 +1,6 @@
-﻿// Cyotek Svn2Git Migration Utility
+// Cyotek Svn2Git Migration Utility
 
-// Copyright © 2021-2024 Cyotek Ltd. All Rights Reserved.
+// Copyright © Cyotek Ltd. All Rights Reserved.
 
 // This work is licensed under the MIT License.
 // See LICENSE.TXT for the full text
@@ -39,16 +39,16 @@ namespace Cyotek.SvnMigrate.Client
 
     #region Public Methods
 
-    public static StringCollection GetGlobStrings(string patterns)
+    public static List<string> GetGlobStrings(string patterns)
     {
       return GetGlobStrings(patterns.Split(_globSeparators));
     }
 
-    public static StringCollection GetGlobStrings(string[] patterns)
+    public static List<string> GetGlobStrings(string[] patterns)
     {
-      StringCollection result;
+      List<string> result;
 
-      result = new StringCollection();
+      result = new List<string>();
 
       for (int i = 0; i < patterns.Length; i++)
       {
@@ -75,7 +75,7 @@ namespace Cyotek.SvnMigrate.Client
       return result;
     }
 
-    public static bool IsExcluded(StringCollection files, StringCollection excludeGlobs)
+    public static bool IsExcluded(StringCollection files, List<string> excludeGlobs)
     {
       bool result;
       Glob[] excludes;
@@ -100,7 +100,7 @@ namespace Cyotek.SvnMigrate.Client
       return globs.Length != 0 && GlobMatcher.IsMatch(file, globs);
     }
 
-    public static bool IsIncluded(StringCollection files, StringCollection includeGlobs)
+    public static bool IsIncluded(StringCollection files, List<string> includeGlobs)
     {
       bool result;
       Glob[] includes;
@@ -153,7 +153,7 @@ namespace Cyotek.SvnMigrate.Client
       return result;
     }
 
-    public static Glob[] PrepareGlobs(StringCollection patterns)
+    public static Glob[] PrepareGlobs(List<string> patterns)
     {
       Glob[] results;
 
